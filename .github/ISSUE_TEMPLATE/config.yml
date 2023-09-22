@@ -1,0 +1,12 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "Bug Report"
+    url: https://github.com/flowcourier/Flowcourier.Umbraco.Support/issues/new
+    about: "File a bug report, if you've discovered a problem."
+  - name: Features and ideas
+    url: https://github.com/flowcourier/Flowcourier.Umbraco.Support/discussions/new?category=ideas
+    about: Suggest an idea for this project
+  - name: Security issue
+    url: https://github.com/flowcourier/Flowcourier.Umbraco.Support/security/policy
+    about: Discovered a Security Issue?
+
