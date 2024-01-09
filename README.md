@@ -1,6 +1,8 @@
 # Flowcourier Umbraco Support
 
-Create issue in https://github.com/flowcourier/Flowcourier.Umbraco.Support/issues
+* Create issue in https://github.com/flowcourier/Flowcourier.Umbraco.Support/issues
+
+* Report vulnerabity in https://github.com/flowcourier/Flowcourier.Umbraco.Support/blob/main/SECURITY.md
 
 # Visitor on a page
 ![Visitors - page specific reporting](images/visitors-page-specific-reporting.png)
