@@ -1,8 +1,5 @@
 # Flowcourier Umbraco Support
 
-*  in
-* in 
-
 - [Create an Issue]( https://github.com/flowcourier/Flowcourier.Umbraco.Support/issues)
 - [Reporting a Vulnerability](https://github.com/flowcourier/Flowcourier.Umbraco.Support/blob/main/SECURITY.md)
 
