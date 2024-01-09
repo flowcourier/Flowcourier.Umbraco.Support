@@ -6,5 +6,5 @@
 ![Real Time](images/analytics-realtime.png)
 
 # Site wide reporting
-![Visitors -  Site wide reporting](images/analytics-site-wide-reports)
+![Visitors -  Site wide reporting](images/analytics-site-wide-reports.png)
 
