@@ -1,8 +1,10 @@
 # Flowcourier.Umbraco.Support
+# Visitor on a page
 ![Visitors - page specific reporting](images/visitors-page-specific-reporting.png)
 
+# Real Time
+![Real Time](images/analytics-realtime.png)
 
-<video width="320" height="240" controls>
-  <source src="images/visitors-v12.1.0.mp4" type="video/mp4">
-Your browser does not support the video tag.
-</video>
+# Site wide reporting
+![Visitors -  Site wide reporting](images/analytics-site-wide-reports)
+
