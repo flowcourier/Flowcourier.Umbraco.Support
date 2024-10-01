@@ -5,6 +5,7 @@ import starlight from '@astrojs/starlight';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://flowcourier.github.io',
+	base: '/Flowcourier.Umbraco.Support/', // Repository name
 	
 	integrations: [
 		starlight({
