@@ -28,7 +28,8 @@ pipeline {
                         bat "if exist ${env.WebRootFilePath}\\docs rd /s /q ${env.WebRootFilePath}\\docs"
                         
                         // Move the docs folder to the WebRootFilePath
-                        bat "move docs ${env.WebRootFilePath}"
+                        bat "robocopy docs ${env.WebRootFilePath}\\docs /e /mir"
+
 
                         // Remove the local docs folder just in case
                         bat "if exist docs rd /s /q docs"
