@@ -1,0 +1,38 @@
+---
+title: Get Started 
+description: A guide to getting started with FlowCourier Analytics.
+---
+
+import { Steps } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+# How to install and use Google Analytics for Umbraco
+
+There are just 4 steps to have the extension up and running in Umbraco
+
+<Steps>
+
+1. Install the extension 
+
+    The extension is available via NuGet. Visit the URL [Flowcourier Analytics on NuGet]( https://www.nuget.org/packages/Flowcourier.Umbraco.Analytics/) for instructions on how to install the package in your website. Or search the Flowcourier package in Visual Studio or simply run the following command in the Package Manager Console:
+    <Code code="dotnet add package Flowcourier.Umbraco.Analytics" lang="shell"  />
+
+2. Create Service Account for your Google Analytics property
+    
+        To create a service account, follow the instructions in the [Google Analytics documentation](https://developers.google.com/identity/protocols/oauth2/service-account).If you are familiar with Google Analytics Console, head there and create Service Account user and then in Google Analytics add this new user read access to the property you want to read. 
+
+        For detailed steps see section 2. Configure Access at the [Developer Guide](/docs/developer-guide/configure-access-to-google-services)
+
+3. Get license and install license
+
+    You can see licensing options at Pricing page. We will send you license to your inbox which then you can copy to your /umbraco/Licenses -folder. License is limited on domains (in Google Analytics), so please provide every domain you want the extension work at.
+
+4. Create new Connection to Google Analytics from Umbraco
+    
+        After you have installed the package and created the service account that has access to , you can create a new connection to Google Analytics from Umbraco. 
+    
+        For detailed steps see section 3. Create Connection at the [Developer Guide](/docs/developer-guide/create-connection-to-google-analytics)
+
+
+</Steps>
+

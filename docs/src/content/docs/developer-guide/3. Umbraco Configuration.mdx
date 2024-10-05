@@ -1,0 +1,28 @@
+---
+title: 3. Finalize Configuration
+description:  Umbraco Configuration guide for the website analytics reporting extension
+
+---
+
+Before we can start to use Flowcourier Analytics, we need to configure Umbraco to allow ourselves access to the relevant sections. The Flowcourier Analytics UI is split over three sections within the Umbraco back-office:
+
+Settings / Flowcourier For managing connections
+Analytics For getting site wide statistics, basically Google Analytics Overview
+Content / Visitors For viewing page specific statistics
+
+In order to access these sections, we will need to ensure our User account has the relevant permissions to do so. If you are logged in as Administrator, you will likely already have access to the Settings and Content sections. If you are not an Administrator however, you will need to assign your user account to the Administrators User Group.
+
+To gain access to the Analytics section however, will require some additional configuration.
+
+## Creating a Analytics User Group
+To gain access to the Analytics section, it is advised that you create a new User Group called Analytics, assigning our User account to that User Group and allowing that User Group access to the Analytics section as a whole. By creating a custom User Group in this way it provides an easier method of managing Users who have access to the Analytics section, rather than allowing individual Users access.
+
+To create the Analytics User Group you should follow the instructions on how to create a User Group available on the Umbraco Documentation site, ensuring you select the Analytics section in the Sections list, as well as selecting your User account in the Users list, as per the screenshot below.
+
+## Accessing the Analytics Section
+Once created and assigned, you should be able to refresh the back-office and see that we now have access to the new Analytics section.
+
+
+## Install License
+
+Once you have purchased a license you can install it by dropping the license file directly into your sites umbraco\Licenses folder. Flowcourier will automatically scan this directory for any valid licenses.
