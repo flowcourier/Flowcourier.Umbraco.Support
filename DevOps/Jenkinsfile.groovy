@@ -41,13 +41,7 @@ pipeline {
     }
 
     post {
-        // Request page so cache will rebuild
-        always {
-            nodejs(nodeJSInstallationName: 'latest') {
-                bat 'node --version'
-                bat "node .\\DevOps\\Scripts\\Loadpage.js ${env.FrontPage}"
-            }
-        }
+        
 
         success {
             slackSend channel: "#DevOps", message: "Build Done: ${env.JOB_NAME} ${env.BUILD_NUMBER}"
