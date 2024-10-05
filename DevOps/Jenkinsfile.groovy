@@ -21,6 +21,8 @@ pipeline {
                     dir('docs') {
                         bat 'pnpm install'
                         bat 'pnpm build'
+                         // Remove the local docs folder just in case
+                        bat "if exist docs rd /s /q docs"
                         // Rename dist to docs
                         bat 'ren dist docs'
 
@@ -31,8 +33,7 @@ pipeline {
                         bat "robocopy docs ${env.WebRootFilePath}\\docs /e /mir"
 
 
-                        // Remove the local docs folder just in case
-                        bat "if exist docs rd /s /q docs"
+                       
                     }
 
                 }
