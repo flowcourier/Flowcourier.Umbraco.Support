@@ -3,8 +3,6 @@ pipeline {
 
     environment {
         WebRootFilePath = 'D:\\Sites\\flowcourier\\flowcourier.com\\wwwroot'
-        AppPoolName = "flowcourier.com"
-        FrontPage = "https://flowcourier.web05.jpkeisala.com/"
     }
 
     stages {
@@ -27,11 +25,9 @@ pipeline {
                         // Rename dist to docs
                         bat 'ren dist docs'
 
-                        // Check if docs already exists in the target, if so delete it
-                        bat "if exist ${env.WebRootFilePath}\\docs rd /s /q ${env.WebRootFilePath}\\docs"
-                        
-                        // Move the docs folder to the WebRootFilePath
+                       // Use robocopy to move docs to the target directory with overwrite
                         bat "robocopy docs ${env.WebRootFilePath}\\docs /e /mir"
+                        
 
 
                        
@@ -44,12 +40,9 @@ pipeline {
     }
 
     post {
-        
-
         success {
             slackSend channel: "#DevOps", message: "Build Done: ${env.JOB_NAME} ${env.BUILD_NUMBER}"
         }
-
         failure {
             slackSend(channel: '#DevOps', color: 'RED', message: "FAILED :alarm_clock:  ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL} :alarm_clock:")
         }
