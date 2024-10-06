@@ -21,7 +21,7 @@ pipeline {
                     dir('docs') {
                         // pagefind fails with pnpm, so we use npm
                         bat 'npm install'
-                        bat 'npm build'
+                        bat 'npm run build'
                          // Remove the local docs folder just in case
                         bat "if exist docs rd /s /q docs"
                         // Rename dist to docs
