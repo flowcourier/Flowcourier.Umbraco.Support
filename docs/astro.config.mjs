@@ -39,5 +39,6 @@ export default defineConfig({
             
             
         ],
+        pagefind:false,
 		}), tailwind()],
 });
