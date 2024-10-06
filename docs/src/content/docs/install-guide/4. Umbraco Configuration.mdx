@@ -8,53 +8,81 @@ On this last step, we will configure the extension in Umbraco to use the Service
 
 The Google Analytics by Flowcourier UI is split over three sections within the Umbraco back-office:
 
-* Settings / Flowcourier For managing connections
-* Analytics For getting site wide statistics, basically Google Analytics Overview
-* Content / Visitors For viewing page specific statistics
+* **Settings/Flowcourier** Settings area (only for Umbraco Administrators)
+* **Analytics** For getting site wide statistics, basically Google Analytics Overview and Google Search Console Overview optimized for CMS users
+* **Content / Visitors** For viewing page specific statistics, performance and SEO data
 
 
 ## Create data Connection in Umbraco Settings
 
+### 1. Go to Umbraco Settings area
 To create a new connection to Google Analytics, you need to go to the Flowcourier settings in Umbraco back-office as Umbraco Administrator.
 
+![Umbraco Settingsl](../../../assets/umbraco/fc-settings.png)
 
 
-In order to access these sections, we will need to ensure our User account has the relevant permissions to do so. If you are logged in as Administrator, you will likely already have access to the Settings and Content sections. If you are not an Administrator however, you will need to assign your user account to the Administrators User Group.
+### 2. Add Google Services Connector
+On the Connections -item, add new connection by clicking the "Google Services Connector" link.
+![Umbraco Settings Add Connection](../../../assets/umbraco/fc-setting-add-new.png)
 
-To gain access to the Analytics section however, will require some additional configuration.
 
-## Creating a Analytics User Group
-To gain access to the Analytics section, it is advised that you create a new User Group called Analytics, assigning our User account to that User Group and allowing that User Group access to the Analytics section as a whole. By creating a custom User Group in this way it provides an easier method of managing Users who have access to the Analytics section, rather than allowing individual Users access.
+### 3. Fill required fields
+Fill the required fields in the form. You can find the required information from the Google Cloud Console.
+![Fill the required fields](../../../assets/umbraco/fc-setting-add-new-field-1.png)
 
-To create the Analytics User Group you should follow the instructions on how to create a User Group available on the Umbraco Documentation site, ensuring you select the Analytics section in the Sections list, as well as selecting your User account in the Users list, as per the screenshot below.
+* **Connection Name**: Give a name for the connection for example "Google Analytics"
+* **Website**: Select here the Home node of Umbraco. This is needed for routing the path to the correct page. 
+* **Service Account Credentials**: Paste here JSON key of the Service Account.
+* **Website URL**: This is canonical URL that your website is seen by Google. The URL is needed by Google Search and PageSpeed to find the page with full URL.
 
-## Accessing the Analytics Section
-Once created and assigned, you should be able to refresh the back-office and see that we now have access to the new Analytics section.
+
+#### 3.1 Service Account Credentials
+Now it is time to tell Google Analytics by Flowcourier to use the Service Account to read data from Google Analytics.
+
+####  3.2 Go to Google Cloud Console IAM & Admin 
+Go to the [Google Cloud Console](https://console.cloud.google.com/iam-admin/serviceaccounts?project=flowcourieranalytics) and in IAM & Admin, open Service Accounts. Then click your Service Account.
+
+![Service Accounts](../../../assets/google/31-service-accounts.png)
+
+####  3.3  Create Key
+Click the KEYS tab and then click the ADD KEY > Create new key button.
+
+![Create Key](../../../assets/google/32-createkey.png)
+
+#### 3.4  Download JSON Key
+Choose the JSON key type.
+
+![Choose JSON Key Type](../../../assets/google/33-step-3-choose-json-key-type.png)
+
+
+### 4. Enable Google Services
+Enable here Google Analytics, Google Search Console and Google PageSpeed Insights services by following the instructions on the screen.
+![Fill the required fields](../../../assets/umbraco/fc-setting-add-new-field-2.png)
+
+
+
+
+## Give users access to Analytics -section
+
+All users should already have access to the Content and Visitors sections, but the Analytics section is only available to Users who have been granted access to it. To give access to the Analytics section, you will need to go Groups in User Management section in the Umbraco back-office.
+
+![user-management-groups](../../../assets/umbraco/user-management-groups.png)
+
+### Create a new User Group or add to existing group to access Analytics section
+Create a new User Group or add to existing
+![user-management-groups](../../../assets/umbraco/user-management-groups-add.png)
+
+Now try to reload the Umbraco back-office and you should see the Analytics section in the top menu.
 
 
 ## Install License
 
 Once you have purchased a license you can install it by dropping the license file directly into your sites umbraco\Licenses folder. Flowcourier will automatically scan this directory for any valid licenses.
 
+---
+
+**CONGRATULATIONS!** You have now successfully configured the Google Analytics by Flowcourier extension in Umbraco.
 
 
 
 
-## Step 3: Add Service Account User to Umbraco
-
-In this final step, we tell Google Analytics by Flowcourier to use the Service Account to read data from Google Analytics.
-
-### 1:  Go to Google Cloud Console IAM & Admin 
-Go to the [Google Cloud Console](https://console.cloud.google.com/iam-admin/serviceaccounts?project=flowcourieranalytics) and in IAM & Admin, open Service Accounts. Then click your Service Account.
-
-![Service Accounts](../../../assets/google/31-service-accounts.png)
-
-### 2: Create Key
-Click the KEYS tab and then click the ADD KEY > Create new key button.
-
-![Create Key](../../../assets/google/32-createkey.png)
-
-### 3: Download JSON Key
-Choose the JSON key type.
-
-![Choose JSON Key Type](../../../assets/google/33-step-3-choose-json-key-type.png)
