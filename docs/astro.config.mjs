@@ -29,8 +29,12 @@ export default defineConfig({
                 autogenerate: { directory: 'start-here' },
             },
             {
-                label: 'Developer Guide',
-                autogenerate: { directory: 'developer-guide' },
+                label: 'Install Guide',
+                autogenerate: { directory: 'install-guide' },
+            },
+            {
+                label: 'FAQ',
+                autogenerate: { directory: 'faq' },
             }
             
             
