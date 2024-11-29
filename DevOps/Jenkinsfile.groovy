@@ -26,7 +26,9 @@ pipeline {
                         bat 'ren dist docs'
 
                        // Use robocopy to move docs to the target directory with overwrite
-                        bat "robocopy docs ${env.WebRootFilePath}\\docs /e /mir"
+                        // bat "robocopy docs ${env.WebRootFilePath}\\docs /e /mir"
+                        bat "robocopy docs ${env.WebRootFilePath}\\docs /e /mir /z /copy:DAT | exit 0"
+
                         
 
 
