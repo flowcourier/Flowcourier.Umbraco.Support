@@ -32,7 +32,7 @@ Fill the required fields in the form. You can find the required information from
 
 * **Connection Name**: Give a name for the connection for example "Google Analytics"
 * **Website**: Select here the Home node of Umbraco. This is needed for routing the path to the correct page. 
-* **Service Account Credentials**: Paste here JSON key of the Service Account.
+* **Service Account Credentials**: Paste here JSON key of the Service Account. See [section 3.5](#35--open-json-key-and-paste-it-to-umbraco-back-office) below for details on how to get this.
 * **Website URL**: This is canonical URL that your website is seen by Google. The URL is needed by Google Search and PageSpeed to find the page with full URL.
 
 
@@ -54,6 +54,24 @@ Choose the JSON key type.
 
 ![Choose JSON Key Type](../../../assets/google/33-step-3-choose-json-key-type.png)
 
+
+#### 3.5  Open JSON Key and paste it to Umbraco back-office
+Open the downloaded JSON key file (in text editor) and copy the entire key to the Service Account Credentials field in the Umbraco back-office. It should look like this:
+
+```json{
+    {
+    "type": "service_account",
+    "project_id": "flowcourieranalytics",
+    "private_key_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "private_key": "-----BEGIN PRIVATE
+    ...    
+    } 
+```  
+
+Finally, the configuration should look like this screenshot below:
+<div style="border: 1px solid #ddd; border-radius: 4px; padding: 5px;">
+![Open JSON Key and paste it to Umbraco back-office](../../../assets/umbraco/fc-google-connector-with-credentials.png)
+</div>
 
 ### 4. Enable Google Services
 Enable here Google Analytics, Google Search Console and Google PageSpeed Insights services by following the instructions on the screen.
