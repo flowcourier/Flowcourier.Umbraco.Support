@@ -26,3 +26,21 @@ We did not get enough interest to continue developing the Matomo connector. If y
 - You have created the service account under the same Google account you use for Google Analytics;
 - The local time is in sync with the server time (maximum admissible difference is 5 minutes).
 
+## Statistics not loading in my Umbraco instance, Google Chrome inspector shows 500 errors on requests.
+
+1. Double check that you have provided complete JSON object to credentials field in Umbraco Settings
+2. Test the credentials with an empty Umbraco installation, you can do this easily by running commands:
+~~~
+dotnet new install Umbraco.Templates::13.*
+dotnet new umbraco -n "v13"
+cd v13
+dotnet add package Clean --version 4.*
+dotnet add package Flowcourier.Umbraco.Analytics --version 13.1.0-rc1
+dotnet run
+~~~
+Then add your Google Service Account credentials with configuration in Settings area and check that analytics loads on the home node. If they are not loading, your problem is on Google credentials or Google Analytics configuration. If it loads then the problem might be on some customization in Umbraco. Try following:
+
+1. Check Umbraco logs, just in case there is more detailed error logging related to this issue?
+2. Are you using some specific json serializer in the project?
+3. Please contact us at GitHub [https://github.com/flowcourier/Flowcourier.Umbraco.Support](https://github.com/flowcourier/Flowcourier.Umbraco.Support)
+
