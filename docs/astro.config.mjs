@@ -2,15 +2,11 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
-import tailwindcss from "@tailwindcss/vite";
-
+import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
-    vite: {
-        plugins: [tailwindcss()],
-      },
-
+    site: 'https://flowcourier.com/docs/',
     base: '/docs/',
     
     integrations: [starlight({
@@ -44,5 +40,5 @@ export default defineConfig({
             
         ],
         pagefind:false,
-		})],
+		}), tailwind()],
 });

@@ -1,0 +1,54 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import CustomStyles from '../components/CustomStyles.astro';
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'Welcome to test page',
+    description: 'Meta text.',
+    template: 'splash',
+    editUrl: false,
+    lastUpdated: false,
+  }}
+>
+
+  <CustomStyles />
+  
+  <div class="not-found">
+    <h1 class="animate animate-bounce">test</h1>
+    <p class="animate animate-bounce">Just testing nothing to see here.</p>
+    <a href="/docs/">Return to homepage</a>
+  </div>
+</StarlightPage>
+
+<style>
+  .not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+    text-align: center;
+  }
+
+  .not-found h1 {
+    font-size: 6rem;
+    margin-bottom: 1rem;
+  }
+
+  .not-found a {
+    margin-top: 2rem;
+    padding: 0.5rem 1rem;
+    color: var(--sl-color-text-accent);
+    border: 1px solid var(--sl-color-accent);
+    border-radius: 999px;
+    text-decoration: none;
+  }
+
+  .not-found a:hover {
+    background-color: var(--sl-color-accent);
+    color: var(--sl-color-white);
+  }
+</style>
