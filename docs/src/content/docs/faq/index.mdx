@@ -5,13 +5,28 @@ description: Installing the extension for Umbraco
 
 # FAQ
 
+
 ## Can I use the free license for a commercial project?
-Yes, you can use the free license for a commercial project. The free license is to 30 days data view. If you want to use filters you need to upgrade to the paid license.
+Yes, you can use the free license for a commercial project.
 
-If you still have issues, please contact us at [Support Email](mailto:support@flowcourier.com).
+When you install the extension without providing a license, it runs in **Free Edition** mode by default. This includes a 30-day data view limit. If you want access to additional features such as filters, you need to upgrade to the **Paid License**. A valid license key will be provided upon purchase.
 
-## Umbraco 14 and 15
-We are working on the compatibility with Umbraco 14 and 15. We will release the new version soon. 
+If you experience issues, please contact us at [support@flowcourier.com](mailto:support@flowcourier.com).
+
+## Can I run the extension in localhost or headless environments?
+Yes. The extension works regardless of where Umbraco is running—whether it's `http://localhost`, `https://staging.mysite.com`, or `https://intranet`.
+
+What matters is the **base URL configured in Google Analytics**, not the Umbraco domain itself. This design supports local development, internal use, staging, test, and headless setups.
+
+For example:
+- You have Umbraco running on `http://localhost/`
+- Your Google Analytics is tracking `https://www.example.com/`
+
+In this case, your Umbraco home node `http://localhost/` maps to the GA view of `https://www.example.com/`. To view stats for `https://www.example.com/my-page`, simply create a matching Umbraco page at `http://localhost/my-page`.
+
+
+## Umbraco v14 - v17
+We are working on the compatibility to the next major release (LTS) of Umbraco.
 
 ## Can I have a feature request?
 Yes, you can have a feature request. Please contact us at GitHub [https://github.com/flowcourier/Flowcourier.Umbraco.Support](https://github.com/flowcourier/Flowcourier.Umbraco.Support)
