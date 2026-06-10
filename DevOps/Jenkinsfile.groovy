@@ -17,9 +17,9 @@ pipeline {
                     
                     // Navigate to the project directory and run pnpm build
                     dir('docs') {
-                        // pagefind fails with pnpm, so we use npm
-                        bat 'npm install'
-                        bat 'npm run build'
+                        // pnpm via corepack; version pinned in package.json "packageManager"
+                        bat 'corepack pnpm install --frozen-lockfile'
+                        bat 'corepack pnpm run build'
                          // Remove the local docs folder just in case
                         bat "if exist docs rd /s /q docs"
                         // Rename dist to docs
