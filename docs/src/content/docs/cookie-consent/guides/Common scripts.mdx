@@ -1,0 +1,68 @@
+---
+title: Common scripts
+description: Ready-to-use managed script configurations for GA4, Meta Pixel, LinkedIn Insight Tag and Google Tag Manager.
+sidebar:
+  order: 3
+---
+
+import { Code } from '@astrojs/starlight/components';
+
+# Common scripts
+
+Managed scripts are added under **Settings → Cookie Consent → Scripts**. Each script has a name, a category, a location (`Head`, `BodyStart` or `BodyEnd`) and the script content — paste the vendor snippet as-is, including the `<script>` tags. The middleware consent-gates every `<script>` tag in the content and the banner activates them once the visitor accepts the category.
+
+A fresh install contains two example scripts (one per category) that log to the browser console, so you can verify consent gating works before adding real vendors. Replace them with your own.
+
+![Scripts dashboard with the two example scripts assigned to analytics and marketing](../../../../assets/cookie-consent/scripts.png)
+
+## Google Analytics 4
+
+Category: **Analytics** · Location: **Head**
+
+<Code code={`<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXX');
+</script>`} lang="html" />
+
+If you enable [Google Consent Mode v2](/docs/cookie-consent/guides/google-consent-mode/), GA4 receives consent signals automatically and adjusts its behavior before and after consent.
+
+## Meta Pixel
+
+Category: **Marketing** · Location: **Head**
+
+<Code code={`<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', 'YOUR_PIXEL_ID');
+fbq('track', 'PageView');
+</script>`} lang="html" />
+
+Remember the matching auto-clear entry `_fbp` on the Marketing category (included by default).
+
+## LinkedIn Insight Tag
+
+Category: **Marketing** · Location: **BodyEnd**
+
+<Code code={`<script type="text/javascript">
+_linkedin_partner_id = "YOUR_PARTNER_ID";
+window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+</script>
+<script type="text/javascript" async src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script>`} lang="html" />
+
+## Google Tag Manager
+
+Two common approaches:
+
+1. **GTM inside a category** — add the GTM container snippet as a managed script under **Marketing** (or Analytics, depending on what the container fires). Simple, but all tags in the container share one consent category.
+2. **GTM + Consent Mode (recommended)** — load GTM unconditionally in your template and let [Google Consent Mode v2](/docs/cookie-consent/guides/google-consent-mode/) gate the individual tags. Google-side tags respect the consent signals; configure built-in consent checks for non-Google tags in GTM's tag settings.
+
+## Which category does a script belong to?
+
+As a rule of thumb: measurement-only tools go to **Analytics**; anything that builds advertising audiences, tracks conversions or follows users across sites goes to **Marketing**. Some vendors span both — HubSpot's tracking script, for example, is conventionally classified as Marketing because it enables marketing automation, even though it also does analytics. When in doubt, check the vendor's own cookie documentation and classify by the most invasive purpose.

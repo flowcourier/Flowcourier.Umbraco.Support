@@ -1,0 +1,24 @@
+---
+title: System requirements
+description: Supported Umbraco and .NET versions for Flowcourier Cookie Consent.
+sidebar:
+  order: 2
+---
+
+# System requirements
+
+| Requirement | Version |
+|-------------|---------|
+| Umbraco | 17+ (LTS) |
+| .NET | 10+ |
+
+## Notes
+
+- The package is self-hosted: all consent assets are served by your own application. No external consent service is called at runtime, which also keeps the consent flow inside your own data-residency boundary.
+- Settings and consent statistics are stored in your Umbraco database. Tables are created automatically by migrations on first startup (SQL Server and SQLite are supported through Umbraco's standard database layer).
+- The backoffice UI is built with Lit web components for the Umbraco Bellissima backoffice.
+- The frontend banner wraps the well-established open-source [orestbida/cookieconsent](https://github.com/orestbida/cookieconsent) library (MIT).
+
+## License
+
+Flowcourier Cookie Consent is free and open source under the MIT license. There is no license file to install and no domain restrictions.

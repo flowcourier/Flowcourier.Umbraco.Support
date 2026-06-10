@@ -1,0 +1,50 @@
+---
+title: FAQ
+description: Frequently asked questions about Flowcourier Cookie Consent.
+---
+
+# Frequently asked questions
+
+## Is it really free?
+
+Yes. The package is open source under the MIT license — no license file, no domain restrictions, no tiers. It wraps the widely used [orestbida/cookieconsent](https://github.com/orestbida/cookieconsent) library, also MIT.
+
+## How is this different from Cookiebot or other commercial CMPs?
+
+This package is self-hosted and Umbraco-native: configuration, translations and statistics all live in your Umbraco installation, and no external consent service is in the runtime path. A commercial CMP makes sense when you need vendor-managed compliance workflows, automatic cookie scanning, or CMP-specific ad-stack certifications (e.g. Google's CMP partner program for certain ads features). For standard Umbraco sites with GA4, Meta Pixel and similar, this package covers the requirements.
+
+## The banner doesn't appear — what should I check?
+
+1. Integration mode is **Auto** (or you've added the manual init script).
+2. The current path isn't in **Excluded paths**.
+3. The response is an HTML page — the middleware only injects into HTML responses.
+4. You haven't already consented in this browser: clear cookies for the site or use a private window.
+5. Check the browser console for `Flowcourier:` errors.
+
+## My script doesn't fire after accepting — why?
+
+Confirm the script is **Enabled**, assigned to the category the visitor accepted, and that the snippet includes its `<script>` tags. Each `<script>` tag in the content is consent-gated and activated by the banner once its category is accepted.
+
+## Does rejecting consent remove cookies that were already set?
+
+Yes, for cookies listed in the category's **auto-clear** configuration. Defaults cover GA4 (`^_ga`, `_gid`) and common marketing cookies (`_fbp`, `_gcl_au`); add entries for other vendors you use. Cookies set by third parties on their own domains can't be removed by any consent tool — they can only be prevented by not loading the third party until consent.
+
+## Do I need consent for Plausible, Fathom or other cookieless analytics?
+
+Generally no banner consent is needed under ePrivacy, since they set no cookies and store nothing on the device. GDPR still applies to the IP processing, so list the tool in your privacy policy and have a data processing agreement with the vendor. You can load such scripts directly in your templates without consent-gating.
+
+## Does it work with Google Consent Mode v2?
+
+Yes — both Basic and Advanced modes. See [Google Consent Mode v2](/docs/cookie-consent/guides/google-consent-mode/). It's off by default; enable it when you use Google tags.
+
+## Can I use it with a headless frontend?
+
+Yes. Set integration mode to **Headless** and use the NPM package together with the public REST API (`/fc-cookie-consent/api/config` etc.). Enable CORS allowed origins for your frontend domain under **Settings → API**.
+
+## Where is consent data stored?
+
+In your Umbraco database. Consent statistics are anonymous accept/reject counts with a configurable retention period (90 days by default). Nothing is sent to Flowcourier or any third party.
+
+## Which Umbraco versions are supported?
+
+Umbraco 17+ on .NET 10. See [System requirements](/docs/cookie-consent/start-here/system-requirements/).

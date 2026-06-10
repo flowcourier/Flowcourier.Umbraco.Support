@@ -1,0 +1,55 @@
+---
+title: Google Consent Mode v2
+description: How Flowcourier Cookie Consent implements Google Consent Mode v2 and how to enable it.
+sidebar:
+  order: 4
+---
+
+import { Code } from '@astrojs/starlight/components';
+
+# Google Consent Mode v2
+
+If your site uses Google Analytics 4, Google Ads or GTM, you should enable Consent Mode v2 — since March 2024 Google requires it for ads personalization and audience features in the EEA.
+
+Enable it under **Cookie Consent → Settings → Google Consent Mode**. It is **off by default**, because without a Google tag setup it would only emit unused consent calls.
+
+## What the package does
+
+When enabled, the middleware injects a consent default snippet *before* any Google tags load:
+
+<Code code={`gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'functionality_storage': 'denied',
+    'personalization_storage': 'denied',
+    'security_storage': 'granted',
+    'wait_for_update': 500
+});
+gtag('set', 'ads_data_redaction', true);
+gtag('set', 'url_passthrough', true);`} lang="javascript" />
+
+When the visitor makes a choice, the package sends a `gtag('consent', 'update', …)` with the granted signals.
+
+## Category mapping
+
+Consent categories map to Consent Mode signals as follows:
+
+| Banner category | Consent Mode signals |
+|-----------------|---------------------|
+| Analytics | `analytics_storage` |
+| Marketing | `ad_storage`, `ad_user_data`, `ad_personalization` |
+| Preferences | `functionality_storage`, `personalization_storage` |
+| Necessary | `security_storage` (always granted) |
+
+Note the mapping is not 1:1 — marketing consent drives three signals, which is exactly what Google's v2 requirements expect.
+
+## Basic vs Advanced mode
+
+Both are supported; the difference is how you load your Google tags:
+
+- **Basic**: add your Google tags as managed scripts in a consent category. Tags load only after consent — no data reaches Google before that, not even cookieless pings.
+- **Advanced**: load Google tags unconditionally (e.g. GTM in your template). Before consent, tags send cookieless pings; after consent, full measurement. Gives Google modelling data but sends *some* data pre-consent — make a deliberate choice here and document it in your privacy policy.
+
+For most Danish/EU sites Basic mode is the safer default; choose Advanced only if you rely on Google's conversion modelling.

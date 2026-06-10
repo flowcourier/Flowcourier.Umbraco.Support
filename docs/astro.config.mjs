@@ -25,19 +25,39 @@ export default defineConfig({
 		  ],
         sidebar: [
             {
-                label: 'Getting Started',
-                autogenerate: { directory: 'start-here' },
+                label: 'Analytics',
+                items: [
+                    {
+                        label: 'Getting Started',
+                        autogenerate: { directory: 'start-here' },
+                    },
+                    {
+                        label: 'Install Guide',
+                        autogenerate: { directory: 'install-guide' },
+                    },
+                    {
+                        label: 'FAQ',
+                        autogenerate: { directory: 'faq' },
+                    },
+                ],
             },
             {
-                label: 'Install Guide',
-                autogenerate: { directory: 'install-guide' },
+                label: 'Cookie Consent',
+                items: [
+                    {
+                        label: 'Getting Started',
+                        autogenerate: { directory: 'cookie-consent/start-here' },
+                    },
+                    {
+                        label: 'Guides',
+                        autogenerate: { directory: 'cookie-consent/guides' },
+                    },
+                    {
+                        label: 'FAQ',
+                        autogenerate: { directory: 'cookie-consent/faq' },
+                    },
+                ],
             },
-            {
-                label: 'FAQ',
-                autogenerate: { directory: 'faq' },
-            }
-            
-            
         ],
         pagefind:false,
 		}), tailwind()],

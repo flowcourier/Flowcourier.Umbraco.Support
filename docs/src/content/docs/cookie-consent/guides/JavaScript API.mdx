@@ -1,0 +1,72 @@
+---
+title: JavaScript API
+description: Manual integration and the window.FlowcourierConsent API.
+sidebar:
+  order: 6
+---
+
+import { Code } from '@astrojs/starlight/components';
+
+# JavaScript API
+
+In **Auto** mode you rarely need this page. Use it when running **Manual** mode, when wiring up your own "Cookie settings" link, or when reacting to consent changes in your own code.
+
+## Manual initialization
+
+Set the integration mode to **Manual** in the backoffice, then add the init script to your layout where you want it:
+
+<Code code={`<script type="module">
+import { initFlowcourierConsent } from '/fc-cookie-consent/flowcourier.esm.js';
+
+initFlowcourierConsent({
+    apiUrl: '/fc-cookie-consent/api',
+    language: 'en-US',
+    autoInit: true
+});
+</script>`} lang="html" />
+
+`language` should match the culture of the current page — in a Razor layout, pass Umbraco's current culture instead of a hard-coded value.
+
+## window.FlowcourierConsent
+
+After initialization the public API is available on `window.FlowcourierConsent`:
+
+| Method | Description |
+|--------|-------------|
+| `show()` | Show the consent banner |
+| `hide()` | Hide the consent banner |
+| `showPreferences()` | Open the preferences modal — use this for footer "Cookie settings" links |
+| `hidePreferences()` | Close the preferences modal |
+| `getState()` | Returns the current consent state |
+| `isCategoryAccepted(category)` | `true` if the visitor accepted the given category, e.g. `'analytics'` |
+| `acceptAll()` | Programmatically accept all categories |
+| `rejectAll()` | Programmatically reject all non-necessary categories |
+| `config` | The loaded configuration object |
+
+## Examples
+
+A footer link to reopen preferences (required by GDPR — withdrawing consent must be as easy as giving it):
+
+<Code code={`<a href="#" onclick="window.FlowcourierConsent.showPreferences(); return false;">
+    Cookie settings
+</a>`} lang="html" />
+
+Conditionally run your own code based on consent:
+
+<Code code={`if (window.FlowcourierConsent?.isCategoryAccepted('analytics')) {
+    // load something analytics-related
+}`} lang="javascript" />
+
+## REST API
+
+For headless setups, the same configuration that drives the banner is available over HTTP:
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/fc-cookie-consent/api/config` | GET | Banner configuration (categories, UI, texts) |
+| `/fc-cookie-consent/api/languages` | GET | Available languages |
+| `/fc-cookie-consent/api/stats` | POST | Record a consent decision |
+| `/fc-cookie-consent/api/stats/summary` | GET | Aggregated consent statistics |
+| `/fc-cookie-consent/api/ping` | GET | Health check |
+
+CORS is enabled by default; restrict allowed origins (and optionally require an API key) under **Settings → API**.
