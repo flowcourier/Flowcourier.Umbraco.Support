@@ -1,0 +1,59 @@
+{
+  "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
+  "Title": "Flowcourier Cookie Consent",
+  "Description": "Self-hosted cookie consent package for Umbraco with Matomo, Google Consent Mode v2 support, Umbraco Dictionary-based labels, and backoffice configuration.",
+  "Category": "Analytics & Insights",
+  "PackageType": "Package",
+  "LicenseTypes": ["Free"],
+  "DocumentationUrl": "https://flowcourier.com/docs/cookie-consent/start-here/get-started/",
+  "IssueTrackerUrl": "https://github.com/flowcourier/Flowcourier.Umbraco.Support/issues",
+  "DiscussionForumUrl": "https://github.com/flowcourier/Flowcourier.Umbraco.Support/discussions",
+  "Tags": [
+    "cookie consent",
+    "gdpr",
+    "google consent mode v2",
+    "analytics",
+    "matomo",
+    "ga4",
+    "gtm",
+    "consent management",
+    "cookie banner"
+  ],
+  "VersionDependencyMode": "Default",
+  "Screenshots": [
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/flowcourier/Flowcourier.Umbraco.Support/refs/heads/main/images/cookie-consent/frontend-intial-dialog.png",
+      "Caption": "Customisable cookie consent banner shown to first-time visitors"
+    },
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/flowcourier/Flowcourier.Umbraco.Support/refs/heads/main/images/cookie-consent/frontend-consent-dialog.png",
+      "Caption": "Preferences dialog with per-category opt-in controls"
+    },
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/flowcourier/Flowcourier.Umbraco.Support/refs/heads/main/images/cookie-consent/settings.png",
+      "Caption": "Configure integration mode and Google Consent Mode v2 from the backoffice"
+    },
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/flowcourier/Flowcourier.Umbraco.Support/refs/heads/main/images/cookie-consent/settings-appearance.png",
+      "Caption": "Control the banner appearance to match your site"
+    },
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/flowcourier/Flowcourier.Umbraco.Support/refs/heads/main/images/cookie-consent/categories.png",
+      "Caption": "Manage cookie categories and their default opt-in state"
+    },
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/flowcourier/Flowcourier.Umbraco.Support/refs/heads/main/images/cookie-consent/scripts.png",
+      "Caption": "Consent-gate vendor scripts per category, with placement control"
+    },
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/flowcourier/Flowcourier.Umbraco.Support/refs/heads/main/images/cookie-consent/statistics.png",
+      "Caption": "Consent statistics dashboard — accept / reject / custom rates over time"
+    }
+  ],
+  "AuthorDetails": {
+    "Name": "Flowcourier",
+    "Description": "Flowcourier develops practical, self-hosted Umbraco extensions.",
+    "Url": "https://flowcourier.com/",
+    "SyncContributorsFromRepository": true
+  }
+}
