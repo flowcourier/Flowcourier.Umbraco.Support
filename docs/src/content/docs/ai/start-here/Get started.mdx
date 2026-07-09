@@ -24,12 +24,18 @@ The agents run inside Umbraco AI — they don't ship their own AI runtime. Befor
 
     In the backoffice, go to the **AI** section and add a connection for your provider (this is where your API key goes), then create a **profile with the Chat capability** and make it the default. The Flowcourier agents resolve the default Chat profile — without one, they won't appear.
 
-3. Install the Flowcourier AI package
+3. Install the agents you need
 
-    The extension is available via NuGet. Visit [Flowcourier.Umbraco.AI on NuGet](https://www.nuget.org/packages/Flowcourier.Umbraco.AI/) or run:
-    <Code code="dotnet add package Flowcourier.Umbraco.AI --prerelease" lang="shell" />
+    Each agent is its own NuGet package — pick the ones your site needs:
 
-    This meta-package installs both agents. You can also install them individually with `Flowcourier.Umbraco.AI.Agents.Translation` or `Flowcourier.Umbraco.AI.Agents.Seo`.
+    ```shell
+    dotnet add package Flowcourier.Umbraco.AI.Agents.Translation
+    dotnet add package Flowcourier.Umbraco.AI.Agents.Seo
+    ```
+
+    Want everything? The [Flowcourier.Umbraco.AI](https://www.nuget.org/packages/Flowcourier.Umbraco.AI/) meta-package installs all available agents in one go:
+
+    <Code code="dotnet add package Flowcourier.Umbraco.AI" lang="shell" />
 
     No composer or startup code is needed — everything is auto-registered, and the Translation Agent's database table is created automatically on first startup.
 

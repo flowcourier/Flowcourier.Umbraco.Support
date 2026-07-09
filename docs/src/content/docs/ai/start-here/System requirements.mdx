@@ -17,13 +17,15 @@ sidebar:
 
 ## Packages
 
+Each agent ships as its own NuGet package — install only what your site needs:
+
 | Package | Contents |
 |---------|----------|
-| [`Flowcourier.Umbraco.AI`](https://www.nuget.org/packages/Flowcourier.Umbraco.AI/) | Meta-package — installs both agents below |
 | `Flowcourier.Umbraco.AI.Agents.Translation` | Translation Agent with review workflow |
 | `Flowcourier.Umbraco.AI.Agents.Seo` | SEO Agent |
+| [`Flowcourier.Umbraco.AI`](https://www.nuget.org/packages/Flowcourier.Umbraco.AI/) | Meta-package — installs all available agents |
 
-The package major version tracks the Umbraco major version (17.x targets Umbraco 17). The packages are currently in pre-release, so install with the `--prerelease` flag.
+The package major version tracks the Umbraco major version (17.x targets Umbraco 17).
 
 ## Notes
 

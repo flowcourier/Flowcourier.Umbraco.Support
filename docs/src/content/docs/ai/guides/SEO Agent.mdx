@@ -11,6 +11,14 @@ The SEO Agent suggests optimized values for the SEO fields of the page you are e
 
 **Prerequisites:** [Umbraco AI with a Chat profile](/docs/ai/guides/umbraco-ai-setup/). That's all — the SEO Agent has **no configuration of its own** and works out of the box once installed. It sends no email, so SMTP is not required for it.
 
+## Install
+
+```shell
+dotnet add package Flowcourier.Umbraco.AI.Agents.Seo
+```
+
+No composer or startup code is needed. On the next startup the agent registers itself with the Umbraco AI Copilot (a Chat profile must exist first).
+
 ## How editors use it
 
 1. Open a content page and launch the **Copilot**.

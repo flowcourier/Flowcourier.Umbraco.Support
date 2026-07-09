@@ -11,6 +11,14 @@ The Translation Agent translates a content page into another culture variant dir
 
 **Prerequisites:** [Umbraco AI with a Chat profile](/docs/ai/guides/umbraco-ai-setup/), content types that **vary by culture** with the target languages added under **Settings → Languages**, and SMTP for the approval emails.
 
+## Install
+
+```shell
+dotnet add package Flowcourier.Umbraco.AI.Agents.Translation
+```
+
+No composer or startup code is needed. On the next startup the agent registers itself with the Umbraco AI Copilot (a Chat profile must exist first) and creates its review table automatically.
+
 ## How editors use it
 
 1. Open a culture-varying page and launch the **Copilot**, or use the **Translate…** button in the workspace footer.
