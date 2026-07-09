@@ -42,6 +42,19 @@ export default defineConfig({
                 ],
             },
             {
+                label: 'AI Agents',
+                items: [
+                    {
+                        label: 'Getting Started',
+                        autogenerate: { directory: 'ai/start-here' },
+                    },
+                    {
+                        label: 'Guides',
+                        autogenerate: { directory: 'ai/guides' },
+                    },
+                ],
+            },
+            {
                 label: 'Cookie Consent',
                 items: [
                     {

@@ -1,0 +1,34 @@
+---
+title: SEO Agent
+description: The Flowcourier SEO Agent suggests optimized SEO field values in the Copilot — zero configuration required.
+sidebar:
+  order: 3
+---
+
+# SEO Agent
+
+The SEO Agent suggests optimized values for the SEO fields of the page you are editing — meta title, meta description and similar metadata properties — based on the page's actual content.
+
+**Prerequisites:** [Umbraco AI with a Chat profile](/docs/ai/guides/umbraco-ai-setup/). That's all — the SEO Agent has **no configuration of its own** and works out of the box once installed. It sends no email, so SMTP is not required for it.
+
+## How editors use it
+
+1. Open a content page and launch the **Copilot**.
+2. Pick the **SEO Agent** and ask it to suggest or improve the SEO fields.
+3. The agent reads the page's properties and text, identifies which fields are SEO/metadata fields — including custom property names, not just the standard ones — and proposes optimized values.
+4. The suggestions are **staged into the open editor**, not saved. Review them, adjust if needed, and click **Save** yourself.
+
+On multi-language sites the agent works per culture: it reads and suggests values for the language variant you currently have open.
+
+## What it optimizes
+
+- **Meta title** — aims for at most 60 characters.
+- **Meta description** — aims for 140–160 characters.
+- Other metadata-style text fields it identifies on the page.
+- **Meta keywords are deliberately skipped** — search engines ignore them.
+
+The agent makes a single model call per request and never writes to the database; the editor stays in control of what gets saved.
+
+## Settings page
+
+Under **Settings → Flowcourier → SEO** you'll find the agent's settings page. Since the agent currently has no configurable options, the page simply confirms the agent is installed and active.

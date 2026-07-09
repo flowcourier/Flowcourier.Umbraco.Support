@@ -1,0 +1,94 @@
+---
+title: Umbraco AI setup
+description: Install Umbraco AI, add an LLM provider and create the Chat profile the Flowcourier agents depend on.
+sidebar:
+  order: 1
+---
+
+# Umbraco AI setup
+
+The Flowcourier agents extend the official **Umbraco AI Copilot**. This page covers the prerequisite: a working Umbraco AI installation with an AI model configured. If your site already has Umbraco AI with a default Chat profile, you can skip straight to the [Translation Agent](/docs/ai/guides/translation-agent/) and [SEO Agent](/docs/ai/guides/seo-agent/) guides.
+
+## 1. Install the Umbraco AI packages
+
+Add the Umbraco AI host packages to your site:
+
+```shell
+dotnet add package Umbraco.AI
+dotnet add package Umbraco.AI.Startup
+dotnet add package Umbraco.AI.Web
+dotnet add package Umbraco.AI.Web.StaticAssets
+dotnet add package Umbraco.AI.Agent
+dotnet add package Umbraco.AI.Agent.Copilot
+dotnet add package Umbraco.AI.Prompt
+```
+
+Add at least one LLM provider package — this determines which models you can use:
+
+```shell
+dotnet add package Umbraco.AI.OpenAI
+# and/or
+dotnet add package Umbraco.AI.Anthropic
+dotnet add package Umbraco.AI.MicrosoftFoundry
+```
+
+Add the persistence packages matching your database (each Umbraco AI subsystem has its own):
+
+```shell
+# SQL Server
+dotnet add package Umbraco.AI.Persistence.SqlServer
+dotnet add package Umbraco.AI.Agent.Persistence.SqlServer
+dotnet add package Umbraco.AI.Prompt.Persistence.SqlServer
+
+# or SQLite
+dotnet add package Umbraco.AI.Persistence.Sqlite
+dotnet add package Umbraco.AI.Agent.Persistence.Sqlite
+dotnet add package Umbraco.AI.Prompt.Persistence.Sqlite
+```
+
+## 2. Add a connection and your API key
+
+Start the site and open the **AI** section in the backoffice. Create a **connection** for your provider — this is where your OpenAI/Anthropic/Foundry API key goes. The key belongs to Umbraco AI's provider configuration, not to any Flowcourier setting.
+
+## 3. Create a default Chat profile
+
+Still in the AI section, create a **profile** with the **Chat** capability, pick the model, and set it as the default.
+
+This is the step the Flowcourier agents depend on:
+
+- The agents resolve the **default Chat profile** (or, if no default is set, the first profile with Chat capability) for every LLM call.
+- Agents are seeded into the Copilot on startup **only if a Chat profile exists**. If you installed the Flowcourier package first, simply restart the site after creating the profile — the seeder picks it up on the next start.
+- No Flowcourier-specific profile alias is required; whatever your default Chat profile is, the agents use it.
+
+## Running on SQLite?
+
+From the sample project in the repository, a few settings keep Umbraco AI happy on SQLite's single-writer database:
+
+```json
+{
+  "Umbraco": {
+    "CMS": {
+      "Global": {
+        "DistributedLockingWriteLockDefaultTimeout": "00:00:20"
+      }
+    },
+    "AI": {
+      "Analytics": { "Enabled": false }
+    }
+  },
+  "ConnectionStrings": {
+    "umbracoDbDSN": "Data Source=|DataDirectory|/Umbraco.sqlite.db;Cache=Private;Foreign Keys=True;Pooling=True;Default Timeout=30",
+    "umbracoDbDSN_ProviderName": "Microsoft.Data.Sqlite"
+  }
+}
+```
+
+- Use `Cache=Private` (not `Shared`), pooling and a 30&nbsp;second timeout in the connection string.
+- Raise the distributed-locking write timeout to 20 seconds.
+- Disable `Umbraco:AI:Analytics` — its rollup jobs can starve SQLite's single writer.
+
+None of this is needed on SQL Server.
+
+## Verify
+
+Open any content page and launch the **Copilot**. Once it responds to a plain chat message, the model is configured correctly — and after a restart you should see the **Translation Agent** and **SEO Agent** in the Copilot's agent picker.

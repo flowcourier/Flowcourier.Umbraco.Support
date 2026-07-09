@@ -1,0 +1,74 @@
+---
+title: Quick start
+description: Install and configure the Flowcourier AI agents for Umbraco — Translation Agent and SEO Agent.
+sidebar:
+  order: 1
+---
+
+import { Steps } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+# How to install the Flowcourier AI agents for Umbraco
+
+Flowcourier Umbraco AI adds two agents to the official **Umbraco AI Copilot**: a **Translation Agent** that translates content into other culture variants with a built-in review/approval workflow, and an **SEO Agent** that suggests optimized SEO field values for the page you are editing.
+
+The agents run inside Umbraco AI — they don't ship their own AI runtime. Before they can do anything you need Umbraco AI installed with a working **Chat profile** (an AI model with an API key). The Translation Agent's approval emails additionally need SMTP configured.
+
+<Steps>
+
+1. Install Umbraco AI with an LLM provider
+
+    If your site doesn't have Umbraco AI yet, add the host packages plus at least one provider (OpenAI, Anthropic or Microsoft Foundry) and the persistence packages for your database. See [Umbraco AI setup](/docs/ai/guides/umbraco-ai-setup/) for the full package list and configuration.
+
+2. Create a Chat profile
+
+    In the backoffice, go to the **AI** section and add a connection for your provider (this is where your API key goes), then create a **profile with the Chat capability** and make it the default. The Flowcourier agents resolve the default Chat profile — without one, they won't appear.
+
+3. Install the Flowcourier AI package
+
+    The extension is available via NuGet. Visit [Flowcourier.Umbraco.AI on NuGet](https://www.nuget.org/packages/Flowcourier.Umbraco.AI/) or run:
+    <Code code="dotnet add package Flowcourier.Umbraco.AI --prerelease" lang="shell" />
+
+    This meta-package installs both agents. You can also install them individually with `Flowcourier.Umbraco.AI.Agents.Translation` or `Flowcourier.Umbraco.AI.Agents.Seo`.
+
+    No composer or startup code is needed — everything is auto-registered, and the Translation Agent's database table is created automatically on first startup.
+
+4. Restart the site
+
+    On startup the agents seed themselves into Umbraco AI (idempotent, non-destructive). If no Chat profile existed yet at that point, they are seeded on the next restart after you create one.
+
+5. Configure SMTP for translation approvals
+
+    The Translation Agent sends review-request, reminder and status emails through Umbraco's standard SMTP settings:
+
+    ```json
+    {
+      "Umbraco": {
+        "CMS": {
+          "Global": {
+            "Smtp": {
+              "From": "noreply@yoursite.com",
+              "Host": "smtp.yourprovider.com",
+              "Port": 587,
+              "Username": "…",
+              "Password": "…"
+            }
+          }
+        }
+      }
+    }
+    ```
+
+    Without SMTP the agents still work — translation and SEO suggestions are unaffected — but approval emails are skipped and the **Send for approval** action reports that no From address is configured. The SEO Agent never sends email.
+
+6. Try the agents
+
+    Open a content page and launch the **Copilot**. On a culture-varying page, pick the **Translation Agent** and use the "Translate to…" starter (or the **Translate…** button in the workspace footer). On any page, ask the **SEO Agent** to suggest SEO fields — suggestions are staged into the editor for you to review and save.
+
+</Steps>
+
+## Next steps
+
+- Walk through the [Umbraco AI setup](/docs/ai/guides/umbraco-ai-setup/) in detail, including SQLite-specific settings.
+- Configure the [Translation Agent](/docs/ai/guides/translation-agent/) — review workflow, reminders, publish-on-approve and translation knowledge.
+- Read what the [SEO Agent](/docs/ai/guides/seo-agent/) does and how editors use it.

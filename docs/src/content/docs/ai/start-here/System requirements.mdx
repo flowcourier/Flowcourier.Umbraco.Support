@@ -1,0 +1,37 @@
+---
+title: System requirements
+description: Supported Umbraco, .NET and Umbraco AI versions for the Flowcourier AI agents.
+sidebar:
+  order: 2
+---
+
+# System requirements
+
+| Requirement | Version |
+|-------------|---------|
+| Umbraco | 17+ (LTS) |
+| .NET | 10+ |
+| Umbraco AI | 17.0.0+ with a **Chat** profile configured |
+| LLM provider | OpenAI, Anthropic or Microsoft Foundry via the matching `Umbraco.AI.*` provider package, with your own API key |
+| SMTP | Only for the Translation Agent's approval emails (Umbraco's standard `Umbraco:CMS:Global:Smtp` settings) |
+
+## Packages
+
+| Package | Contents |
+|---------|----------|
+| [`Flowcourier.Umbraco.AI`](https://www.nuget.org/packages/Flowcourier.Umbraco.AI/) | Meta-package — installs both agents below |
+| `Flowcourier.Umbraco.AI.Agents.Translation` | Translation Agent with review workflow |
+| `Flowcourier.Umbraco.AI.Agents.Seo` | SEO Agent |
+
+The package major version tracks the Umbraco major version (17.x targets Umbraco 17). The packages are currently in pre-release, so install with the `--prerelease` flag.
+
+## Notes
+
+- The agents plug into the official **Umbraco AI Copilot** — Umbraco AI provides the model connections, profiles and chat UI; Flowcourier provides the agents and tools.
+- No manual composer or startup code: all services are auto-registered when the package is installed.
+- The Translation Agent creates one database table (`FcTranslationReview`) automatically via an idempotent migration on first startup. SQL Server and SQLite are supported through Umbraco's standard database layer. The SEO Agent has no database footprint.
+- Backoffice assets are served from `App_Plugins` (`fc-ai-core`, `fc-ai-translation`, `fc-ai-seo`, `fc-foundation`) and built for the Umbraco Bellissima backoffice.
+
+## License
+
+The packages are free to use, including commercially, under the Flowcourier License 1.0. There is no license key to install and no domain restrictions.
