@@ -5,6 +5,11 @@ sidebar:
   order: 2
 ---
 
+import { Image } from 'astro:assets';
+import logo from '../../../../assets/ai/translation-agent-logo.svg';
+
+<Image src={logo} alt="Translation Agent logo" width="70" />
+
 # Translation Agent
 
 The Translation Agent translates a content page into another culture variant directly from the Copilot, then routes the draft through an email-based review workflow: an editor sends the translation to a reviewer, the reviewer approves or requests changes, and reminders chase pending reviews automatically.
