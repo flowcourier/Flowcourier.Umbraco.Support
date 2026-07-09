@@ -27,16 +27,39 @@ No composer or startup code is needed. On the next startup the agent registers i
 ## How editors use it
 
 1. Open a culture-varying page and launch the **Copilot**, or use the **Translate…** button in the workspace footer.
-2. Pick the **Translation Agent** and use the "Translate to…" starter. The target language can be given as an ISO code (`da-DK`), a prefix (`da`) or a name ("Danish").
+2. Pick the **Translation Agent** and use the "Translate to…" starter, then choose the target language. It can also be given as an ISO code (`da-DK`), a prefix (`da`) or a name ("Danish").
+
+    ![The Copilot with the Translation Agent selected, showing the available target languages](../../../../assets/ai/translation-agent/choose-language.png)
+
 3. The agent translates the node name and every culture-varying property — plain text, rich text (HTML tags preserved) and Block List/Block Grid content (only human-readable text is translated; structure, GUIDs and aliases stay untouched) — and saves the result **as a draft in the target culture only**. The source culture is never modified.
+
+    ![The finished translation with the source and Danish variant side by side and a result card offering to send the translation for review](../../../../assets/ai/translation-agent/translation-complete.png)
+
 4. The editor reviews the draft and either publishes it directly or sends it for approval.
 
 ### Review workflow
 
-- **Send for approval** — the editor enters a reviewer's email address. The reviewer must be an existing Umbraco backoffice user with that email; the agent sends them an approval email with a link to the page.
-- **Approve / Decline** — the reviewer acts from the buttons in the document workspace footer, or from the **Translation Workflow** dashboard in the **Translation** section. Declining requires a comment; the requester is notified of the outcome by email.
-- **Statuses** — a review moves through `Pending` → `Approved`/`Published`, `ChangesRequested` (after a decline, the editor can resubmit) or `Cancelled`.
-- If a reviewer simply publishes the culture variant themselves, any open review for that content and culture is automatically marked `Published` and the requester is notified.
+**Send for approval** — the editor enters a reviewer's email address. The reviewer must be an existing Umbraco backoffice user with that email (the field validates the address against backoffice users as you type).
+
+![The send-for-approval card in the Copilot with a reviewer email that matches a backoffice user](../../../../assets/ai/translation-agent/send-for-approval.png)
+
+The reviewer receives an email with a read-only preview link and a direct link to the variant in the editor:
+
+![The approval email received by the reviewer with Preview and Open in editor buttons](../../../../assets/ai/translation-agent/email-to-reviewer.png)
+
+**Approve / Decline** — the reviewer acts from the buttons in the document workspace footer, with source and translation side by side, or from the **Translation Workflow** dashboard in the **Translation** section:
+
+![The document workspace with source and Danish variant side by side and Approve/Decline buttons in the footer](../../../../assets/ai/translation-agent/review-translation.png)
+
+Declining requires a note explaining what needs to change; it is emailed to whoever requested the review:
+
+![The decline translation dialog asking what needs to change](../../../../assets/ai/translation-agent/decline-translation.png)
+
+**Translation Workflow dashboard** — all reviews are listed under **Translation → Flowcourier → Translation Workflow**, filterable by status, with Approve, Decline, Remind and Delete actions:
+
+![The Translation Workflow dashboard listing a pending review with its actions](../../../../assets/ai/translation-agent/translation-workflow-view.png)
+
+**Statuses** — a review moves through `Pending` → `Approved`/`Published`, `ChangesRequested` (after a decline, the editor can resubmit) or `Cancelled`. If a reviewer simply publishes the culture variant themselves, any open review for that content and culture is automatically marked `Published` and the requester is notified.
 
 ### Required permissions
 
