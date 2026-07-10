@@ -27,9 +27,14 @@ No composer or startup code is needed. On the next startup the agent registers i
 ## How editors use it
 
 1. Open a content page and launch the **Copilot**.
-2. Pick the **SEO Agent** and ask it to suggest or improve the SEO fields.
+2. Pick the **SEO Agent** and use the "Improve SEO" starter, or ask it in your own words to suggest or improve the SEO fields.
+
+    ![A content page's SEO tab with the Umbraco Copilot open, showing the SEO Agent's Improve SEO starter](../../../../assets/ai/seo-agent/start-seo-agent.png)
+
 3. The agent reads the page's properties and text, identifies which fields are SEO/metadata fields — including custom property names, not just the standard ones — and proposes optimized values.
-4. The suggestions are **staged into the open editor**, not saved. Review them, adjust if needed, and click **Save** yourself.
+4. The suggestions come back as cards, one per field, each with a character count and an explanation. **Apply** the ones you want (or **Apply all**) — applied values are staged into the open editor, not saved. Adjust if needed and click **Save** yourself.
+
+    ![SEO suggestion cards in the Copilot with per-field Apply buttons, character counts and an Apply all action](../../../../assets/ai/seo-agent/seo-agent-results.png)
 
 On multi-language sites the agent works per culture: it reads and suggests values for the language variant you currently have open.
 
@@ -72,4 +77,6 @@ Details worth knowing:
 
 ## Settings page
 
-Under **Settings → Flowcourier → SEO** you'll find the agent's settings page. It shows the effective field configuration, including a copyable snippet for overriding it in appsettings.
+Under **Settings → Flowcourier → SEO Agent** you'll find the agent's settings page. It shows the effective field configuration, including a copyable snippet for overriding it in appsettings.
+
+![The SEO Agent settings page showing the effective Fields value and a copyable appsettings override snippet](../../../../assets/ai/seo-agent/seo-agent-settings.png)
