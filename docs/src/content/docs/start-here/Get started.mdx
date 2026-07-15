@@ -8,31 +8,31 @@ import { Code } from '@astrojs/starlight/components';
 
 # How to install and use Google Analytics for Umbraco
 
-There are just 4 steps to have the extension up and running in Umbraco
+Four steps get the extension up and running in Umbraco.
 
 <Steps>
 
-1. Install the extension 
+1. Install the extension
 
-    The extension is available via NuGet. Visit the URL [Google Analytics by Flowcourier on NuGet]( https://www.nuget.org/packages/Flowcourier.Umbraco.Analytics/) for instructions on how to install the package in your website. Or search the Flowcourier package in Visual Studio or simply run the following command in the Package Manager Console:
+    The extension is available via NuGet. Visit [Google Analytics by Flowcourier on NuGet](https://www.nuget.org/packages/Flowcourier.Umbraco.Analytics/), search for the package in Visual Studio, or run:
     <Code code="dotnet add package Flowcourier.Umbraco.Analytics" lang="shell"  />
 
-2. Create Service Account for your Google Analytics property
-    
-        To create a service account, follow the instructions in the [Google Analytics documentation](https://developers.google.com/identity/protocols/oauth2/service-account).If you are familiar with Google Analytics Console, head there and create Service Account user and then in Google Analytics add this new user read access to the property you want to read. 
+2. Create a service account for your Google Analytics property
 
-        For detailed steps see section 2. Configure Access at the [Install Guide](/docs/install-guide/configure-access-to-google-services)
+    The extension reads your data through Google's APIs using a **service account**. Create one in the Google Cloud Console, then give it **Viewer** access to the Google Analytics property you want to report on — the same way you would invite any user.
 
-3. Get license and install license
+    For detailed steps, see [2. Create Service Account](/docs/install-guide/2-create-sa-and-add-api-access) and [3. Add Service Account User to Google Analytics](/docs/install-guide/3-add-sa-user-to-google-analytics) in the Install Guide.
 
-    You can see licensing options at Pricing page. We will send you license to your inbox which then you can copy to your /umbraco/Licenses -folder. License is limited on domains (in Google Analytics), so please provide every domain you want the extension work at.
+3. Get and install a license (optional for the Free Edition)
 
-4. Create new Connection to Google Analytics from Umbraco
-    
-        After you have installed the package and created the service account that has access to , you can create a new connection to Google Analytics from Umbraco. 
-    
-        For detailed steps see section 3. Create Connection at the [Developer Guide](/docs/install-guide/create-connection-to-google-analytics)
+    Without a license the extension runs in **Free Edition** mode, with a 30-day data view limit. To unlock the paid features, purchase a license on the [Google Analytics for Umbraco page](https://flowcourier.com/solutions/google-analytics/) — we email the license file to you, and you copy it into your site's `/umbraco/Licenses` folder.
 
+    The license is bound to the domains configured in Google Analytics, so when ordering, include every domain you want the extension to work on.
+
+4. Create a connection to Google Analytics in Umbraco
+
+    Once the package is installed and the service account has access to your property, create a new connection under **Settings → Flowcourier** in the Umbraco backoffice.
+
+    For detailed steps, see [4. Extension configuration in Umbraco](/docs/install-guide/4-umbraco-configuration) in the Install Guide.
 
 </Steps>
-

@@ -9,12 +9,12 @@ description: Installing the extension for Umbraco
 ## Can I use the free license for a commercial project?
 Yes, you can use the free license for a commercial project.
 
-When you install the extension without providing a license, it runs in **Free Edition** mode by default. This includes a 30-day data view limit. If you want access to additional features such as filters, you need to upgrade to the **Paid License**. A valid license key will be provided upon purchase.
+When you install the extension without providing a license, it runs in **Free Edition** mode by default. This includes a 30-day data view limit. If you want access to additional features such as filters, you need to upgrade to the **Paid License** — see the [Google Analytics for Umbraco page](https://flowcourier.com/solutions/google-analytics/) for pricing. A valid license key will be provided upon purchase.
 
 If you experience issues, please contact us at [support@flowcourier.com](mailto:support@flowcourier.com).
 
-## Can I run the extension in localhost or headless environments?
-Yes. The extension works regardless of where Umbraco is running—whether it's `http://localhost`, `https://staging.mysite.com`, or `https://intranet`.
+## Can I run the extension on localhost or in headless environments?
+Yes. The extension works regardless of where Umbraco is running — whether it's `http://localhost`, `https://staging.mysite.com`, or `https://intranet`.
 
 What matters is the **base URL configured in Google Analytics**, not the Umbraco domain itself. This design supports local development, internal use, staging, test, and headless setups.
 
@@ -25,26 +25,26 @@ For example:
 In this case, your Umbraco home node `http://localhost/` maps to the GA view of `https://www.example.com/`. To view stats for `https://www.example.com/my-page`, simply create a matching Umbraco page at `http://localhost/my-page`.
 
 
-## Umbraco v14 - v17
-We are working on the compatibility to the next major release (LTS) of Umbraco.
+## Does the extension support Umbraco 14-17?
+Not yet. The currently supported versions are Umbraco 10–13, and we are working on compatibility with the newer Umbraco majors.
 
-## Can I have a feature request?
-Yes, you can have a feature request. Please contact us at GitHub [https://github.com/flowcourier/Flowcourier.Umbraco.Support](https://github.com/flowcourier/Flowcourier.Umbraco.Support)
+## Can I request a feature?
+Yes! Please open an issue on GitHub at [https://github.com/flowcourier/Flowcourier.Umbraco.Support](https://github.com/flowcourier/Flowcourier.Umbraco.Support).
 
-## What happen to Matomo support?
+## What happened to Matomo support?
 We did not get enough interest to continue developing the Matomo connector. If you are interested in Matomo support, please contact us.
 
 
-## If after clicking the 'Finish' button you're getting the 'Invalid grant' error message, please check the following:
+## I get an "Invalid grant" error message — what should I check?
 
-- Your service account has the correct role ('Editor' or 'Owner');
-- You have created the service account under the same Google account you use for Google Analytics;
-- The local time is in sync with the server time (maximum admissible difference is 5 minutes).
+- Your service account has the correct role (**Editor** or **Owner**).
+- You have created the service account under the same Google account you use for Google Analytics.
+- The local time is in sync with the server time (the maximum admissible difference is 5 minutes).
 
-## Statistics not loading in my Umbraco instance, Google Chrome inspector shows 500 errors on requests.
+## Statistics are not loading, and the browser inspector shows 500 errors on requests
 
-1. Double check that you have provided complete JSON object to credentials field in Umbraco Settings
-2. Test the credentials with an empty Umbraco installation, you can do this easily by running commands:
+1. Double-check that you have pasted the **complete JSON key** into the credentials field in Umbraco Settings.
+2. Test the credentials against an empty Umbraco installation. You can set one up quickly with:
 ~~~
 dotnet new install Umbraco.Templates::13.*
 dotnet new umbraco -n "v13"
@@ -53,9 +53,9 @@ dotnet add package Clean --version 4.*
 dotnet add package Flowcourier.Umbraco.Analytics --version 13.1.0-rc1
 dotnet run
 ~~~
-Then add your Google Service Account credentials with configuration in Settings area and check that analytics loads on the home node. If they are not loading, your problem is on Google credentials or Google Analytics configuration. If it loads then the problem might be on some customization in Umbraco. Try following:
+Then add your Google service account credentials under the Settings area and check that analytics loads on the home node.
 
-1. Check Umbraco logs, just in case there is more detailed error logging related to this issue?
-2. Are you using some specific json serializer in the project?
-3. Please contact us at GitHub [https://github.com/flowcourier/Flowcourier.Umbraco.Support](https://github.com/flowcourier/Flowcourier.Umbraco.Support)
+- If it **doesn't load**, the problem is with your Google credentials or Google Analytics configuration.
+- If it **does load**, the problem is likely a customization in your own Umbraco site. Check the Umbraco logs for a more detailed error message, and consider whether the project uses a custom JSON serializer — that is a common culprit.
 
+Still stuck? Open an issue at [https://github.com/flowcourier/Flowcourier.Umbraco.Support](https://github.com/flowcourier/Flowcourier.Umbraco.Support).
