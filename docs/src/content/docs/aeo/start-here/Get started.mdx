@@ -19,6 +19,8 @@ One package gives you four things:
 - **`/{any-page}.md`** — append `.md` to any page URL and get a clean Markdown rendering instead of HTML.
 - **Structured data (JSON-LD)** injected into every rendered page's `<head>`, plus an **AI crawler analytics dashboard** in the backoffice.
 
+AEO has no AI dependency — no Umbraco AI, no LLM provider, no API key. It is built for sites where Umbraco renders the front end (MVC/Razor) — headless setups are not supported (see [system requirements](/docs/aeo/start-here/system-requirements/)).
+
 <Steps>
 
 1. Install the package
@@ -43,7 +45,7 @@ One package gives you four things:
 
     Go to **Settings → Flowcourier → AEO Dashboard → Structured Data** in the backoffice and enter your organization's name, logo, profile links and contact details. This is the one piece of structured data the package never guesses from content — page-level markup (WebPage/Article, breadcrumbs, FAQ) is generated automatically. See [Structured data](/docs/aeo/guides/structured-data/) for details.
 
-    {/* TODO screenshot: the Structured Data form under Settings → Flowcourier → AEO Dashboard */}
+    ![The Structured Data form under Settings → Flowcourier → AEO Dashboard, where editors fill in the organization identity](../../../../assets/aeo/Structured-data-organization-identity.png)
 
 4. Optional: advertise the files in robots.txt
 
@@ -63,7 +65,7 @@ One package gives you four things:
 
     Open **Settings → Flowcourier → AEO Dashboard**. Visits from GPTBot, ClaudeBot, PerplexityBot and 20+ other AI crawlers are recognised and counted — which bot, which pages, and whether they fetched HTML or your Markdown surface. Privacy-safe by design: no IP addresses or raw user-agent strings are ever stored. See [AI crawler analytics](/docs/aeo/guides/ai-crawler-analytics/).
 
-    {/* TODO screenshot: the AEO Dashboard with crawler statistics */}
+    ![The AEO Dashboard showing AI crawler hits per day, traffic share per operator, hits per crawler and top pages](../../../../assets/aeo/AEO-Dashboard.png)
 
 </Steps>
 
