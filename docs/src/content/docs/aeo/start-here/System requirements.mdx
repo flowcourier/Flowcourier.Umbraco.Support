@@ -1,0 +1,34 @@
+---
+title: System requirements
+description: Supported Umbraco and .NET versions for Flowcourier AEO.
+sidebar:
+  order: 2
+---
+
+# System requirements
+
+| Requirement | Version |
+|-------------|---------|
+| Umbraco | 17+ (LTS) |
+| .NET | 10+ |
+
+That's the whole list. AEO has **no AI dependency** — it does not require Umbraco AI, an LLM provider or an API key. All output is generated from your own published content.
+
+## Packages
+
+| Package | Contents |
+|---------|----------|
+| [`Flowcourier.Umbraco.AEO`](https://www.nuget.org/packages/Flowcourier.Umbraco.AEO/) | llms.txt / llms-full.txt / Markdown pages, structured data (JSON-LD) and AI crawler analytics |
+
+The package major version tracks the Umbraco major version (17.x targets Umbraco 17). AEO is currently in **prerelease** (17.0.0-alpha), so install with the `--prerelease` flag.
+
+## Notes
+
+- No manual composer or startup code: the package self-registers through an Umbraco pipeline filter — endpoints, middleware and backoffice UI are all wired up on install.
+- Works on single-site and multi-site installs (output is scoped to the site root matching the request's hostname via your Umbraco domain configuration) and on culture-variant sites (output is generated per language).
+- The crawler analytics feature creates one database table (`FcAeoCrawlerHit`) automatically via an idempotent migration on first startup. SQL Server and SQLite are supported through Umbraco's standard database layer. The Markdown and structured-data features have no database footprint; organization identity entered in the backoffice is stored in the database.
+- Backoffice assets are served from `App_Plugins` (`fc-aeo`, `fc-foundation`) and built for the Umbraco Bellissima backoffice. All AEO views live under **Settings → Flowcourier → AEO Dashboard**.
+
+## License
+
+The package is free to use, including commercially, under the Flowcourier License 1.0. There is no license key to install and no domain restrictions.

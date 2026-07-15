@@ -1,0 +1,84 @@
+---
+title: Structured data (JSON-LD)
+description: Flowcourier AEO generates schema.org JSON-LD from your Umbraco content — WebSite, WebPage/Article, breadcrumbs, FAQ and an editor-managed Organization identity.
+sidebar:
+  order: 2
+---
+
+# Structured data (JSON-LD)
+
+Every eligible rendered page gets one `<script type="application/ld+json">` in its `<head>` with a schema.org graph. Page-level markup is generated from your content — no templates to edit; the organization identity is the one thing you fill in yourself (a two-minute form in the backoffice).
+
+## What gets emitted
+
+- **`Organization`** — your company identity, and the one node that is **never guessed**: it only emits once a name has been provided. Emitted on the **homepage** by default (schema.org guidance: one representative page is enough); set `Schema.OrganizationOnAllPages` if you want it everywhere.
+- **`WebSite`** — homepage only: site name + URL.
+- **`WebPage` / `Article` / `NewsArticle` / …** — every page, typed via `Schema.TypeMappings` (doc-type alias → schema.org type; blog/news doc-types map to articles out of the box). Includes title, description, URL, language, `datePublished` (from your date property, falling back to the create date), `dateModified` and the author (string fields and content pickers both resolve).
+- **`BreadcrumbList`** — the page's ancestor trail, on every page below the homepage.
+- **`FAQPage`** — when the page (or any of its Block List / Block Grid elements) has a filled question **and** answer property (`question`/`answer` by default — configurable), the pairs are emitted as FAQ markup. Rich-text answers are stripped to plain text.
+
+Eligibility follows the same rules as the [Markdown surface](/docs/aeo/guides/markdown-endpoints/#what-gets-included): preview renders, non-200 responses, no-indexed pages and excluded document types never emit schema. The graph is cached per page + culture (`Schema.CacheSeconds`, default 300) and refreshed on publish.
+
+Validate your output at [validator.schema.org](https://validator.schema.org) or Google's Rich Results test.
+
+## The Structured Data form
+
+Editors fill in the organization identity under **Settings → Flowcourier → AEO Dashboard → Structured Data**: name, legal name, URL, logo, profile links (`sameAs`), email and phone. The values are stored in the database.
+
+{/* TODO screenshot: the Structured Data form under Settings → Flowcourier → AEO Dashboard */}
+
+Fill in `SameAs` (your LinkedIn/GitHub/social profiles), `LogoUrl` and `LegalName` for real deployments — verified identity is a core AI trust signal.
+
+Developers can set the same fields via `Schema:Organization` in appsettings; **backoffice values win field by field**. No name in either place = no Organization markup.
+
+## appsettings reference
+
+All settings live under `Flowcourier:Aeo:Schema` and are optional:
+
+```jsonc
+{
+  "Flowcourier": {
+    "Aeo": {
+      "Schema": {
+        "Enabled": true,
+        "EnableOrganization": true,
+        "OrganizationOnAllPages": false,
+        "EnableWebSite": true,
+        "EnableWebPage": true,
+        "EnableBreadcrumbs": true,
+        "EnableFaq": true,
+        "CacheSeconds": 300,
+        "Organization": {
+          "Name": null, "LegalName": null, "Url": null, "LogoUrl": null,
+          "SameAs": [], "Email": null, "Telephone": null
+        },
+        "TypeMappings": { "blogpost": "Article", "newsItem": "NewsArticle" },
+        "DatePublishedPropertyAliases": [ "publishDate", "articleDate", "postDate", "date" ],
+        "AuthorPropertyAliases": [ "author", "authorName", "writer" ],
+        "Faq": {
+          "DocumentTypes": [],
+          "QuestionPropertyAliases": [ "question", "faqQuestion" ],
+          "AnswerPropertyAliases": [ "answer", "faqAnswer" ]
+        }
+      }
+    }
+  }
+}
+```
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `Enabled` | `true` | Inject a JSON-LD graph into the `<head>` of rendered pages. |
+| `EnableOrganization` | `true` | Allow the `Organization` node (homepage only unless `OrganizationOnAllPages`). It only actually emits once a name is provided — on the Structured Data form or in `Organization`. |
+| `OrganizationOnAllPages` | `false` | Repeat the Organization node on every page instead of just the homepage. |
+| `EnableWebSite` | `true` | Emit a `WebSite` node on the homepage. |
+| `EnableWebPage` | `true` | Emit a `WebPage` (or mapped `Article`/…) node on every eligible page. |
+| `EnableBreadcrumbs` | `true` | Emit a `BreadcrumbList` on pages below the homepage. |
+| `EnableFaq` | `true` | Emit an `FAQPage` node when question/answer pairs are found. |
+| `CacheSeconds` | `300` | Cache lifetime for the serialized graph per (page, culture); publishes clear it immediately. |
+| `Organization.*` | unset | Organization identity in appsettings (name, legal name, URL, logo, `sameAs` profiles, email, phone). The backoffice form overrides these field by field. |
+| `TypeMappings` | blog/news → Article | Doc-type alias → schema.org type for the per-page node; unmapped types emit `WebPage`. |
+| `DatePublishedPropertyAliases` | `publishDate`, … | Aliases checked in order for `datePublished`; falls back to the node's create date. |
+| `AuthorPropertyAliases` | `author`, … | Aliases checked in order for the author (string values and content pickers both resolve). |
+| `Faq.DocumentTypes` | `[]` | Doc-type filter for FAQ markup; empty = all pages are scanned. |
+| `Faq.QuestionPropertyAliases` / `Faq.AnswerPropertyAliases` | `question` / `answer` + `faq*` | The question/answer aliases scanned on the page and its Block List/Grid elements. |

@@ -4,62 +4,54 @@ description:  Umbraco Configuration guide for the website analytics reporting ex
 
 ---
 
-On this last step, we will configure the extension in Umbraco to use the Service Account to access Google Analytics and Search reports and PageSpeed Insights reports.
+In this last step, we configure the extension in Umbraco to use the service account for Google Analytics, Google Search Console and PageSpeed Insights reports.
 
-The Google Analytics by Flowcourier UI is split over three sections within the Umbraco back-office:
+The Google Analytics by Flowcourier UI is split over three areas of the Umbraco backoffice:
 
-* **Settings/Flowcourier** Settings area (only for Umbraco Administrators)
-* **Analytics** For getting site wide statistics, basically Google Analytics Overview and Google Search Console Overview optimized for CMS users
-* **Content / Visitors** For viewing page specific statistics, performance and SEO data
-
-
-## Create data Connection in Umbraco Settings
-
-### 1. Go to Umbraco Settings area
-To create a new connection to Google Analytics, you need to go to the Flowcourier settings in Umbraco back-office as Umbraco Administrator.
-
-![Umbraco Settingsl](../../../assets/umbraco/fc-settings.png)
+* **Settings → Flowcourier** — connection settings (Umbraco administrators only)
+* **Analytics** — site-wide statistics: a Google Analytics overview and a Google Search Console overview, optimized for CMS users
+* **Content → Visitors** — per-page statistics, performance and SEO data
 
 
-### 2. Add Google Services Connector
-On the Connections -item, add new connection by clicking the "Google Services Connector" link.
+## Create a Data Connection in Umbraco Settings
+
+### 1. Go to the Umbraco Settings area
+To create a new connection to Google Analytics, go to **Settings → Flowcourier** in the Umbraco backoffice as an Umbraco administrator.
+
+![Umbraco Settings](../../../assets/umbraco/fc-settings.png)
+
+
+### 2. Add the Google Services Connector
+On the **Connections** item, add a new connection by clicking the **Google Services Connector** link.
 ![Umbraco Settings Add Connection](../../../assets/umbraco/fc-setting-add-new.png)
 
 
-### 3. Fill required fields
-Fill the required fields in the form. You can find the required information from the Google Cloud Console.
+### 3. Fill in the required fields
 ![Fill the required fields](../../../assets/umbraco/fc-setting-add-new-field-1.png)
 
-* **Connection Name**: Give a name for the connection for example "Google Analytics"
-* **Website**: Select here the Home node of Umbraco. This is needed for routing the path to the correct page. 
-* **Service Account Credentials**: Paste here JSON key of the Service Account. See [section 3.5](#35--open-json-key-and-paste-it-to-umbraco-back-office) below for details on how to get this.
-* **Website URL**: This is canonical URL that your website is seen by Google. The URL is needed by Google Search and PageSpeed to find the page with full URL.
+* **Connection Name**: A name for the connection, for example "Google Analytics".
+* **Website**: Select the home node of your Umbraco site. Page paths are resolved relative to this node when mapping analytics data to your content.
+* **Service Account Credentials**: The JSON key of the service account. Steps 3.1–3.4 below show how to create and download it.
+* **Website URL**: The canonical URL under which Google sees your website. Google Search Console and PageSpeed Insights use it to build the full URL of each page.
 
 
-#### 3.1 Service Account Credentials
-Now it is time to tell Google Analytics by Flowcourier to use the Service Account to read data from Google Analytics.
-
-####  3.2 Go to Google Cloud Console IAM & Admin 
-Go to the [Google Cloud Console](https://console.cloud.google.com/iam-admin/serviceaccounts?project=flowcourieranalytics) and in IAM & Admin, open Service Accounts. Then click your Service Account.
+#### 3.1 Go to Google Cloud Console IAM & Admin
+Go to the [Google Cloud Console](https://console.cloud.google.com/iam-admin/serviceaccounts) and in **IAM & Admin**, open **Service Accounts**. Then click your service account.
 
 ![Service Accounts](../../../assets/google/31-service-accounts.png)
 
-####  3.3  Create Key
-Click the KEYS tab and then click the ADD KEY > Create new key button.
+#### 3.2 Create a key
+Click the **KEYS** tab and then click **ADD KEY → Create new key**.
 
 ![Create Key](../../../assets/google/32-createkey.png)
 
-#### 3.4  Download JSON Key
-Choose the JSON key type.
+#### 3.3 Download the JSON key
+Choose the **JSON** key type.
 
 ![Choose JSON Key Type](../../../assets/google/33-step-3-choose-json-key-type.png)
 
-
-#### 3.5  Open JSON Key and paste it to Umbraco back-office
-Open the downloaded JSON key file (in text editor) and copy the entire key to the Service Account Credentials field in the Umbraco back-office. It should look like this:
-
-#### 3.5  Open JSON Key and paste it to Umbraco back-office
-Open the downloaded JSON key file (in text editor) and copy the entire key to the Service Account Credentials field in the Umbraco back-office. It should look like this:
+#### 3.4 Paste the JSON key into the Umbraco backoffice
+Open the downloaded JSON key file in a text editor and copy its entire content into the **Service Account Credentials** field in the Umbraco backoffice. It should look like this:
 
 ```json
 {
@@ -70,40 +62,36 @@ Open the downloaded JSON key file (in text editor) and copy the entire key to th
 }
 ```
 
-Finally, the configuration should look like this screenshot below:
+The finished configuration should look like the screenshot below:
 
 
 ![Open JSON Key and paste it to Umbraco back-office](../../../assets/umbraco/fc-google-connector-with-credentials.png)
 
 
-### 4. Enable Google Services
-Enable here Google Analytics, Google Search Console and Google PageSpeed Insights services by following the instructions on the screen.
+### 4. Enable the Google services
+Enable the Google Analytics, Google Search Console and Google PageSpeed Insights services by following the instructions on the screen.
 ![Fill the required fields](../../../assets/umbraco/fc-setting-add-new-field-2.png)
 
 
 
 
-## Give users access to Analytics -section
+## Give Users Access to the Analytics Section
 
-All users should already have access to the Content and Visitors sections, but the Analytics section is only available to Users who have been granted access to it. To give access to the Analytics section, you will need to go Groups in User Management section in the Umbraco back-office.
+All users already have access to the Content section (and its Visitors views), but the **Analytics** section is only visible to users who have been granted access to it. To grant access, go to **Groups** under the Users area of the Umbraco backoffice.
 
 ![user-management-groups](../../../assets/umbraco/user-management-groups.png)
 
-### Create a new User Group or add to existing group to access Analytics section
-Create a new User Group or add to existing
+### Add the Analytics section to a user group
+Create a new user group, or edit an existing one, and add the **Analytics** section to it.
 ![user-management-groups](../../../assets/umbraco/user-management-groups-add.png)
 
-Now try to reload the Umbraco back-office and you should see the Analytics section in the top menu.
+Reload the Umbraco backoffice, and the Analytics section appears in the top menu for the members of that group.
 
 
-## Install License
+## Install the License
 
-Once you have purchased a license you can install it by dropping the license file directly into your sites umbraco\Licenses folder. Flowcourier will automatically scan this directory for any valid licenses.
+Once you have purchased a license, install it by dropping the license file into your site's `umbraco/Licenses` folder. Flowcourier automatically scans this directory for valid licenses.
 
 ---
 
 **CONGRATULATIONS!** You have now successfully configured the Google Analytics by Flowcourier extension in Umbraco.
-
-
-
-

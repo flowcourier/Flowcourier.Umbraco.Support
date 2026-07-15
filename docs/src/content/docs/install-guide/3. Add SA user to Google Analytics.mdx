@@ -6,39 +6,39 @@ import { Steps } from '@astrojs/starlight/components';
 
 
 
-## Give Service Account Access to Google Analytics Property
+## Give the Service Account Access to Your Google Analytics Property
 
-In the previous step, we created a Service Account. Now we want to give this service account read access to the Google Analytics property. This is as easy as giving access to any user. If you are not familiar with Google Analytics Access Management, you can follow these simple steps below.
+In the previous step, we created a service account. Now we give that service account read access to your Google Analytics property — exactly the same way you would invite any user. If you are not familiar with Google Analytics access management, follow the steps below.
 
 
-### 1: Login to Google Analytics
-Sign in to the Google account at [analytics.google.com](https://analytics.google.com/) with an Administrator role for the account or property that you want to grant access to.
+### 1: Log in to Google Analytics
+Sign in at [analytics.google.com](https://analytics.google.com/) with a Google account that has the Administrator role for the account or property you want to grant access to.
 
-### 2: Open Google Analytics Settings
-Go to the property in question and click on the gear icon in the lower-left corner of the screen.
+### 2: Open the Google Analytics settings
+Go to the property in question and click the gear icon in the lower-left corner of the screen.
 
 ![Access Google Analytics Settings](../../../assets/google/ga/ga-grant-access-1.webp)
 
-### 3: Grant Access
-To grant access to the GA account, click on "Account Access Management." To grant access to the GA property, click on "Property Access Management."
+### 3: Open access management
+To grant access at the account level, click **Account Access Management**. To grant access to a single property only, click **Property Access Management**.
 
 ![Property Access Management](../../../assets/google/ga/ga-grant-access-2.webp)
 
-### 4: Add user
-Click on the blue "+" icon in the upper-right corner of the screen, then select "Add users."
+### 4: Add a user
+Click the blue **+** icon in the upper-right corner of the screen, then select **Add users**.
 
 ![Add Users](../../../assets/google/ga/ga-grant-access-3.png)
 
-### 5: Paste Service Account Email 
-Paste in the service account email address and select their Viewer role.
+### 5: Paste the service account email
+Paste in the service account email address (copied in the previous step) and select the **Viewer** role.
 
-### 6: Add Roles and Data Restrictions 
-Click on the blue "Add" button in the upper-right corner of the screen.
+### 6: Confirm
+Click the blue **Add** button in the upper-right corner of the screen.
 
 ![Add Roles and Data Restrictions](../../../assets/google/ga/add-roles-and-data-restrictions.png)
 
-Now the service account has access to the Google Analytics property!
+The service account now has access to your Google Analytics property!
 
-On the next step we will configure the extension in Umbraco to use this service account to access the data in Google API's.
+In the next step, we will configure the extension in Umbraco to use this service account to read the data from Google's APIs.
 
 ---

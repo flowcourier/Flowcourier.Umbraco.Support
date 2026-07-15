@@ -55,6 +55,19 @@ export default defineConfig({
                 ],
             },
             {
+                label: 'AEO',
+                items: [
+                    {
+                        label: 'Getting Started',
+                        autogenerate: { directory: 'aeo/start-here' },
+                    },
+                    {
+                        label: 'Guides',
+                        autogenerate: { directory: 'aeo/guides' },
+                    },
+                ],
+            },
+            {
                 label: 'Cookie Consent',
                 items: [
                     {

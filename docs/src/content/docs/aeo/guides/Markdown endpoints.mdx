@@ -1,0 +1,115 @@
+---
+title: llms.txt & Markdown pages
+description: How Flowcourier AEO serves your Umbraco site as llms.txt, llms-full.txt and per-page Markdown — inclusion rules, discovery, content negotiation and multilingual behaviour.
+sidebar:
+  order: 1
+---
+
+# llms.txt & Markdown pages
+
+Search engines read HTML; **answer engines prefer Markdown**. `llms.txt` and `llms-full.txt` are emerging conventions that let AI crawlers discover and ingest your content efficiently — without wading through navigation, scripts, styling and tracking markup. Flowcourier AEO produces all three artefacts automatically from your existing Umbraco content:
+
+| Endpoint | What it returns |
+|----------|-----------------|
+| `/llms.txt` | A curated **index** of your site — the [llms.txt standard](https://llmstxt.org): title, summary, and a grouped list of links (one per page) pointing at each page's Markdown version. |
+| `/llms-full.txt` | The **entire site rendered to Markdown** in a single document — every indexable page, concatenated with source-URL markers. Ideal for feeding a whole site into a model's context or a RAG pipeline. |
+| `/{any-page-path}.md` | **Any page as Markdown.** Append `.md` to any URL (e.g. `/products/widget.md`) and get a clean Markdown rendering of that page instead of HTML. |
+
+Everything is derived from the live published-content cache, so the output always reflects what's currently published. Results are cached in memory for a short, configurable window — and refreshed immediately on publish.
+
+The routes, the suffix and each individual feature can be changed or turned off — see the [configuration reference](/docs/aeo/guides/configuration/).
+
+## What gets included?
+
+A page appears in `/llms.txt` and `/llms-full.txt` when it is:
+
+- **Routable** — it has a real, resolvable URL (element/folder nodes without a template are skipped automatically).
+- **Not no-indexed** — none of the configured *no-index* properties (default `noIndex`, `hideFromSearch`) are ticked.
+- **Not excluded from listings** — none of the configured *exclude* properties (default `hideFromSitemap`, `excludeFromSitemap`, `umbracoNaviHide`) are ticked.
+- **Not an excluded document type** — its doc-type alias isn't in the `ExcludedDocumentTypeAliases` list.
+
+Pages whose doc-type is in `OptionalDocumentTypeAliases` (default: error, search, login, thank-you pages) are grouped under a `## Optional` heading in `llms.txt` so small-context models can safely skip them.
+
+Individual `.md` requests serve any published page directly, but return **404** for no-indexed pages and excluded document types. Pages excluded *from listings only* (e.g. `umbracoNaviHide`) are still reachable as `.md` — mirroring how they behave on the HTML side.
+
+## How a page becomes Markdown
+
+The converter walks each page's properties generically — it works with any content model, no ModelsBuilder types required:
+
+- **Rich text / grid HTML** → Markdown, after stripping scripts, iframes, style blocks, icon fonts and inline SVG.
+- **Block List & Block Grid** content → flattened recursively so nested blocks are included.
+- **Media pickers** → Markdown image links (video files are skipped). Relative URLs are made absolute (configurable via `AbsoluteUrls`).
+- **Text / multi-value properties** → paragraphs / bullet lists.
+- **Layout, theme, SEO and system properties** → skipped, so they don't pollute the output (extend the skip list with `SkippedPropertyAliases`).
+
+The page **title** and **description** are resolved by trying a configurable list of property aliases (`TitlePropertyAliases` / `DescriptionPropertyAliases`, falling back to the node name), so they follow whatever your SEO fields are called.
+
+## Multilingual sites
+
+On culture-variant sites the output is generated **per language**, following the same domain configuration Umbraco uses to route your pages — both host-based (`es.your-site/llms.txt`) and path-prefix (`your-site/es/llms.txt`) setups:
+
+- `https://your-site/llms.txt` → default culture
+- `https://your-site/es/llms.txt` → Spanish (and `/es/llms-full.txt`, `/es/about-us.md`)
+
+Titles, summaries, body content and the generated `.md` links all resolve in that culture, and a page is only listed for a language when it is actually published in it — so each language's `llms.txt` matches what Umbraco itself serves. Each culture is cached independently.
+
+:::note
+Culture-prefixed **`llms.txt` / `llms-full.txt`** URLs support a single path segment (`/es/`, `/de-at/`). Host-based domains have no such limit. `.md` pages work at any depth. (Multi-segment domain prefixes for the two text endpoints aren't routed.)
+:::
+
+## Markdown discovery & content negotiation
+
+Every rendered HTML content page is self-describing:
+
+```
+GET /products/widget
+→ Link: <https://your-site/products/widget.md>; rel="alternate"; type="text/markdown"
+→ Vary: Accept
+→ …<head> contains <link rel="alternate" type="text/markdown" href="/products/widget.md">…
+```
+
+and the Markdown side points back:
+
+```
+GET /products/widget.md
+→ Link: <https://your-site/products/widget>; rel="canonical"
+→ Link: <https://your-site/products/widget>; rel="alternate"; type="text/html"
+```
+
+A client can also skip the `.md` suffix entirely and negotiate:
+
+```
+GET /products/widget
+Accept: text/markdown
+→ 200 text/markdown, Vary: Accept, Content-Location: /products/widget.md
+```
+
+Negotiation is deliberately conservative: only an **explicit** `text/markdown` token that outranks HTML triggers it — browser Accept headers (`text/html,…,*/*;q=0.8`) can never be hijacked, because wildcards don't count toward Markdown. Pages that are no-indexed or on an excluded document type never advertise and never negotiate.
+
+:::caution[CDN note]
+Negotiation adds `Vary: Accept` to HTML content pages so shared caches keep the two representations apart. If you front the site with a CDN and would rather not fragment its HTML cache, set `EnableContentNegotiation: false` (which also stops the `Vary` emission) — the `.md` URLs keep working.
+:::
+
+## HTTP caching
+
+All AEO responses (`.md` pages, `/llms.txt`, `/llms-full.txt`) carry a weak `ETag` and `Last-Modified` (from the content's culture-aware update dates), answer `If-None-Match` / `If-Modified-Since` with `304 Not Modified`, and support `HEAD` — so AI crawlers that re-fetch aggressively can revalidate cheaply. On publish, the cached `llms.txt` / `llms-full.txt` are cleared immediately (`InvalidateCacheOnPublish`), with the TTLs (`LlmsTxtCacheSeconds` / `LlmsFullCacheSeconds`) as a safety net.
+
+## robots.txt hint
+
+Set `Robots.Enabled` to `true` and the package serves `/robots.txt` with discovery lines for the AEO files:
+
+```
+Llms: https://your-site/llms.txt
+Llms-full: https://your-site/llms-full.txt
+
+User-agent: *
+Allow: /
+```
+
+- If you already have a physical `wwwroot/robots.txt`, its content is **preserved** — the hint lines are prepended and any previous copies of them are de-duplicated.
+- If you don't, the minimal permissive block above is generated.
+- The middleware runs before the static-file handler, so it wins over a physical `robots.txt` while keeping that file's rules intact.
+
+:::note
+`Llms:` is not an official robots.txt directive (crawlers ignore unknown lines), so it's a **discovery pointer**, not a crawl rule. Change the keyword with `Robots.Directive` if you prefer another convention.
+:::
