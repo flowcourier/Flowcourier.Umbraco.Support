@@ -2,13 +2,11 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
-import tailwind from '@astrojs/tailwind';
-
 // https://astro.build/config
 export default defineConfig({
     site: 'https://flowcourier.com/docs/',
     base: '/docs/',
-    
+
     integrations: [starlight({
         title: 'Flowcourier Support',
 		logo: {
@@ -16,28 +14,27 @@ export default defineConfig({
 			dark: '/src/assets/logo-text-dark.svg',
 			replacesTitle: true,
 		},
-        social: {
-            github: 'https://github.com/flowcourier/Flowcourier.Umbraco.Support',
-        },
+        social: [
+            { icon: 'github', label: 'GitHub', href: 'https://github.com/flowcourier/Flowcourier.Umbraco.Support' },
+        ],
 		customCss: [
-			// Path to your Tailwind base styles:
-			'./src/tailwind.css',
-		  ],
+			'./src/styles/custom.css',
+		],
         sidebar: [
             {
                 label: 'Analytics',
                 items: [
                     {
                         label: 'Getting Started',
-                        autogenerate: { directory: 'start-here' },
+                        items: [{ autogenerate: { directory: 'start-here' } }],
                     },
                     {
                         label: 'Install Guide',
-                        autogenerate: { directory: 'install-guide' },
+                        items: [{ autogenerate: { directory: 'install-guide' } }],
                     },
                     {
                         label: 'FAQ',
-                        autogenerate: { directory: 'faq' },
+                        items: [{ autogenerate: { directory: 'faq' } }],
                     },
                 ],
             },
@@ -46,11 +43,11 @@ export default defineConfig({
                 items: [
                     {
                         label: 'Getting Started',
-                        autogenerate: { directory: 'ai/start-here' },
+                        items: [{ autogenerate: { directory: 'ai/start-here' } }],
                     },
                     {
                         label: 'Guides',
-                        autogenerate: { directory: 'ai/guides' },
+                        items: [{ autogenerate: { directory: 'ai/guides' } }],
                     },
                 ],
             },
@@ -59,11 +56,11 @@ export default defineConfig({
                 items: [
                     {
                         label: 'Getting Started',
-                        autogenerate: { directory: 'aeo/start-here' },
+                        items: [{ autogenerate: { directory: 'aeo/start-here' } }],
                     },
                     {
                         label: 'Guides',
-                        autogenerate: { directory: 'aeo/guides' },
+                        items: [{ autogenerate: { directory: 'aeo/guides' } }],
                     },
                 ],
             },
@@ -72,19 +69,19 @@ export default defineConfig({
                 items: [
                     {
                         label: 'Getting Started',
-                        autogenerate: { directory: 'cookie-consent/start-here' },
+                        items: [{ autogenerate: { directory: 'cookie-consent/start-here' } }],
                     },
                     {
                         label: 'Guides',
-                        autogenerate: { directory: 'cookie-consent/guides' },
+                        items: [{ autogenerate: { directory: 'cookie-consent/guides' } }],
                     },
                     {
                         label: 'FAQ',
-                        autogenerate: { directory: 'cookie-consent/faq' },
+                        items: [{ autogenerate: { directory: 'cookie-consent/faq' } }],
                     },
                 ],
             },
         ],
-        pagefind:false,
-		}), tailwind()],
+        pagefind: false,
+		})],
 });

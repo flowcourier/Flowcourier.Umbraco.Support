@@ -12,12 +12,9 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
-    "@astrojs/starlight": "^0.32.6",
-    "@astrojs/starlight-tailwind": "^3.0.1",
-    "@astrojs/tailwind": "^5.1.5",
-    "astro": "^5.18.2",
-    "sharp": "^0.33.5",
-    "tailwindcss": "^3.4.19",
+    "@astrojs/starlight": "^0.41.3",
+    "astro": "^7.0.9",
+    "sharp": "^0.35.3",
     "typescript": "^5.9.3"
   }
 }
