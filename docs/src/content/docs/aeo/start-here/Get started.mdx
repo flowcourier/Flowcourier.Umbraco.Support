@@ -19,17 +19,13 @@ One package gives you four things:
 - **`/{any-page}.md`** — append `.md` to any page URL and get a clean Markdown rendering instead of HTML.
 - **Structured data (JSON-LD)** injected into every rendered page's `<head>`, plus an **AI crawler analytics dashboard** in the backoffice.
 
-Unlike the Flowcourier AI agents, AEO has **no AI dependency at all** — no Umbraco AI, no LLM provider, no API key. Everything is generated from your own published content.
-
 <Steps>
 
 1. Install the package
 
     The package is available via NuGet. Visit [Flowcourier.Umbraco.AEO on NuGet](https://www.nuget.org/packages/Flowcourier.Umbraco.AEO/), search for it in Visual Studio, or run:
 
-    <Code code="dotnet add package Flowcourier.Umbraco.AEO --prerelease" lang="shell" />
-
-    AEO is currently in prerelease (17.0.0-alpha), hence the `--prerelease` flag.
+    <Code code="dotnet add package Flowcourier.Umbraco.AEO" lang="shell" />
 
     That's it — no composer, no `Program.cs` changes, no route configuration. The package self-registers through an Umbraco pipeline filter, and the crawler-analytics database table is created automatically on first startup.
 
