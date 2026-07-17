@@ -15,9 +15,10 @@ Spoofed hits — vulnerability scanners wearing an AI user agent — are blocked
 
 Open **Settings → Flowcourier → AEO Dashboard** in the backoffice:
 
-- **Hits per crawler**, with operator and purpose — training, AI search, or live assistant fetches — so you can tell "a model is being trained on my content" apart from "a user asked an assistant about my site right now".
+- **Hits per crawler**, with operator and purpose — training, AI search, or live assistant fetches — so you can tell "a model is being trained on my content" apart from "a user asked an assistant about my site right now". A **filter box** narrows the table as you type.
 - **HTML vs Markdown ratio** — is your AEO surface actually being used?
-- **Top pages** the crawlers fetch.
+- **Top pages** the crawlers fetch, with a **search box** that looks up any page's crawler hits — not just the visible top 10.
+- A **Verification** box showing, per impersonated crawler, how many hits verified against the vendor's ranges versus proved spoofed.
 - A **recent-visits log** with per-hit verdict badges (verified / spoofed / unverifiable).
 - A **"Spoofed requests blocked"** counter and a distinct "Spoofed" slice in the traffic-share donut.
 - **Today, 7-day and 30-day** views.
@@ -68,18 +69,33 @@ model corpora, block those crawlers on the
   requests blocked in the selected window.
 - **Hits per day / per hour** — the bar chart zero-fills quiet days, so gaps
   are real "no crawler came" periods, not missing data. The **Today** view
-  switches to hourly bars.
+  switches to hourly bars. When intent data is available the bars stack by
+  why the crawler came (training / user-triggered / scanner), so a scan wave
+  reads differently from a burst of real assistant fetches.
 - **Traffic share** — group by *operator* (who runs the crawlers: OpenAI,
   Anthropic, Google…), by *crawler* (individual bots), or by *type* (the
   three categories above). The long tail collapses into "Other"; spoofed
   traffic appears as its own visually distinct slice, never mixed into the
   real crawler shares.
+- **Hits per crawler** — every crawler seen in the window with operator, type
+  and hit count. The **filter box** matches crawler name, operator *and* type
+  label, so typing `assistant`, `training` or `Anthropic` narrows to that
+  whole group — and the bars stay scaled to the unfiltered maximum, so
+  proportions remain comparable while you filter.
+- **Verification** — per impersonated crawler: verified hits, spoofed hits
+  and the spoof rate. A high spoof rate on a crawler name tells you scanners
+  favour that disguise; it says nothing bad about the real crawler.
 - **HTML vs Markdown ratio** — a rising Markdown/llms.txt share means
   crawlers are discovering and preferring your AEO surface, which is exactly
   what you want: cleaner input for the models, cheaper rendering for you.
-- **Top pages** — which content the crawlers actually pull. If your key
-  landing pages aren't here but your archive is, that's a signal to review
-  your [llms.txt inclusion rules](/docs/aeo/guides/markdown-endpoints/).
+- **Top pages** — which content the crawlers actually pull. The list shows
+  the top 10; the **search box** queries *every* crawled path in the selected
+  range (case-insensitive, up to 50 matches ranked by hits, respecting the
+  Today / 7 / 30-day toggle), so you can answer "do AI crawlers ever fetch
+  this specific page?" directly. Spoofed hits are excluded, like everywhere
+  else. If your key landing pages aren't here but your archive is, that's a
+  signal to review your
+  [llms.txt inclusion rules](/docs/aeo/guides/markdown-endpoints/).
 - **Recent visits** — the raw log: timestamp, crawler, path, verification
   verdict badge, what was served, and status code.
 
