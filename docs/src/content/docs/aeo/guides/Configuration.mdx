@@ -2,7 +2,7 @@
 title: Configuration
 description: All Flowcourier AEO settings explained — endpoints, routes, discovery headers, caching and content-model mapping.
 sidebar:
-  order: 4
+  order: 5
 ---
 
 # Configuration
@@ -45,6 +45,9 @@ All settings are optional — the defaults work out of the box. Configure under 
       // AI crawler analytics — see the AI crawler analytics guide
       "CrawlerAnalytics": { "Enabled": true },
 
+      // Crawler verification & spoof blocking — see that guide
+      "BotVerification": { "Enabled": true, "BlockSpoofed": true },
+
       // Behaviour
       "AbsoluteUrls": true,
       "LlmsTxtCacheSeconds": 60,
@@ -68,7 +71,7 @@ All settings are optional — the defaults work out of the box. Configure under 
 }
 ```
 
-The `Schema` and `CrawlerAnalytics` sub-sections have their own reference tables in the [Structured data](/docs/aeo/guides/structured-data/#appsettings-reference) and [AI crawler analytics](/docs/aeo/guides/ai-crawler-analytics/#appsettings-reference) guides.
+The `Schema`, `CrawlerAnalytics` and `BotVerification` sub-sections have their own reference tables in the [Structured data](/docs/aeo/guides/structured-data/#appsettings-reference), [AI crawler analytics](/docs/aeo/guides/ai-crawler-analytics/#appsettings-reference) and [Crawler verification & blocking](/docs/aeo/guides/crawler-verification-and-blocking/#appsettings-reference) guides.
 
 ## Settings reference
 

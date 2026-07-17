@@ -7,7 +7,9 @@ sidebar:
 
 # AI crawler analytics
 
-Flowcourier AEO recognises the user agents of 20+ AI crawlers — OpenAI (GPTBot, ChatGPT-User, OAI-SearchBot), Anthropic (ClaudeBot, Claude-User, Claude-SearchBot), Perplexity, Google-Extended, Meta, Apple, Common Crawl, Bytespider and more — and records every visit: which bot, which path, response status, and whether it was served **HTML, Markdown, llms.txt or robots.txt**.
+Flowcourier AEO recognises the user agents of 20+ AI crawlers — OpenAI (GPTBot, ChatGPT-User, OAI-SearchBot), Anthropic (ClaudeBot, Claude-User, Claude-SearchBot), Perplexity, Google-Extended, Meta, Apple, Common Crawl, Bytespider and more — and records every visit: which bot, which path, response status, whether it was served **HTML, Markdown, llms.txt or robots.txt**, and a **verification verdict** (verified / spoofed / unverifiable — see [Crawler verification & blocking](/docs/aeo/guides/crawler-verification-and-blocking/)).
+
+Spoofed hits — vulnerability scanners wearing an AI user agent — are blocked, excluded from the traffic aggregates below, and reported separately, so the numbers you see are real crawler traffic.
 
 ## The AEO Dashboard
 
@@ -16,17 +18,18 @@ Open **Settings → Flowcourier → AEO Dashboard** in the backoffice:
 - **Hits per crawler**, with operator and purpose — training, AI search, or live assistant fetches — so you can tell "a model is being trained on my content" apart from "a user asked an assistant about my site right now".
 - **HTML vs Markdown ratio** — is your AEO surface actually being used?
 - **Top pages** the crawlers fetch.
-- A **recent-visits log**.
-- **7-day and 30-day** views.
+- A **recent-visits log** with per-hit verdict badges (verified / spoofed / unverifiable).
+- A **"Spoofed requests blocked"** counter and a distinct "Spoofed" slice in the traffic-share donut.
+- **Today, 7-day and 30-day** views.
 
 ![The AEO Dashboard under Settings → Flowcourier: AI crawler hits, distinct crawlers, HTML vs Markdown responses, hits per day, traffic share per operator and hits per crawler](../../../../assets/aeo/AEO-Dashboard.png)
 
-The dashboard's children hold the [Structured Data](/docs/aeo/guides/structured-data/) form and a read-only settings page showing the effective configuration.
+The dashboard's children hold the [Blocking](/docs/aeo/guides/crawler-verification-and-blocking/) page, the [Structured Data](/docs/aeo/guides/structured-data/) form and a read-only settings page showing the effective configuration.
 
 ## Built for production safety
 
 - **Never slows a request down** — matching is a cheap in-memory scan; hits go into a bounded queue and a background writer persists them in batches (one short transaction per flush, SQLite-friendly). Under pressure, hits are dropped rather than queued unboundedly.
-- **GDPR-safe by design** — no IP addresses, no raw user-agent strings, no query strings are ever stored, so no personal data is processed and the feature needs no consent banner entry.
+- **GDPR-safe by design** — the analytics store no IP addresses, no raw user-agent strings and no query strings, so no personal data is processed and the feature needs no consent banner entry. (The opt-out-able [security block list](/docs/aeo/guides/crawler-verification-and-blocking/#privacy-gdpr) is the one deliberate exception: it stores offender IPs only, retention-bound.)
 - **Bounded storage** — a daily job prunes hits older than `RetentionDays` (default 90); the `FcAeoCrawlerHit` table is created automatically on startup.
 
 ## appsettings reference
