@@ -26,6 +26,63 @@ Open **Settings → Flowcourier → AEO Dashboard** in the backoffice:
 
 The dashboard's children hold the [Blocking](/docs/aeo/guides/crawler-verification-and-blocking/) page, the [Structured Data](/docs/aeo/guides/structured-data/) form and a read-only settings page showing the effective configuration.
 
+## What the crawler types mean
+
+Every crawler carries a **Type** — shown in the per-crawler table, and as a
+grouping in the Traffic share donut (**By type**). The type describes *why*
+the bot is fetching your pages, and each one means something different for
+your AI visibility:
+
+- **Training** — the crawler is collecting pages to build a model-training
+  corpus (GPTBot, ClaudeBot, Bytespider, CCBot, Google-Extended, …). Your
+  content may end up baked into a future model's knowledge, but there's no
+  attribution and no click back to you. It's a long-term, diffuse benefit at
+  best — the model might "know about" your site months later, with no way to
+  trace it.
+
+- **AI search** — the crawler is building an AI search/answer index
+  (OAI-SearchBot, PerplexityBot, Claude-SearchBot, Amazonbot, …). **This is
+  the one that matters most for AEO**: these indexes are what ChatGPT Search,
+  Perplexity and Claude's web search draw from when composing answers, and
+  they typically cite the source. Being crawled here is roughly the AI
+  equivalent of being indexed by Googlebot.
+
+- **Assistant** — a live, on-demand fetch made on behalf of a real user's
+  prompt (ChatGPT-User, Claude-User, Perplexity-User, MistralAI-User, …).
+  Someone asked an AI assistant a question and it went and read your page
+  *right now* to answer it. These are the closest thing to actual human
+  traffic in the table — each hit generally corresponds to a real person
+  seeing your content summarized or cited in their chat.
+
+Practically: treat **AI search** and **Assistant** hits as your AEO success
+metrics — they translate into citations and real readers. **Training** traffic
+is the one to weigh against your content strategy; if you'd rather not feed
+model corpora, block those crawlers on the
+[Blocking page](/docs/aeo/guides/crawler-verification-and-blocking/#the-blocking-page)
+(an enforced `403`, unlike robots.txt).
+
+## Reading the rest of the dashboard
+
+- **Stat cards** — total hits from real (verified or unverifiable) crawlers,
+  distinct crawlers seen, HTML vs Markdown+llms.txt responses, and spoofed
+  requests blocked in the selected window.
+- **Hits per day / per hour** — the bar chart zero-fills quiet days, so gaps
+  are real "no crawler came" periods, not missing data. The **Today** view
+  switches to hourly bars.
+- **Traffic share** — group by *operator* (who runs the crawlers: OpenAI,
+  Anthropic, Google…), by *crawler* (individual bots), or by *type* (the
+  three categories above). The long tail collapses into "Other"; spoofed
+  traffic appears as its own visually distinct slice, never mixed into the
+  real crawler shares.
+- **HTML vs Markdown ratio** — a rising Markdown/llms.txt share means
+  crawlers are discovering and preferring your AEO surface, which is exactly
+  what you want: cleaner input for the models, cheaper rendering for you.
+- **Top pages** — which content the crawlers actually pull. If your key
+  landing pages aren't here but your archive is, that's a signal to review
+  your [llms.txt inclusion rules](/docs/aeo/guides/markdown-endpoints/).
+- **Recent visits** — the raw log: timestamp, crawler, path, verification
+  verdict badge, what was served, and status code.
+
 ## Built for production safety
 
 - **Never slows a request down** — matching is a cheap in-memory scan; hits go into a bounded queue and a background writer persists them in batches (one short transaction per flush, SQLite-friendly). Under pressure, hits are dropped rather than queued unboundedly.
