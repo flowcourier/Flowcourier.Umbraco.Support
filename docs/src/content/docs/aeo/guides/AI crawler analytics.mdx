@@ -1,13 +1,13 @@
 ---
 title: AI crawler analytics
-description: See which AI crawlers visit your Umbraco site — GPTBot, ClaudeBot, PerplexityBot and 20+ more — on the privacy-safe AEO Dashboard.
+description: See which AI crawlers visit your Umbraco site — GPTBot, ClaudeBot, PerplexityBot and 150+ more — on the privacy-safe AEO Dashboard.
 sidebar:
   order: 3
 ---
 
 # AI crawler analytics
 
-Flowcourier AEO recognises the user agents of 20+ AI crawlers — OpenAI (GPTBot, ChatGPT-User, OAI-SearchBot), Anthropic (ClaudeBot, Claude-User, Claude-SearchBot), Perplexity, Google-Extended, Meta, Apple, Common Crawl, Bytespider and more — and records every visit: which bot, which path, response status, whether it was served **HTML, Markdown, llms.txt or robots.txt**, and a **verification verdict** (verified / spoofed / unverifiable — see [Crawler verification & blocking](/docs/aeo/guides/crawler-verification-and-blocking/)).
+Flowcourier AEO recognises the user agents of 150+ AI crawlers — OpenAI (GPTBot, ChatGPT-User, OAI-SearchBot), Anthropic (ClaudeBot, Claude-User, Claude-SearchBot), Perplexity, Google-Extended, Meta, Apple, Common Crawl, Bytespider and the long tail besides — and records every visit: which bot, which path, response status, whether it was served **HTML, Markdown, llms.txt or robots.txt**, and a **verification verdict** (verified / spoofed / unverifiable — see [Crawler verification & blocking](/docs/aeo/guides/crawler-verification-and-blocking/)).
 
 Spoofed hits — vulnerability scanners wearing an AI user agent — are blocked, excluded from the traffic aggregates below, and reported separately, so the numbers you see are real crawler traffic.
 
@@ -98,6 +98,23 @@ model corpora, block those crawlers on the
   [llms.txt inclusion rules](/docs/aeo/guides/markdown-endpoints/).
 - **Recent visits** — the raw log: timestamp, crawler, path, verification
   verdict badge, what was served, and status code.
+
+## Where the crawler list comes from
+
+The built-in list is derived from the community-maintained
+[ai.robots.txt](https://github.com/ai-robots-txt/ai.robots.txt) dataset and
+**refreshed with each package release** — so as new AI crawlers appear and that
+project adds them, they arrive in the next AEO version. Flowcourier curates a
+layer on top: the training / AI search / assistant category for the major
+vendors, and the verification descriptors (published IP ranges and reverse-DNS
+suffixes) that back [spoof blocking](/docs/aeo/guides/crawler-verification-and-blocking/)
+— data ai.robots.txt doesn't carry.
+
+The list does **not** update itself between releases. If a brand-new crawler
+shows up before we ship it, add it yourself with
+[`CrawlerAnalytics:AdditionalBots`](#appsettings-reference) — no release needed.
+Likewise, `DisabledBots` mutes any built-in you don't care to track. Your config
+always wins over the built-in list.
 
 ## Built for production safety
 
