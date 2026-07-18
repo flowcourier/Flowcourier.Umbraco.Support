@@ -25,13 +25,13 @@ Open **Settings → Flowcourier → AEO Dashboard** in the backoffice:
 
 ![The AEO Dashboard under Settings → Flowcourier: AI crawler hits, distinct crawlers, HTML vs Markdown responses, hits per day, traffic share per operator and hits per crawler](../../../../assets/aeo/AEO-Dashboard.png)
 
-The dashboard's children hold the [Blocking](/docs/aeo/guides/crawler-verification-and-blocking/) page, the [Structured Data](/docs/aeo/guides/structured-data/) form and a read-only settings page showing the effective configuration.
+The dashboard's children hold the [AI Referrals](/docs/aeo/guides/ai-referrals/) page, the [Blocking](/docs/aeo/guides/crawler-verification-and-blocking/) page, the [Structured Data](/docs/aeo/guides/structured-data/) form and a read-only settings page showing the effective configuration.
 
 ## What the crawler types mean
 
 Every crawler carries a **Type** — shown in the per-crawler table, and as a
-grouping in the Traffic share donut (**By type**). The type describes *why*
-the bot is fetching your pages, and each one means something different for
+grouping in the Traffic share donut (the **Type** option). The type describes
+*why* the bot is fetching your pages, and each one means something different for
 your AI visibility:
 
 - **Training** — the crawler is collecting pages to build a model-training
@@ -70,8 +70,11 @@ model corpora, block those crawlers on the
 - **Hits per day / per hour** — the bar chart zero-fills quiet days, so gaps
   are real "no crawler came" periods, not missing data. The **Today** view
   switches to hourly bars. When intent data is available the bars stack by
-  why the crawler came (training / user-triggered / scanner), so a scan wave
-  reads differently from a burst of real assistant fetches.
+  *intent* — **Training**, **AI search** and **User-triggered** (the per-hit
+  form of the three crawler types above, where User-triggered is an
+  Assistant-type fetch), plus a **Scanner** bucket for spoofed probes — so a
+  scan wave reads differently from a burst of real assistant fetches. (Hits
+  recorded before intent classification show as "Unknown".)
 - **Traffic share** — group by *operator* (who runs the crawlers: OpenAI,
   Anthropic, Google…), by *crawler* (individual bots), or by *type* (the
   three categories above). The long tail collapses into "Other"; spoofed
@@ -119,7 +122,7 @@ always wins over the built-in list.
 ## Built for production safety
 
 - **Never slows a request down** — matching is a cheap in-memory scan; hits go into a bounded queue and a background writer persists them in batches (one short transaction per flush, SQLite-friendly). Under pressure, hits are dropped rather than queued unboundedly.
-- **GDPR-safe by design** — the analytics store no IP addresses, no raw user-agent strings and no query strings, so no personal data is processed and the feature needs no consent banner entry. (The opt-out-able [security block list](/docs/aeo/guides/crawler-verification-and-blocking/#privacy-gdpr) is the one deliberate exception: it stores offender IPs only, retention-bound.)
+- **GDPR-safe by default** — out of the box the analytics store no IP addresses and no query strings, and raw user agents are kept only as forensics on spoofed or failed-verification requests (where the parsed bot id can't be trusted). Site owners can opt in to storing addresses per hit via `IpStorage` — truncated (/24, /48), daily-salted hash, or full. The one table that *always* stores IPs is the security [block list](/docs/aeo/guides/crawler-verification-and-blocking/#privacy-gdpr), retention-bound.
 - **Bounded storage** — a daily job prunes hits older than `RetentionDays` (default 90); the `FcAeoCrawlerHit` table is created automatically on startup.
 
 ## appsettings reference
@@ -133,8 +136,9 @@ All settings live under `Flowcourier:Aeo:CrawlerAnalytics` and are optional:
       "CrawlerAnalytics": {
         "Enabled": true,
         "RetentionDays": 90,
+        "IpStorage": "None",
         "AdditionalBots": [
-          { "Id": "mybot", "Name": "MyBot", "Vendor": "Acme", "Category": "Search", "UserAgentToken": "MyBot" }
+          { "Id": "mybot", "Name": "MyBot", "Vendor": "Acme", "Category": "search", "UserAgentToken": "MyBot" }
         ],
         "DisabledBots": [ "bytespider" ]
       }
@@ -150,5 +154,11 @@ All settings live under `Flowcourier:Aeo:CrawlerAnalytics` and are optional:
 | `FlushIntervalSeconds` | `15` | How often the background writer flushes queued hits (one batched transaction per flush). |
 | `MaxBatchSize` | `200` | Maximum hits written per flush transaction. |
 | `QueueCapacity` | `5000` | In-memory queue size between requests and the writer; overflow is dropped, never blocking a request. |
-| `AdditionalBots` | `[]` | Extra crawlers to track: `{ Id, Name, Vendor, Category, UserAgentToken }`. |
+| `AdditionalBots` | `[]` | Extra crawlers to track: `{ Id, Name, Vendor, Category, UserAgentToken }`. `Category` is `training`, `search` or `assistant` (shown as Training / AI search / Assistant). |
 | `DisabledBots` | `[]` | Ids of built-in crawlers to stop tracking (e.g. `bytespider`). |
+| `IpStorage` | `None` | Whether and how the client address is stored per hit. `None` (default) stores no address at all; `Truncated` (/24, /48), `Hashed` (daily-salted) or `Full` opt in to scanner-cluster forensics. Verification always compares full addresses in memory regardless of this. |
+| `ClientIpHeader` | `null` | Header carrying the real client address when a trusted edge injects one (e.g. Cloudflare's `CF-Connecting-IP`); default uses the connection's remote address. The package never parses `X-Forwarded-For` itself. |
+| `CountryHeader` | `null` | Header carrying a two-letter country code from a trusted edge (e.g. `CF-IPCountry`); default records no country. |
+| `ProbePathPatterns` | `/.`, `appsettings`, `wp-`, `_profiler`, `elmah.axd`, `/telescope/` | Case-insensitive path substrings that mark a spoofed request as a vulnerability scan (intent `scanner`). Configured entries are added to the defaults. |
+
+Two more `CrawlerAnalytics` settings — `ReferralHosts` and `ReferralRetentionDays` — drive the [AI referrals](/docs/aeo/guides/ai-referrals/) feature and are documented there.

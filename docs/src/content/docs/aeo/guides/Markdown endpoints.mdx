@@ -54,7 +54,7 @@ On culture-variant sites the output is generated **per language**, following the
 Titles, summaries, body content and the generated `.md` links all resolve in that culture, and a page is only listed for a language when it is actually published in it — so each language's `llms.txt` matches what Umbraco itself serves. Each culture is cached independently.
 
 :::note
-Culture-prefixed **`llms.txt` / `llms-full.txt`** URLs support a single path segment (`/es/`, `/de-at/`). Host-based domains have no such limit. `.md` pages work at any depth. (Multi-segment domain prefixes for the two text endpoints aren't routed.)
+Culture-prefixed **`llms.txt` / `llms-full.txt`** URLs are routed under a single path segment (`/es/`, `/de-at/`) — multi-segment prefixes aren't. Host-based domains have no such limit, and `.md` pages work at any depth.
 :::
 
 ## Markdown discovery & content negotiation

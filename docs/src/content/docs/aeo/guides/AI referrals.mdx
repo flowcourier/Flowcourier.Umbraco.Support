@@ -21,10 +21,12 @@ Referrals) turns those visits into a conversion metric.
 ## Questions answered
 
 The headline metric is **"questions answered"**: a user-triggered crawler fetch
-(intent `user` — an assistant reading your page to answer someone's prompt)
-followed within 30 minutes by an AI-referred human visit to the **same path**.
-That pairing is the closest observable proxy for *"someone asked an AI, it cited
-your page, and they clicked through"*.
+(an **Assistant**-type crawler like ChatGPT-User or Claude-User reading your page
+to answer someone's prompt — the "User-triggered" intent on the
+[crawler dashboard](/docs/aeo/guides/ai-crawler-analytics/)) followed within 30
+minutes by an AI-referred human visit to the **same path**. That pairing is the
+closest observable proxy for *"someone asked an AI, it cited your page, and they
+clicked through"*.
 
 The page shows:
 
@@ -46,15 +48,16 @@ rest discarded — which keeps the `FcAeoReferralHit` table outside personal-dat
 scope by construction. Rows are kept forever by default
 (`ReferralRetentionDays: 0`); set a positive number of days to prune older ones.
 
-## Configuration
+## appsettings reference
 
 All settings are optional, under `Flowcourier:Aeo:CrawlerAnalytics`:
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `ReferralHosts` | ChatGPT, Claude, Perplexity, Copilot, Gemini | Extra AI surfaces to count as referral sources (host or `utm_source` match), added to the built-in list. |
+| `ReferralHosts` | `claude.ai`, `chatgpt.com`, `perplexity.ai`, `copilot.microsoft.com`, `gemini.google.com` | AI surfaces whose outbound clicks count as referrals (matched on Referer host, including subdomains, or `utm_source`). Configured entries are **added** to these built-in defaults, not replaced. |
 | `ReferralRetentionDays` | `0` | Days of referral hits to keep; `0` keeps them forever. |
 
-The correlation only needs crawler analytics to be on — referrals reuse the same
-recorded `user`-intent fetches described in
+The correlation only needs crawler analytics to be on — referrals pair each
+AI-referred visit with the earlier **User-triggered** (Assistant-type) fetch of
+the same page, the intent described in
 [AI crawler analytics](/docs/aeo/guides/ai-crawler-analytics/).

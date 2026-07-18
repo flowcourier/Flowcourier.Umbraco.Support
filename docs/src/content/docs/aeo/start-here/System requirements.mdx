@@ -9,7 +9,7 @@ sidebar:
 
 | Requirement | Version |
 |-------------|---------|
-| Umbraco | 17+ (LTS) |
+| Umbraco | 17.5+ (LTS) |
 | .NET | 10+ |
 | Rendering | Umbraco renders the pages (MVC/Razor templates) |
 
@@ -21,14 +21,14 @@ That's the whole list. AEO has **no AI dependency** — it does not require Umbr
 |---------|----------|
 | [`Flowcourier.Umbraco.AEO`](https://www.nuget.org/packages/Flowcourier.Umbraco.AEO/) | llms.txt / llms-full.txt / Markdown pages, structured data (JSON-LD) and AI crawler analytics |
 
-The package major version tracks the Umbraco major version (17.x targets Umbraco 17).
+The package version signals the minimum supported Umbraco release: `17.5.x` requires Umbraco 17.5 or later.
 
 ## Notes
 
 - No manual composer or startup code: the package self-registers through an Umbraco pipeline filter — endpoints, middleware and backoffice UI are all wired up on install.
 - **Headless setups are not supported.** Discovery headers, JSON-LD injection and crawler analytics all happen where the page is rendered. On a decoupled front end (e.g. the Content Delivery API with a separate front-end host), those features never reach your public site, and the AEO endpoints would sit on the CMS host — where crawlers never look.
 - Works on single-site and multi-site installs (output is scoped to the site root matching the request's hostname via your Umbraco domain configuration) and on culture-variant sites (output is generated per language).
-- The crawler analytics feature creates one database table (`FcAeoCrawlerHit`) automatically via an idempotent migration on first startup. SQL Server and SQLite are supported through Umbraco's standard database layer. The Markdown and structured-data features have no database footprint; organization identity entered in the backoffice is stored in the database.
+- The crawler analytics, AI referrals and blocking features create three database tables (`FcAeoCrawlerHit`, `FcAeoReferralHit`, `FcAeoBlockedClient`) automatically via idempotent migrations on first startup. SQL Server and SQLite are supported through Umbraco's standard database layer. The Markdown and structured-data features have no database footprint; organization identity entered in the backoffice is stored in Umbraco's key/value store.
 - Backoffice assets are served from `App_Plugins` (`fc-aeo`, `fc-foundation`) and built for the Umbraco Bellissima backoffice. All AEO views live under **Settings → Flowcourier → AEO Dashboard**.
 
 ## License

@@ -13,10 +13,10 @@ probing for `/.env`, private keys, admin panels and debug endpoints. Real AI
 crawlers don't do that — and most vendors publish an official way to prove an
 address is really theirs. Flowcourier AEO uses it.
 
-From 17.6.0, every request whose user agent claims a known AI crawler is
-**verified against the vendor's official mechanism**, spoofers are **blocked
-with `403`** (on by default), and repeat offenders escalate onto a persistent
-block list you manage in the backoffice.
+Every request whose user agent claims a known AI crawler is **verified against
+the vendor's official mechanism**, spoofers are **blocked with `403`** (on by
+default), and repeat offenders escalate onto a persistent block list you manage
+in the backoffice.
 
 ## How verification works
 

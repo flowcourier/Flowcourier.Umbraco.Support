@@ -12,12 +12,14 @@ import { Code } from '@astrojs/starlight/components';
 
 Flowcourier AEO adds **Answer Engine Optimization** to your Umbraco site: it makes your published content readable by LLMs and AI answer engines (ChatGPT, Claude, Perplexity, Gemini, …) by serving it in the formats those tools understand — generated live from the content cache, with **no editor work and no content changes required**.
 
-One package gives you four things:
+One package gives you six things:
 
 - **`/llms.txt`** — a curated index of your site following the [llms.txt standard](https://llmstxt.org), with a link to each page's Markdown version.
 - **`/llms-full.txt`** — the entire site rendered to Markdown in a single document.
 - **`/{any-page}.md`** — append `.md` to any page URL and get a clean Markdown rendering instead of HTML.
-- **Structured data (JSON-LD)** injected into every rendered page's `<head>`, plus an **AI crawler analytics dashboard** in the backoffice — with built-in **crawler verification** that blocks vulnerability scanners spoofing AI user agents.
+- **Structured data (JSON-LD)** injected into every rendered page's `<head>`.
+- **AI crawler analytics** in the backoffice — with built-in **verification** that blocks vulnerability scanners spoofing AI user agents.
+- **AI referrals** — see which of your pages AI answers actually sent real visitors to.
 
 AEO has no AI dependency — no Umbraco AI, no LLM provider, no API key. It is built for sites where Umbraco renders the front end (MVC/Razor) — headless setups are not supported (see [system requirements](/docs/aeo/start-here/system-requirements/)).
 
@@ -63,7 +65,7 @@ AEO has no AI dependency — no Umbraco AI, no LLM provider, no API key. It is b
 
 5. Watch the AI crawlers arrive
 
-    Open **Settings → Flowcourier → AEO Dashboard**. Visits from GPTBot, ClaudeBot, PerplexityBot and 20+ other AI crawlers are recognised and counted — which bot, which pages, and whether they fetched HTML or your Markdown surface. Each visit is also **verified against the vendor's published IP ranges**, and scanners spoofing an AI user agent are blocked automatically — manage this on the dashboard's Blocking page. Privacy-safe by design: the analytics never store IP addresses or raw user-agent strings. See [AI crawler analytics](/docs/aeo/guides/ai-crawler-analytics/) and [Crawler verification & blocking](/docs/aeo/guides/crawler-verification-and-blocking/).
+    Open **Settings → Flowcourier → AEO Dashboard**. Visits from GPTBot, ClaudeBot, PerplexityBot and 150+ other AI crawlers are recognised and counted — which bot, which pages, and whether they fetched HTML or your Markdown surface. Each visit is also **verified against the vendor's official mechanism** where one exists (published IP ranges or reverse DNS), and scanners spoofing an AI user agent are blocked automatically — manage this on the dashboard's Blocking page. Privacy-safe by default: the analytics store no IP addresses unless you opt in, and raw user agents are kept only as forensics on spoofed requests — see [Privacy (GDPR)](/docs/aeo/guides/crawler-verification-and-blocking/#privacy-gdpr) for details. See [AI crawler analytics](/docs/aeo/guides/ai-crawler-analytics/) and [Crawler verification & blocking](/docs/aeo/guides/crawler-verification-and-blocking/).
 
     ![The AEO Dashboard showing AI crawler hits per day, traffic share per operator, hits per crawler and top pages](../../../../assets/aeo/AEO-Dashboard.png)
 
@@ -75,4 +77,5 @@ AEO has no AI dependency — no Umbraco AI, no LLM provider, no API key. It is b
 - Configure [structured data (JSON-LD)](/docs/aeo/guides/structured-data/) — type mappings, FAQ markup and the organization form.
 - Review the [AI crawler analytics](/docs/aeo/guides/ai-crawler-analytics/) dashboard and its privacy guarantees.
 - See how [crawler verification & blocking](/docs/aeo/guides/crawler-verification-and-blocking/) stops vulnerability scanners that spoof AI crawlers — and lets you block any crawler permanently.
+- Track [AI referrals & questions answered](/docs/aeo/guides/ai-referrals/) — which pages AI answers cite and convert into real visits.
 - Browse the full [configuration reference](/docs/aeo/guides/configuration/) — everything works out of the box, but every path, toggle and property alias is configurable.
