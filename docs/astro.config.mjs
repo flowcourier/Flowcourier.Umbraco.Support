@@ -14,6 +14,33 @@ export default defineConfig({
 			dark: '/src/assets/logo-text-dark.svg',
 			replacesTitle: true,
 		},
+		// Matomo (self-hosted at a.flowcourier.com, cookieless) on every page.
+		// Starlight uses full-page navigation, so trackPageView fires per load.
+		head: [
+			{
+				tag: 'script',
+				content: [
+					'var _paq = window._paq = window._paq || [];',
+					'_paq.push(["disableCookies"]);',
+					"_paq.push(['trackPageView']);",
+					"_paq.push(['enableLinkTracking']);",
+					'(function() {',
+					'  var u="//a.flowcourier.com/";',
+					"  _paq.push(['setTrackerUrl', u+'matomo.php']);",
+					"  _paq.push(['setSiteId', '16']);",
+					"  var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];",
+					"  g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);",
+					'})();',
+				].join('\n'),
+			},
+			{
+				tag: 'noscript',
+				content:
+					'<p><img referrerpolicy="no-referrer-when-downgrade" ' +
+					'src="//a.flowcourier.com/matomo.php?idsite=16&amp;rec=1" ' +
+					'style="border:0;" alt="" /></p>',
+			},
+		],
         social: [
             { icon: 'github', label: 'GitHub', href: 'https://github.com/flowcourier/Flowcourier.Umbraco.Support' },
         ],
