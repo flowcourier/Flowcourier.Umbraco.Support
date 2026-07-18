@@ -86,17 +86,43 @@ Open **Settings → Flowcourier → AEO Dashboard → Blocking**:
 
 ![The AI Crawler Blocking page: the in-memory auto-blocked list, the durable block list with a manual IP field, and the per-crawler table with type, verifiability and Block buttons](../../../../assets/aeo/AI-Crawler-Blocking.png)
 
-- **Auto-blocked right now** — clients currently blocked in memory as
-  spoofers, with the crawler they claimed, their strike count and when the
-  block lapses. One click promotes any of them to the durable block list.
-- **Durable block list** — every durably blocked address and
-  strike-in-progress record, with source (automatic or manual), last offense
-  and an **Unblock** button. You can also block any IP address manually.
-- **Crawlers** — every tracked crawler with its verifiability and a permanent
-  **Block/Unblock** toggle. Blocking a crawler here answers *all* its requests
-  with `403` — an enforced block, unlike advisory `robots.txt` rules that
-  scrapers are free to ignore. Use it for crawlers you never want (say,
-  Bytespider), verifiable or not.
+The page has two tabs.
+
+### Clients tab
+
+- **Auto-blocked right now** — a live, in-memory view: clients that claimed to
+  be a verifiable crawler (GPTBot, ClaudeBot, …) from an address that provably
+  isn't the vendor's, so their requests are answered `403` right now. Nothing
+  is stored yet — each entry lapses on its own when the cached verdict expires
+  (about an hour). Coming back and spoofing again counts as a strike; after the
+  configured number of strikes (default 3) the address moves to the durable
+  block list. One click promotes any entry there immediately.
+- **Durable block list** — the permanent record, stored in the database:
+  addresses that kept spoofing (hit the strike threshold) or that you blocked
+  manually. They stay blocked across restarts until `DurableBlockRetentionDays`
+  after their last offense, and only for requests wearing an AI-crawler user
+  agent. Rows shown as "x/3 strikes" are offense records still counting toward
+  a block, not blocks yet. Each row has an **Unblock** button, and you can
+  block any IP address manually.
+- **Allowlist** — addresses (or CIDR ranges, e.g. `203.0.113.0/24`) AEO
+  **never** answers with `403`: crawler policy blocks, spoof blocking and the
+  durable block list are all bypassed for them. Use it for your own uptime
+  monitoring, a staging network, or a partner's fetcher. Their visits are still
+  recorded and verified in analytics — the allowlist only suppresses blocking.
+
+### Crawlers tab
+
+- Every tracked crawler with its verifiability and a permanent **Block/Unblock**
+  toggle. Blocking a crawler here answers *all* its requests with `403` — an
+  enforced block, unlike advisory `robots.txt` rules that scrapers are free to
+  ignore. Use it for crawlers you never want (say, Bytespider), verifiable or
+  not.
+- **Block all** switches from the default *allow-by-default* to
+  *deny-by-default*: every recognised AI crawler gets `403` — including ones
+  added in future registry updates — except the ones you then **Allow**. It's a
+  deliberate, confirmed switch; the allowlist you build under it is remembered
+  if you turn it back off and on. Combine it with the Markdown/llms.txt surface
+  only if you truly want zero AI crawling; most sites want the opposite.
 
 ## Privacy (GDPR)
 
