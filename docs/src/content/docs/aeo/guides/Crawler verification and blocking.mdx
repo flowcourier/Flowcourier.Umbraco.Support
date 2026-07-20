@@ -144,14 +144,22 @@ nothing IP-shaped is ever written.
 
 ## Behind a reverse proxy or CDN?
 
-Enforcement uses ASP.NET Core's `RemoteIpAddress`. If your site sits behind a
-proxy (Cloudflare, nginx, a load balancer), configure the framework's
+Verification compares the *connection's* address, so behind Cloudflare (or any
+CDN) the app sees the edge's IP instead of the crawler's. AEO recognises known
+edge networks (Cloudflare's published ranges are built in) and **fails open**:
+crawlers read as *unverifiable* and are never blocked or striked — until you
+set `CrawlerAnalytics:ClientIpHeader` (Cloudflare: `CF-Connecting-IP`), which
+restores full verification. The **"AEO Client IP / Forwarded Headers" health
+check** (Settings → Health Checks) tells you which case you're in and the
+exact setting to add. The full walkthrough — edge bot settings included — is
+in the dedicated [Cloudflare & CDNs](/docs/aeo/guides/cloudflare-and-cdns/)
+guide.
+
+Behind a plain reverse proxy or load balancer (nginx, HAProxy, IIS ARR),
+configure ASP.NET Core's
 [Forwarded Headers middleware](https://learn.microsoft.com/aspnet/core/host-and-deploy/proxy-load-balancer)
-in the host site so the real client address reaches the app — AEO deliberately
-never parses `X-Forwarded-For` itself. Until that's in place every request
-appears to come from the proxy: verification will typically read
-*unverifiable* (nothing breaks, nothing is wrongly blocked), but with a
-misconfigured header chain set `BlockSpoofed: false` to be safe.
+in the host site instead — AEO deliberately never parses `X-Forwarded-For`
+itself.
 
 ## appsettings reference
 
@@ -185,6 +193,9 @@ All settings live under `Flowcourier:Aeo:BotVerification` and are optional:
 | `Enabled` | `true` | Verify claimed AI crawlers and record a verdict per hit. |
 | `BlockSpoofed` | `true` | Answer provably spoofed requests with `403`. Off: spoofed hits are recorded but served. |
 | `ExemptPrivateNetworks` | `true` | Never verify or block loopback, private or link-local addresses — keeps local development working. Disable to test enforcement locally. |
+| `VerifiedBotHeader` | `null` | Header injected by a trusted edge that already verified the crawler — recorded as *verified* (method `header`), IP-list/rDNS checks skipped. Only use a header your edge strips from client requests. |
+| `TrustedEdgeCidrs` | Cloudflare's published ranges | CIDRs of known CDN edge networks. Requests from these fail open as *unverifiable* while no `ClientIpHeader` is set (see [Cloudflare & CDNs](/docs/aeo/guides/cloudflare-and-cdns/)). Configured entries are **added** to the defaults. |
+| `TrustedEdgeIpListUrls` | `cloudflare.com/ips-v4`, `/ips-v6` | Published edge-range lists refreshed at runtime on top of the static CIDRs. Configured entries are **added** to the defaults. |
 | `StrikesBeforeDurableBlock` | `3` | Spoofed episodes from one address before it lands on the durable block list; `0` disables escalation (no IPs are ever written). |
 | `DurableBlockRetentionDays` | `90` | Rolling window a durable block survives after the last offense; `0` keeps blocks forever. |
 | `IpListRefreshHours` | `24` | Vendor IP-list cache lifetime (stale-while-revalidate; stale lists are kept on fetch failure). |

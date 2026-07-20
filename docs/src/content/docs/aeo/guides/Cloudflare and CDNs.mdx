@@ -1,0 +1,167 @@
+---
+title: Cloudflare & CDNs
+description: Running Flowcourier AEO behind Cloudflare or another CDN — let AI crawlers through the edge, give verification the real client address, and lock down the origin.
+sidebar:
+  order: 5
+---
+
+# Cloudflare & CDNs
+
+A CDN in front of your Umbraco site changes two things that matter to AEO, and
+they are independent of each other:
+
+1. **The edge decides which AI crawlers reach your site at all.** Cloudflare
+   blocks known AI crawlers by default on newer zones — if the edge answers
+   GPTBot with `403`, the request never reaches Umbraco, AEO never sees it,
+   and your content never enters the answer engines.
+2. **Your application sees the CDN's address, not the crawler's.** Every
+   request arrives from a Cloudflare edge IP, so crawler verification has
+   nothing real to verify until you tell AEO which header carries the actual
+   client address.
+
+Both take about two minutes to fix. This guide uses Cloudflare as the worked
+example because it's by far the most common case; [other CDNs and
+proxies](#other-cdns-and-reverse-proxies) follow the same pattern.
+
+## The checklist
+
+1. In the Cloudflare dashboard, **allow the AI crawlers you want** (they are
+   blocked by default on newer zones).
+2. In `appsettings.json`, set **`ClientIpHeader` to `CF-Connecting-IP`** so
+   verification sees real client addresses.
+3. Make sure the **origin only accepts traffic through Cloudflare**, so the
+   header can't be forged.
+4. Confirm with the **"AEO Client IP / Forwarded Headers" health check**
+   (Settings → Health Checks).
+
+## 1. Let the crawlers through the edge
+
+Since mid-2025 Cloudflare has blocked known AI crawlers **by default for newly
+onboarded zones**, and offers the same block as a one-click toggle everywhere.
+If your goal is AI visibility, check that the edge isn't quietly turning the
+crawlers away (exact names move around the Cloudflare dashboard; these are
+current as of mid-2026):
+
+- **AI Crawl Control** (formerly AI Audit) — per-crawler Allow/Block at the
+  edge. Set the crawlers you want to **Allow**.
+- **Security → Bots** — the "Block AI Scrapers and Crawlers" / AI-bots toggle
+  must be off (or deliberately configured). If **Bot Fight Mode** or Super Bot
+  Fight Mode is on, verify it isn't challenging AI crawlers — a JavaScript
+  challenge stops a crawler just as effectively as a `403`.
+- **Managed robots.txt** — Cloudflare can inject AI-blocking directives into
+  your `robots.txt` at the edge. Leave that off if you want to be crawled;
+  it also conflicts with [AEO's own robots.txt
+  hint](/docs/aeo/guides/markdown-endpoints/#robotstxt-hint), which preserves
+  your file and only adds `llms.txt` discovery lines.
+
+:::tip[Block at the edge, or block in AEO?]
+If you *do* want to refuse some crawlers, prefer the [Blocking
+page](/docs/aeo/guides/crawler-verification-and-blocking/#the-blocking-page)
+over the edge toggle. An edge block is invisible — the request never reaches
+your site, so you get no record of who tried. AEO's block is an enforced `403`
+at the origin that still records the visit, keeps per-crawler policy in the
+backoffice, and distinguishes real crawlers from spoofers. Use the edge for
+volumetric protection; use AEO for crawler *policy*.
+:::
+
+## 2. Give verification the real client address
+
+Cloudflare adds the visitor's real address to every proxied request as
+`CF-Connecting-IP` (all plans, always on). Point AEO at it — and optionally at
+`CF-IPCountry` (sent when Cloudflare's IP Geolocation feature is enabled):
+
+```json
+{
+  "Flowcourier": {
+    "Aeo": {
+      "CrawlerAnalytics": {
+        "ClientIpHeader": "CF-Connecting-IP",
+        "CountryHeader": "CF-IPCountry"
+      }
+    }
+  }
+}
+```
+
+That's the whole fix. The setting takes effect on a running site without a
+restart, and the health check flips to green on the next request.
+
+## What happens if you skip this
+
+Nothing breaks — 17.5.2 made this state deliberately safe. AEO ships
+Cloudflare's published edge ranges built in
+(`BotVerification:TrustedEdgeCidrs`, refreshed at runtime from
+`cloudflare.com/ips-v4` and `/ips-v6`), and when a request arrives from a known
+edge address with no `ClientIpHeader` configured, verification **fails open**:
+
+- Crawlers read as **unverifiable** — never blocked, never striked. (Without
+  this guard, verification would compare *Cloudflare's* addresses against each
+  vendor's ranges and brand every legitimate crawler a spoofer.)
+- Spoofers are **not caught either** — a scanner wearing a GPTBot user agent
+  reads as unverifiable too. This is what you give up by not configuring the
+  header.
+- Durable blocks recorded against edge addresses are **not enforced**, so a
+  block list polluted before the header was configured self-heals.
+- The **"AEO Client IP / Forwarded Headers" health check** warns, naming the
+  exact setting to add. It also detects the reverse case: requests carrying a
+  CDN real-client-IP header (`CF-Connecting-IP`, `True-Client-IP`,
+  `Fastly-Client-IP`, `X-Azure-ClientIP`, `X-Real-IP`) that no `ClientIpHeader`
+  setting is consuming.
+
+## 3. Lock down the origin
+
+`ClientIpHeader` trusts the header as given — that's only safe if every request
+genuinely passed through Cloudflare. If the origin is also reachable directly,
+anyone can send a forged `CF-Connecting-IP` and defeat verification (evade
+spoof blocking, or frame an innocent address into the block list). Standard
+Cloudflare origin hygiene closes this:
+
+- **Firewall the origin** to Cloudflare's published ranges (the same
+  `cloudflare.com/ips-v4` / `ips-v6` lists), or
+- use a **Cloudflare Tunnel**, which removes the public origin entirely, or
+- require **Authenticated Origin Pulls** (mTLS from Cloudflare to origin).
+
+This is the same hardening Cloudflare recommends regardless of AEO — if your
+origin is already locked down, there's nothing extra to do.
+
+## Other CDNs and reverse proxies
+
+The same two questions apply behind any edge: *does it let AI crawlers
+through*, and *how does the real client address reach the app*?
+
+- **CDN that injects a single-IP header** — Fastly (`Fastly-Client-IP`),
+  Akamai (`True-Client-IP`), Azure Front Door (`X-Azure-ClientIP`): set
+  `ClientIpHeader` to that header, and add the CDN's published edge ranges to
+  `TrustedEdgeCidrs` or `TrustedEdgeIpListUrls` (configured entries are
+  **added** to the built-in Cloudflare defaults) so the fail-open guard covers
+  the window before the header is configured.
+- **Plain reverse proxy or load balancer** speaking `X-Forwarded-For` (nginx,
+  HAProxy, IIS ARR): AEO deliberately never parses `X-Forwarded-For` itself —
+  configure ASP.NET Core's [Forwarded Headers
+  middleware](https://learn.microsoft.com/aspnet/core/host-and-deploy/proxy-load-balancer)
+  in the host site so `RemoteIpAddress` is rewritten to the real client, and
+  AEO needs no settings at all.
+- **Edge that verifies bots itself** — if your edge can inject a header only
+  for crawlers *it* has verified (e.g. a transform rule keyed on a
+  verified-bot signal), set `BotVerification:VerifiedBotHeader` to record
+  those as verified (method `header`) and skip IP-list/rDNS checks. Only use a
+  header the edge **strips from client requests** — a forgeable header would
+  defeat verification.
+
+## Caching note
+
+AEO's content negotiation adds `Vary: Accept` to HTML content pages so shared
+caches keep the HTML and Markdown representations apart. If you'd rather not
+fragment the CDN's HTML cache, `EnableContentNegotiation: false` stops both
+the negotiation and the `Vary` emission — see the [CDN note in llms.txt &
+Markdown pages](/docs/aeo/guides/markdown-endpoints/#markdown-discovery--content-negotiation).
+
+## Settings reference
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `CrawlerAnalytics:ClientIpHeader` | `null` | Single-IP header injected by a trusted edge (Cloudflare: `CF-Connecting-IP`). Null uses the connection's remote address. |
+| `CrawlerAnalytics:CountryHeader` | `null` | Two-letter country-code header from a trusted edge (Cloudflare: `CF-IPCountry`); null records no country. |
+| `BotVerification:TrustedEdgeCidrs` | Cloudflare's published ranges | CIDRs of known CDN edge networks. Requests from these addresses fail open as *unverifiable* while no `ClientIpHeader` is set. Configured entries are **added** to the defaults. |
+| `BotVerification:TrustedEdgeIpListUrls` | `cloudflare.com/ips-v4`, `/ips-v6` | Published edge-range lists refreshed at runtime on top of the static CIDRs (plain one-CIDR-per-line text and the JSON prefixes shape both work). Configured entries are **added** to the defaults. |
+| `BotVerification:VerifiedBotHeader` | `null` | Header injected by an edge that already verified the crawler; when present, the hit is recorded as *verified* (method `header`) and IP-list/rDNS checks are skipped. Only use a header your edge strips from client requests. |

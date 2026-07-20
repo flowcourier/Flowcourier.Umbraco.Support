@@ -157,7 +157,7 @@ All settings live under `Flowcourier:Aeo:CrawlerAnalytics` and are optional:
 | `AdditionalBots` | `[]` | Extra crawlers to track: `{ Id, Name, Vendor, Category, UserAgentToken }`. `Category` is `training`, `search` or `assistant` (shown as Training / AI search / Assistant). |
 | `DisabledBots` | `[]` | Ids of built-in crawlers to stop tracking (e.g. `bytespider`). |
 | `IpStorage` | `None` | Whether and how the client address is stored per hit. `None` (default) stores no address at all; `Truncated` (/24, /48), `Hashed` (daily-salted) or `Full` opt in to scanner-cluster forensics. Verification always compares full addresses in memory regardless of this. |
-| `ClientIpHeader` | `null` | Header carrying the real client address when a trusted edge injects one (e.g. Cloudflare's `CF-Connecting-IP`); default uses the connection's remote address. The package never parses `X-Forwarded-For` itself. |
+| `ClientIpHeader` | `null` | Header carrying the real client address when a trusted edge injects one (e.g. Cloudflare's `CF-Connecting-IP`); default uses the connection's remote address. The package never parses `X-Forwarded-For` itself. Behind a CDN this setting is essential — see [Cloudflare & CDNs](/docs/aeo/guides/cloudflare-and-cdns/). |
 | `CountryHeader` | `null` | Header carrying a two-letter country code from a trusted edge (e.g. `CF-IPCountry`); default records no country. |
 | `ProbePathPatterns` | `/.`, `appsettings`, `wp-`, `_profiler`, `elmah.axd`, `/telescope/` | Case-insensitive path substrings that mark a spoofed request as a vulnerability scan (intent `scanner`). Configured entries are added to the defaults. |
 

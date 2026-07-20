@@ -1,0 +1,135 @@
+---
+title: FAQ
+description: Frequently asked questions about Flowcourier AEO — Cloudflare and CDNs, verification verdicts, blocking behaviour, GDPR, SEO impact and performance.
+sidebar:
+  order: 8
+---
+
+# Frequently asked questions
+
+Short answers to the questions we hear most, each linking to the guide that
+covers the topic in depth.
+
+## Do I need to configure anything after installing?
+
+No — the defaults work out of the box: `llms.txt`, Markdown pages, structured
+data, crawler analytics and verification are all on. The one common exception:
+if your site sits **behind Cloudflare or another CDN**, spend two minutes on
+the [Cloudflare & CDNs](/docs/aeo/guides/cloudflare-and-cdns/) checklist so
+verification sees real client addresses. The **"AEO Client IP / Forwarded
+Headers" health check** (Settings → Health Checks) tells you whether your site
+needs it.
+
+## Why do all my crawler visits show as "unverifiable"?
+
+The most common cause: your site is behind a CDN and
+`CrawlerAnalytics:ClientIpHeader` isn't set, so the app sees the CDN's edge
+address instead of the crawler's. AEO detects known edge networks and
+deliberately **fails open** — crawlers read as *unverifiable* rather than
+being wrongly branded spoofers. Behind Cloudflare the fix is one line:
+`ClientIpHeader: "CF-Connecting-IP"` — see [Cloudflare &
+CDNs](/docs/aeo/guides/cloudflare-and-cdns/).
+
+Separately, some crawlers (CCBot, Bytespider, Meta's crawlers, and others) are
+**permanently unverifiable** because their vendors publish no verification
+mechanism at all. *Unverifiable* is not an accusation — such requests are
+never blocked on verification grounds. See [How verification
+works](/docs/aeo/guides/crawler-verification-and-blocking/#how-verification-works).
+
+## Why does the dashboard show little or no AI crawler traffic?
+
+In rough order of likelihood:
+
+1. **Cloudflare is blocking the crawlers at the edge.** Newer Cloudflare zones
+   block known AI crawlers **by default** — the requests never reach Umbraco,
+   so AEO can't see them. Check AI Crawl Control and the bot settings in the
+   Cloudflare dashboard: [Cloudflare &
+   CDNs](/docs/aeo/guides/cloudflare-and-cdns/#1-let-the-crawlers-through-the-edge).
+2. **Your robots.txt disallows them.** Well-behaved crawlers (GPTBot,
+   ClaudeBot, …) respect `Disallow` rules.
+3. **They just haven't visited yet.** Crawlers discover sites through links
+   and sitemaps; for a smaller site, days or weeks between visits is normal.
+
+For a quick outside-in check, the free [Flowcourier website
+analyzer](https://ai-readiness.flowcourier.com/analyzer) fetches your site the
+way a crawler would and scores its technical health and AI-readiness in about
+a minute.
+
+## Will blocking crawlers hurt my Google rankings?
+
+No. The registry tracks **AI crawlers only** — classic Googlebot (the search
+indexer) isn't in it and can never be blocked by AEO. The Google entries are
+**Google-Extended** (the control for AI training and Gemini grounding) and the
+**GoogleOther** family (miscellaneous fetches) — blocking those does not
+affect Search crawling or ranking.
+
+## Does blocking work through robots.txt?
+
+No — blocking is an **enforced `403`** answered by middleware before your
+content pipeline runs. `robots.txt` is purely advisory and scrapers are free
+to ignore it. AEO's optional robots.txt feature does the opposite of blocking:
+it only adds `llms.txt` **discovery** lines (preserving your existing file)
+and never emits `Disallow` rules. See [Crawler verification &
+blocking](/docs/aeo/guides/crawler-verification-and-blocking/).
+
+## I ran the local blocking test and now I'm blocked myself
+
+Three spoofed test requests durably block your own loopback address — by
+design, that's exactly what would happen to a real spoofer. Open **Settings →
+Flowcourier → AEO Dashboard → Blocking → Clients**, find your address on the
+durable block list and click **Unblock**, and remember to revert the
+TEST-NET override in `appsettings.Development.json`. See [Testing it
+locally](/docs/aeo/guides/crawler-verification-and-blocking/#testing-it-locally).
+
+## Is it GDPR-compliant? Where do IP addresses go?
+
+The analytics tables store **no IP addresses, no raw user-agent strings and no
+query strings** (raw user agents are kept only as forensics on spoofed hits).
+Verification compares addresses in bounded, TTL-expiring memory caches only.
+The one deliberate exception is the durable **security block list**, which has
+to remember offender addresses to survive a restart — a textbook
+legitimate-interest basis, auto-pruned on a rolling window. For a strict
+no-IPs-ever posture, set `StrikesBeforeDurableBlock: 0`. Full details:
+[Privacy (GDPR)](/docs/aeo/guides/crawler-verification-and-blocking/#privacy-gdpr).
+
+## A crawler I care about isn't recognised
+
+Add it yourself under `CrawlerAnalytics:AdditionalBots` — it's tracked
+immediately, no release needed. The built-in registry also grows with package
+updates. The reverse works too: `DisabledBots` stops tracking a built-in
+crawler. See the settings table in [AI crawler
+analytics](/docs/aeo/guides/ai-crawler-analytics/).
+
+## Does AEO slow down my site?
+
+No measurable per-request cost. Verification runs **out of band** — the first
+request from an unknown address passes through while the verdict resolves, and
+later requests hit a cached verdict. Analytics hits go into an in-memory queue
+and are flushed to the database in background batches; the queue drops on
+overflow rather than ever blocking a request. Blocked requests are answered
+before the content pipeline runs, so scanner floods get cheaper, not more
+expensive.
+
+## Can a normal browser accidentally receive Markdown instead of HTML?
+
+No. Content negotiation only triggers on an **explicit** `text/markdown`
+Accept token that outranks HTML — browser Accept headers
+(`text/html,…,*/*;q=0.8`) can never trigger it, because wildcards don't count
+toward Markdown. See [Markdown discovery & content
+negotiation](/docs/aeo/guides/markdown-endpoints/#markdown-discovery--content-negotiation).
+
+## What's the difference between crawler hits and AI referrals?
+
+Crawler hits are the machines: answer engines **reading** your content. AI
+referrals are the payoff: **humans arriving** at your site from claude.ai,
+chatgpt.com, perplexity.ai and friends after an answer cited you. The
+dashboard shows both sides — see [AI referrals & questions
+answered](/docs/aeo/guides/ai-referrals/).
+
+## If I turn on "Block all", what happens to crawlers released next year?
+
+"Block all" is **deny-by-default**: every recognised AI crawler gets `403`,
+*including ones added in future registry updates*, except the crawlers you
+explicitly Allow. Your allowlist is remembered if you toggle the mode off and
+back on. See [the Blocking
+page](/docs/aeo/guides/crawler-verification-and-blocking/#the-blocking-page).

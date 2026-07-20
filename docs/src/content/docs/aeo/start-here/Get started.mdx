@@ -7,6 +7,7 @@ sidebar:
 
 import { Steps } from '@astrojs/starlight/components';
 import { Code } from '@astrojs/starlight/components';
+import { LinkCard } from '@astrojs/starlight/components';
 
 # How to install Flowcourier AEO for Umbraco
 
@@ -71,6 +72,14 @@ AEO has no AI dependency — no Umbraco AI, no LLM provider, no API key. It is b
 
 </Steps>
 
+:::caution[Behind Cloudflare or another CDN?]
+Two extra minutes of setup: newer Cloudflare zones **block AI crawlers by
+default**, and behind any CDN the app sees the edge's address instead of the
+crawler's, so verification can't run. Allow the crawlers at the edge and set
+`ClientIpHeader` (Cloudflare: `CF-Connecting-IP`) — the full checklist is in
+[Cloudflare & CDNs](/docs/aeo/guides/cloudflare-and-cdns/).
+:::
+
 ## Next steps
 
 - Learn how [llms.txt & Markdown pages](/docs/aeo/guides/markdown-endpoints/) work — what gets included, discovery headers, content negotiation and multilingual sites.
@@ -78,4 +87,14 @@ AEO has no AI dependency — no Umbraco AI, no LLM provider, no API key. It is b
 - Review the [AI crawler analytics](/docs/aeo/guides/ai-crawler-analytics/) dashboard and its privacy guarantees.
 - See how [crawler verification & blocking](/docs/aeo/guides/crawler-verification-and-blocking/) stops vulnerability scanners that spoof AI crawlers — and lets you block any crawler permanently.
 - Track [AI referrals & questions answered](/docs/aeo/guides/ai-referrals/) — which pages AI answers cite and convert into real visits.
+- Running behind a CDN? [Cloudflare & CDNs](/docs/aeo/guides/cloudflare-and-cdns/) covers edge bot settings, real client addresses and origin lockdown.
 - Browse the full [configuration reference](/docs/aeo/guides/configuration/) — everything works out of the box, but every path, toggle and property alias is configurable.
+- Something unexpected? The [FAQ](/docs/aeo/guides/faq/) answers the questions we hear most.
+
+## Measure before & after
+
+<LinkCard
+  title="Free website analyzer"
+  description="Paste a URL and get technical, SEO, content and AI-readiness scores with prioritised fixes — in about a minute. Run it before installing AEO for a baseline, then again after to see the difference."
+  href="https://ai-readiness.flowcourier.com/analyzer"
+/>

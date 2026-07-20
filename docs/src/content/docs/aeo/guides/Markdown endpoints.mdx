@@ -87,7 +87,7 @@ Accept: text/markdown
 Negotiation is deliberately conservative: only an **explicit** `text/markdown` token that outranks HTML triggers it — browser Accept headers (`text/html,…,*/*;q=0.8`) can never be hijacked, because wildcards don't count toward Markdown. Pages that are no-indexed or on an excluded document type never advertise and never negotiate.
 
 :::caution[CDN note]
-Negotiation adds `Vary: Accept` to HTML content pages so shared caches keep the two representations apart. If you front the site with a CDN and would rather not fragment its HTML cache, set `EnableContentNegotiation: false` (which also stops the `Vary` emission) — the `.md` URLs keep working.
+Negotiation adds `Vary: Accept` to HTML content pages so shared caches keep the two representations apart. If you front the site with a CDN and would rather not fragment its HTML cache, set `EnableContentNegotiation: false` (which also stops the `Vary` emission) — the `.md` URLs keep working. For the rest of the CDN story — letting AI crawlers through the edge and giving verification real client addresses — see [Cloudflare & CDNs](/docs/aeo/guides/cloudflare-and-cdns/).
 :::
 
 ## HTTP caching
