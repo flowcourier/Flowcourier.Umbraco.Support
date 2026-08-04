@@ -1,0 +1,54 @@
+---
+title: What AI assistants asked
+description: What each AI surface does and doesn't transmit about the user's question — and how AEO approximates it honestly.
+sidebar:
+  order: 7
+---
+
+# What AI assistants asked
+
+The question everyone wants answered: *someone asked an AI about my product —
+what did they ask?* The honest answer first: **no AI surface transmits the
+user's prompt to your site.** Not in the crawler fetch, not in the click-through.
+Everything below is about approximating it as well as the web allows.
+
+## What each surface actually sends
+
+| Surface | On the fetch (AI reads your page) | On the click (human follows a citation) |
+| --- | --- | --- |
+| ChatGPT | `ChatGPT-User` user agent | Referer `chatgpt.com` and/or `utm_source=chatgpt.com` |
+| Claude (claude.ai) | `Claude-User` user agent | Referer `claude.ai`; no utm |
+| Claude (Desktop app) | `Claude-User` user agent | Usually **nothing** — apps open your browser with no referer |
+| Perplexity | `Perplexity-User` user agent | `utm_source=perplexity`; referer often stripped |
+| Gemini app | Gemini fetchers (`googleagent-urlcontext`, …) | Referer `gemini.google.com` |
+| Google AI Overviews / AI Mode | Served from Google's index — often **no fetch at all** | Bare `google.com` referer — indistinguishable from organic search, so AEO deliberately does **not** count it as an AI referral |
+| Copilot | `MicrosoftPreview`/Copilot fetchers | Referer `copilot.microsoft.com` |
+
+Two consequences worth internalising:
+
+- A fair share of real AI-driven visits arrive with *neither* referer nor utm
+  and land as "Direct" in every analytics tool, not just AEO. The AI Referrals
+  page shows the detectable floor, never the true total.
+- Google's AI surfaces are special: answers come from the index, so there may
+  be no read to record, and clicks can't be attributed. Google's own
+  [Search Console generative-AI performance report](https://search.google.com/search-console)
+  (added June 2026) is the only source for AI Overviews / AI Mode impressions —
+  it has no API yet, so AEO links out rather than integrating. We'll revisit
+  when the API exposes it.
+
+## AEO's honest proxies
+
+- **The page title.** When an assistant reads `/blog/upgrade-to-umbraco-17/`,
+  the best available signal for "what was asked" is what that page answers.
+  The AI Referrals page resolves every read and conversion to its page title;
+  a Markdown read (`.md`) resolves to the same page.
+- **Questions answered.** A read followed within 30 minutes by an AI-referred
+  visit to the same page is the closest observable version of *"someone asked,
+  the AI cited you, and they clicked"*.
+- **Query strings (opt-in, from 17.5.9).** With
+  `Flowcourier:Aeo:CrawlerAnalytics:CaptureQueryStrings` enabled, AEO stores
+  the query string on crawler hits and referrals (truncated to 400 chars).
+  Occasionally an assistant fetches a search-style URL whose `?q=` reveals a
+  literal question. Off by default: query strings can carry personal data, and
+  enabling this is a conscious privacy decision — see the
+  [configuration reference](/docs/aeo/start-here/configuration/).

@@ -7,14 +7,25 @@ sidebar:
 
 # AI referrals & questions answered
 
-AI crawler hits tell you what the engines *read*. AI referrals tell you what
-*humans did about it* — the payoff side of AEO.
-
-When a visitor arrives from an AI surface — the Referer host (or `utm_source`)
-matches claude.ai, chatgpt.com, perplexity.ai, copilot.microsoft.com,
-gemini.google.com or your own `ReferralHosts` additions — the visit is recorded.
 The **AI Referrals** page (Settings → Flowcourier → AEO Dashboard → AI
-Referrals) turns those visits into a conversion metric.
+Referrals) is an attention funnel with three stages:
+
+1. **AI reads** — a user-triggered assistant fetcher (ChatGPT-User,
+   Claude-User, Perplexity-User, Gemini's fetchers, …) read a page to answer
+   someone's question. This is the earliest observable signal that your
+   content is reaching AI answers, and since 17.5.8 it leads the page: a
+   "Recent AI reads" timeline shows when, which assistant, which page (by
+   title) and in what format (HTML, Markdown, llms.txt).
+2. **AI referrals** — a human arrived from an AI surface: the Referer host
+   (or `utm_source`) matches claude.ai, chatgpt.com, perplexity.ai,
+   copilot.microsoft.com, gemini.google.com or your own `ReferralHosts`
+   additions.
+3. **Questions answered** — the two correlated: the conversion metric.
+
+Reads without referrals are normal — most people read the AI's answer and never
+click a citation. The page says so explicitly instead of showing an empty
+state. To understand what the AI was *asked*, see
+[What AI assistants asked](/docs/aeo/guides/what-ai-assistants-asked/).
 
 ![The AI Referrals dashboard: AI referrals, questions answered, conversion rate and user-triggered fetches, with referrals-per-day and a by-source donut](../../../../assets/aeo/AI-referrals.png)
 
@@ -30,9 +41,10 @@ clicked through"*.
 
 The page shows:
 
-- **Stat cards** — AI referrals in the window, questions answered, the
-  conversion rate (questions answered ÷ user-triggered fetches), and the
-  user-triggered fetch count.
+- **Stat cards** — AI reads, AI referrals, questions answered, and the
+  conversion rate (questions answered ÷ AI reads) for the window.
+- **Recent AI reads** — the timeline of assistant fetches, with the page's
+  title standing in for the question it was answering.
 - **Referrals per day** — the trend over the selected Today / 7-day / 30-day
   window.
 - **By source** — which AI surface sent the visitors (ChatGPT, Claude,
