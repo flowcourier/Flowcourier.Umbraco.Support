@@ -52,6 +52,7 @@ All settings are optional — the defaults work out of the box. Configure under 
       "AbsoluteUrls": true,
       "LlmsTxtCacheSeconds": 60,
       "LlmsFullCacheSeconds": 600,
+      "LlmsFullMaxSizeKb": 5120,
 
       // Content model mapping (which property aliases mean what)
       "TitlePropertyAliases": [ "seoTitle", "metaTitle", "pageTitle", "browserTitle", "title" ],
@@ -107,6 +108,7 @@ The `Schema`, `CrawlerAnalytics` and `BotVerification` sub-sections have their o
 | `AbsoluteUrls` | `true` | Rewrite relative media/link URLs to absolute using the request scheme + host. |
 | `LlmsTxtCacheSeconds` | `60` | In-memory cache lifetime for the index (per site root and culture). |
 | `LlmsFullCacheSeconds` | `600` | In-memory cache lifetime for the full dump (per site root and culture). |
+| `LlmsFullMaxSizeKb` | `5120` | Size cap for `/llms-full.txt` in KB (UTF-8 bytes, 5 MB by default). Pages append in stable URL order; a page that would burst the budget is skipped (one huge page can't evict the rest), and a truncated file ends with a footer stating how many pages were omitted. `0` or negative disables the cap. |
 
 ### Content model mapping
 

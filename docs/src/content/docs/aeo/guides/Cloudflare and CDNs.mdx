@@ -156,6 +156,14 @@ fragment the CDN's HTML cache, `EnableContentNegotiation: false` stops both
 the negotiation and the `Vary` emission — see the [CDN note in llms.txt &
 Markdown pages](/docs/aeo/guides/markdown-endpoints/#markdown-discovery--content-negotiation).
 
+If your CDN has a cache-everything rule (or otherwise caches text responses),
+it will also hold `/robots.txt`, `/llms.txt` and `/llms-full.txt` for its edge
+TTL — so edits to `wwwroot/robots.txt` and content publishes keep serving the
+old copy from the edge until it expires. If a fresh AEO file "doesn't update",
+compare the plain URL against a cache-busted one (`/robots.txt?x=1`): different
+answers mean the edge cache, not the package. Purge the paths after a change,
+or add a bypass / short-TTL cache rule for `robots.txt` and `llms*.txt`.
+
 ## Settings reference
 
 | Setting | Default | Description |
