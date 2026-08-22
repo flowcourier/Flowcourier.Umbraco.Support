@@ -37,6 +37,10 @@ No composer or startup code is needed. On the next startup the agent registers i
 
 4. The editor reviews the draft and either publishes it directly or sends it for approval.
 
+### Dictionary items
+
+The **Translation Agent** view under **Translation → Flowcourier** can also translate **dictionary items** — free in every edition. Use *Translate dictionary items…*, pick the items from the dictionary tree, pick the target language, and the default-language values are translated and saved. Existing target values for the picked items are overwritten; an item whose translation fails is left untouched (dictionary lookups fall back to the default language at runtime anyway). On licensed installs [termbase](/docs/ai/guides/translation-pro/) terms are enforced, same as for content.
+
 ### Review workflow
 
 **Send for approval** — the editor picks the reviewer from a searchable list of backoffice users. Only existing, active backoffice users can receive approvals, and when the user group configuration restricts language access, the list only offers users who can access the target language.
@@ -139,6 +143,14 @@ Example with everything overridden:
   }
 }
 ```
+
+## Translation Pro
+
+Everything on this page is free, including commercial production use. A [Translation Pro](/docs/ai/guides/translation-pro/) license unlocks more inside the same package:
+
+- **Multi-page translation** — translate a larger number of pages, or an entire site, in one batch run with a single approval covering the batch.
+- **Azure Translator engine** — machine translation across more than 100 languages through your own Azure Translator resource; deterministic, fast and typically far cheaper than an LLM for bulk translation.
+- **Termbase** — approved terminology and do-not-translate terms, enforced on every translation.
 
 ## Good to know
 
