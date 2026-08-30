@@ -27,25 +27,39 @@ No composer or startup code is needed. On the next startup the agent registers i
 ## How editors use it
 
 1. Open a culture-varying page and launch the **Copilot**, or use the **Translate…** button in the workspace footer.
-2. Pick the **Translation Agent** and use the "Translate to…" starter, then choose the target language. It can also be given as an ISO code (`da-DK`), a prefix (`da`) or a name ("Danish").
+2. Pick the **Translation Agent** and use the **Translate…** starter, then choose the target language. It can also be given as an ISO code (`da-DK`), a prefix (`da`) or a name ("Danish").
 
     ![The Copilot with the Translation Agent selected, showing the available target languages](../../../../assets/ai/translation-agent/choose-language.png)
 
-3. The agent translates the node name and every culture-varying property — plain text, rich text (HTML tags preserved) and Block List/Block Grid content (only human-readable text is translated; structure, GUIDs and aliases stay untouched) — and saves the result **as a draft in the target culture only**. The source culture is never modified.
+3. Confirm with **Start translation**.
+
+    ![The Copilot confirming the language pair, with a Start translation button and an optional Select pages action](../../../../assets/ai/translation-agent/start-translation.png)
+
+    Optionally use **Select pages** first to point at pages that are *already* translated into the target language. Their approved translations are handed to the agent as style examples, so tone, phrasing and terminology match what you have already published. It is optional and free — skipping it just translates from the source alone.
+
+4. The agent translates the node name and every culture-varying property — plain text, rich text (HTML tags preserved) and Block List/Block Grid content (only human-readable text is translated; structure, GUIDs and aliases stay untouched) — and saves the result **as a draft in the target culture only**. The source culture is never modified.
 
     ![The finished translation with the source and Danish variant side by side and a result card offering to send the translation for review](../../../../assets/ai/translation-agent/translation-complete.png)
 
-4. The editor reviews the draft and either publishes it directly or sends it for approval.
+5. The editor reviews the draft and either publishes it directly or sends it for approval.
+
+### The Translation Agent view
+
+**Translation → Flowcourier → Translation Agent** is the agent's home in the backoffice: the actions on the left, the current state of the install on the right — license, the active translation engine, the review queue by status, and the termbase size, each card linking to where you act on it.
+
+![The Translation Agent view with content and dictionary actions on the left and License, Engine, Workflow and Termbase status cards on the right](../../../../assets/ai/translation-agent/translation-agent-dashboard.png)
+
+The **Content** card translates pages from the view itself; without a [Translation Pro](/docs/ai/guides/translation-pro/) license the language buttons are disabled there, since single pages are always translated free from the page editor's Copilot.
 
 ### Dictionary items
 
-The **Translation Agent** view under **Translation → Flowcourier** can also translate **dictionary items** — free in every edition. Use *Translate dictionary items…*, pick the items from the dictionary tree, pick the target language, and the default-language values are translated and saved. Existing target values for the picked items are overwritten; an item whose translation fails is left untouched (dictionary lookups fall back to the default language at runtime anyway). On licensed installs [termbase](/docs/ai/guides/translation-pro/) terms are enforced, same as for content.
+The same view also translates **dictionary items** — free in every edition. Use *Translate dictionary items…*, pick the items from the dictionary tree, pick the target language, and the default-language values are translated and saved. Existing target values for the picked items are overwritten; an item whose translation fails is left untouched (dictionary lookups fall back to the default language at runtime anyway). On licensed installs [termbase](/docs/ai/guides/translation-pro/) terms are enforced, same as for content.
 
 ### Review workflow
 
 **Send for approval** — the editor picks the reviewer from a searchable list of backoffice users. Only existing, active backoffice users can receive approvals, and when the user group configuration restricts language access, the list only offers users who can access the target language.
 
-![The send-for-approval card in the Copilot with a reviewer email that matches a backoffice user](../../../../assets/ai/translation-agent/send-for-approval.png)
+![The send-for-approval card in the Copilot with the reviewer picker open, listing matching backoffice users](../../../../assets/ai/translation-agent/send-for-approval.png)
 
 The reviewer receives an email with a read-only preview link and a direct link to the variant in the editor:
 
@@ -61,7 +75,7 @@ Declining requires a note explaining what needs to change; it is emailed to whoe
 
 **Translation Workflow dashboard** — all reviews are listed under **Translation → Flowcourier → Translation Workflow**, filterable by status, with Approve, Decline, Remind and Delete actions:
 
-![The Translation Workflow dashboard listing a pending review with its actions](../../../../assets/ai/translation-agent/translation-workflow-view.png)
+![The Translation Workflow dashboard listing pending and approved reviews with their culture, reviewer, age and actions](../../../../assets/ai/translation-agent/translation-workflow-view.png)
 
 **Statuses** — a review moves through `Pending` → `Approved`/`Published`, `ChangesRequested` (after a decline, the editor can resubmit) or `Cancelled`. If a reviewer simply publishes the culture variant themselves, any open review for that content and culture is automatically marked `Published` and the requester is notified.
 

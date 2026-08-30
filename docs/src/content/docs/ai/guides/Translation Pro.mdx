@@ -49,6 +49,10 @@ Good to know:
 - Trial keys work the same and simply carry an expiry date.
 - **Your site never breaks over licensing.** Without a valid key, translation keeps working exactly like the free package: the chat-profile engine translates, and any termbase data you created stays readable and exportable (only changes are blocked). The current license state — and the specific reason when Pro is inactive — is always visible under **Settings → Flowcourier → Translation Pro** and as a banner on the Pro dashboards.
 
+The **Translation Agent** view under **Translation → Flowcourier** shows the same at a glance: who the key is licensed to, which engine translations currently run through, the review queue and the size of the termbase.
+
+![The Translation Agent view with a License card reading Translation Pro, an Engine card showing the chat profile, and Workflow and Termbase cards](../../../../assets/ai/translation-agent/translation-agent-dashboard.png)
+
 ## Azure Translator engine
 
 The engine calls the [Azure Translator Text API](https://learn.microsoft.com/azure/ai-services/translator/) in **your own Azure subscription** — content is sent only to your resource, never through Flowcourier.
@@ -120,6 +124,10 @@ Verify the connection from **Settings → Flowcourier → Translation Pro** (*Te
 ## Termbase
 
 The Termbase lives under **Translation → Flowcourier → Termbase**: approved translations per language pair, do-not-translate terms (brand names), case sensitivity, notes, and CSV import with a validating dry run. Terms are enforced on every translation — as prompt directives for the chat-profile engine, as dynamic-dictionary markup for Azure Translator (English pairs).
+
+![The Termbase view listing terms with their source language, translations, notes and Edit/Delete actions, plus search, Create Term and an Import tab](../../../../assets/ai/translation-agent/termbase.png)
+
+Filter by source language or search the terms, add them one at a time with **Create Term**, or bring a whole glossary in from the **Import** tab. What reaches the engine is the rule itself — *translate "Basket" as "Kurv"*, *keep "Apple" as written*. The **Notes** column is for the people maintaining the glossary: it records why a term is on the list, so the next editor does not undo it.
 
 CSV import columns: `sourceLang,sourceTerm,targetLang,targetTerm,dnt,caseSensitive,notes`.
 
