@@ -46,7 +46,7 @@ AEO has no AI dependency — no Umbraco AI, no LLM provider, no API key. It is b
 
 3. Fill in your organization identity
 
-    Go to **Settings → Flowcourier → AEO Dashboard → Structured Data** in the backoffice and enter your organization's name, logo, profile links and contact details. This is the one piece of structured data the package never guesses from content — page-level markup (WebPage/Article, breadcrumbs, FAQ) is generated automatically. See [Structured data](/docs/aeo/guides/structured-data/) for details.
+    Go to **Settings → Flowcourier → AEO Dashboard → Structured Data** (the group is named **AEO** on a site that also runs Flowcourier Analytics) in the backoffice and enter your organization's name, logo, profile links and contact details. This is the one piece of structured data the package never guesses from content — page-level markup (WebPage/Article, breadcrumbs, FAQ) is generated automatically. See [Structured data](/docs/aeo/guides/structured-data/) for details.
 
     ![The Structured Data form under Settings → Flowcourier → AEO Dashboard, where editors fill in the organization identity](../../../../assets/aeo/Structured-data-organization-identity.png)
 
@@ -66,9 +66,9 @@ AEO has no AI dependency — no Umbraco AI, no LLM provider, no API key. It is b
 
 5. Watch the AI crawlers arrive
 
-    Open **Settings → Flowcourier → AEO Dashboard**. Visits from GPTBot, ClaudeBot, PerplexityBot and 150+ other AI crawlers are recognised and counted — which bot, which pages, and whether they fetched HTML or your Markdown surface. Each visit is also **verified against the vendor's official mechanism** where one exists (published IP ranges or reverse DNS), and scanners spoofing an AI user agent are blocked automatically — manage this on the dashboard's Blocking page. Privacy-safe by default: the analytics store no IP addresses unless you opt in, and raw user agents are kept only as forensics on spoofed requests — see [Privacy (GDPR)](/docs/aeo/guides/crawler-verification-and-blocking/#privacy-gdpr) for details. See [AI crawler analytics](/docs/aeo/guides/ai-crawler-analytics/) and [Crawler verification & blocking](/docs/aeo/guides/crawler-verification-and-blocking/).
+    Open **Analytics → AI Crawlers** — or **Settings → Flowcourier → AEO Dashboard** on a site without [Flowcourier Analytics](/docs/analytics/start-here/get-started/). Visits from GPTBot, ClaudeBot, PerplexityBot and 150+ other AI crawlers are recognised and counted — which bot, which pages, and whether they fetched HTML or your Markdown surface. Each visit is also **verified against the vendor's official mechanism** where one exists (published IP ranges or reverse DNS), and scanners spoofing an AI user agent are blocked automatically — manage this on the Blocking page under **Settings → Flowcourier**. Privacy-safe by default: the analytics store no IP addresses unless you opt in, and raw user agents are kept only as forensics on spoofed requests — see [Privacy (GDPR)](/docs/aeo/guides/crawler-verification-and-blocking/#privacy-gdpr) for details. See [AI crawler analytics](/docs/aeo/guides/ai-crawler-analytics/) and [Crawler verification & blocking](/docs/aeo/guides/crawler-verification-and-blocking/).
 
-    ![The AEO Dashboard showing AI crawler hits per day, traffic share per operator, hits per crawler and top pages](../../../../assets/aeo/AEO-Dashboard.png)
+    ![AI crawler hits per day, traffic share per operator, hits per crawler and top pages](../../../../assets/aeo/AEO-Dashboard.png)
 
 </Steps>
 

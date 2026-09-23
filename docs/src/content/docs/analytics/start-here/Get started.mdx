@@ -12,7 +12,7 @@ import { Code } from '@astrojs/starlight/components';
 
 Flowcourier Analytics puts your web analytics where editors work — in the Umbraco backoffice. No analytics login, no context switch:
 
-- An **Analytics** section with five dashboards: **Realtime**, **Visitors**, **Behaviour**, **Acquisition** and **Technology** — and a live visitor count on the section itself.
+- An **Analytics** section that opens on an **Overview** — human traffic and AI-agent traffic side by side — followed by **Realtime**, **Visitors**, **Behaviour**, **Acquisition** and **Technology**, and a live visitor count on the section itself. Installing [Flowcourier AEO](/docs/aeo/start-here/get-started/) adds **AI Crawlers** and **AI Referrals** here too, and fills in the AI half of the Overview.
 - An **Analytics tab on every document** showing that page's traffic, where its visitors came from, which pages they came from and went to next, and their locations and devices.
 - Optional [**PageSpeed Insights**](/docs/analytics/guides/pagespeed-insights/) and [**Search Console**](/docs/analytics/guides/search-console/) views on the same tab, plus a **Search queries** dashboard.
 - Optionally, the same figures [**in the Umbraco AI Copilot**](/docs/analytics/guides/copilot/) — ask how a page is doing or what lost traffic, and get an answer from measured data.
@@ -58,7 +58,7 @@ Two packages make this up: `Flowcourier.Umbraco.Analytics.Core` (the section, th
 
 4. Open the Analytics section
 
-    Restart the site and log in. Administrators see the new **Analytics** section straight away; grant it to other user groups under **Users → Groups → Sections**. Each dashboard has a date-range picker that follows you from view to view: pick a preset (today, yesterday, last 7 or 30 days, last 3 months, this or last month, this year) for an instant switch, or click a start and an end day across the two calendars and press **Apply** for a custom range.
+    Restart the site and log in. Administrators see the new **Analytics** section straight away; grant it to other user groups under **Users → Groups → Sections**. On a site that also runs Flowcourier AEO, granting the Analytics section also lets that group read the site's AI crawler data, since the AI Crawlers and AI Referrals views live there. Each dashboard has a date-range picker that follows you from view to view: pick a preset (today, yesterday, last 7 or 30 days, last 3 months, this or last month, this year) for an instant switch, or click a start and an end day across the two calendars and press **Apply** for a custom range.
 
 5. Open a page's Analytics tab
 
