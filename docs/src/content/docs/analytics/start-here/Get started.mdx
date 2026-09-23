@@ -1,0 +1,79 @@
+---
+title: Quick start
+description: Install Flowcourier Analytics for Umbraco with the Matomo provider — dashboards and a per-page Analytics tab in the backoffice, read live from your own Matomo, plus optional PageSpeed Insights and Search Console.
+sidebar:
+  order: 1
+---
+
+import { Steps } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+# How to install Flowcourier Analytics for Umbraco (Matomo)
+
+Flowcourier Analytics puts your web analytics where editors work — in the Umbraco backoffice. No analytics login, no context switch:
+
+- An **Analytics** section with five dashboards: **Realtime**, **Visitors**, **Behaviour**, **Acquisition** and **Technology** — and a live visitor count on the section itself.
+- An **Analytics tab on every document** showing that page's traffic, where its visitors came from, which pages they came from and went to next, and their locations and devices.
+- Optional [**PageSpeed Insights**](/docs/analytics/guides/pagespeed-insights/) and [**Search Console**](/docs/analytics/guides/search-console/) views on the same tab, plus a **Search queries** dashboard.
+- Optionally, the same figures [**in the Umbraco AI Copilot**](/docs/analytics/guides/copilot/) — ask how a page is doing or what lost traffic, and get an answer from measured data.
+
+Two packages make this up: `Flowcourier.Umbraco.Analytics.Core` (the section, the tab, the Google features) and a **provider** that supplies the traffic data — today `Flowcourier.Umbraco.Matomo`, reading live from your own Matomo (self-hosted or Matomo Cloud) through its Reporting API. Installing the provider brings the core in. A third, `Flowcourier.Umbraco.Analytics.AI`, is optional and only for sites running the [Umbraco AI Copilot](/docs/analytics/guides/copilot/) — the core has no AI dependency of its own. Nothing about your visitors is stored, and the only database table is the index-status cache, created just for sites that turn [Search Console index tracking](/docs/analytics/guides/search-console/) on.
+
+<Steps>
+
+1. Create a Matomo token
+
+    In Matomo go to **Administration → Personal → Security → Auth tokens → Create new token**. Give it a description (for example "Umbraco"), keep **Only allow secure requests** ticked and copy the token — Matomo shows it only once.
+
+    Create the token for a user that only has **view** access to the website: the token carries that user's rights.
+
+    Note the website's **ID** from **Administration → Websites → Manage**.
+
+2. Install the package
+
+    The package is available via NuGet. Visit [Flowcourier.Umbraco.Matomo on NuGet](https://www.nuget.org/packages/Flowcourier.Umbraco.Matomo/), search for it in Visual Studio, or run:
+
+    <Code code="dotnet add package Flowcourier.Umbraco.Matomo --prerelease" lang="shell" />
+
+    This installs `Flowcourier.Umbraco.Analytics.Core` as well. No composer, no `Program.cs` changes: the packages self-register.
+
+3. Configure the connection
+
+    Add the `Flowcourier:Matomo` section to `appsettings.json` (or set the matching environment variables):
+
+    ```json
+    {
+      "Flowcourier": {
+        "Matomo": {
+          "Endpoint": "https://analytics.example.com/",
+          "TokenAuth": "<token_auth>",
+          "SiteId": 1,
+          "SiteUrl": "https://www.example.com"
+        }
+      }
+    }
+    ```
+
+    Keep the token out of source control — `Flowcourier__Matomo__TokenAuth` as an environment variable or a secret store works the same way. `SiteUrl` is the public base URL the pages are tracked under; when omitted the package uses the main URL registered for the site in Matomo. All settings — including the shared `Flowcourier:Analytics` section for PageSpeed Insights, Search Console and the live badge — are described in [Configuration](/docs/analytics/guides/configuration/).
+
+4. Open the Analytics section
+
+    Restart the site and log in. Administrators see the new **Analytics** section straight away; grant it to other user groups under **Users → Groups → Sections**. Each dashboard has a date-range picker that follows you from view to view: pick a preset (today, yesterday, last 7 or 30 days, last 3 months, this or last month, this year) for an instant switch, or click a start and an end day across the two calendars and press **Apply** for a custom range.
+
+5. Open a page's Analytics tab
+
+    Open any published document in the Content section and switch to its **Analytics** tab. Its **Traffic** view shows pageviews, visits, time on page, bounce and exit rates for the selected range, compared with the previous period, plus the page's referrers, the pages visitors came from and went to next, and their countries, cities, devices and browsers. The tab follows the language you are editing.
+
+    The Analytics tab is shared by every Flowcourier extension: if you also run the [SEO Agent](/docs/ai/guides/seo-agent/) or [AEO](/docs/aeo/start-here/get-started/), their per-page views appear as further sub-tabs here rather than as tabs of their own.
+
+6. Optional: add PageSpeed Insights and Search Console
+
+    Both are off by default and each is a few lines of configuration: [PageSpeed Insights](/docs/analytics/guides/pagespeed-insights/) adds a **Page speed** view to the document tab; [Search Console](/docs/analytics/guides/search-console/) adds a **Search Console** view and a **Search queries** dashboard.
+
+</Steps>
+
+:::tip[Where are the settings shown?]
+The effective settings (secrets masked) are shown under **Settings → Flowcourier → Matomo** and **→ Analytics**. If the dashboards show *Connect Matomo to see analytics here*, one of `Endpoint`, `TokenAuth` or `SiteId` is missing.
+:::
+
+See [Reports](/docs/analytics/guides/reports/) for what each dashboard shows and where the numbers come from in Matomo.

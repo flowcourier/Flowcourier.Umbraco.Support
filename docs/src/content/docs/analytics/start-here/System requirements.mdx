@@ -1,0 +1,39 @@
+---
+title: System requirements
+description: Supported Umbraco, .NET and Matomo versions for Flowcourier Analytics and its Matomo provider.
+sidebar:
+  order: 2
+---
+
+# System requirements
+
+| Requirement | Version |
+|-------------|---------|
+| Umbraco | 17.5+ (LTS) |
+| .NET | 10+ |
+| Matomo | 4.x or 5.x, self-hosted or Matomo Cloud, reachable over HTTPS from the Umbraco server |
+| Matomo token | A `token_auth` for a user with *view* access to the website |
+
+The package has **no AI dependency** and no database footprint: it reads reports from Matomo's Reporting API on demand and caches them briefly in memory.
+
+## Packages
+
+| Package | Contents |
+|---------|----------|
+| [`Flowcourier.Umbraco.Matomo`](https://www.nuget.org/packages/Flowcourier.Umbraco.Matomo/) | The Matomo provider: reads your Matomo's Reporting API |
+| [`Flowcourier.Umbraco.Analytics.Core`](https://www.nuget.org/packages/Flowcourier.Umbraco.Analytics.Core/) | Installed automatically with the provider: the Analytics section, the document tab, PageSpeed Insights, Search Console, the live badge |
+| `Flowcourier.Umbraco.Foundation` | Installed automatically as a dependency: the Flowcourier group in the Settings section, the shared chart element |
+
+The package version signals the minimum supported Umbraco release: `17.5.x` requires Umbraco 17.5 or later. Core and provider are released together with equal versions.
+
+## Notes
+
+- **Outbound access**: the Umbraco server calls `https://<your-matomo>/index.php` with POST requests; with the Google features on it also reaches `www.googleapis.com`, `oauth2.googleapis.com` and `searchconsole.googleapis.com`. Allow those hosts through any egress firewall.
+- **Tracked URLs**: Matomo stores absolute page URLs. The document tab looks pages up by `SiteUrl` (or Matomo's main URL for the site) plus the page's route, so the tracked host must match. See [Configuration](/docs/analytics/guides/configuration/#siteurl-and-multi-site-installs) for staging hosts and multi-site installs.
+- **Unique visitors over a range** are only available when your Matomo host enables unique-visitor processing for custom ranges (`enable_processing_unique_visitors_range`). The charts always show unique visitors per day.
+- **Segments**: the page-scoped breakdowns (referrers, locations, devices on the document tab) use a Matomo segment processed on the fly. On a large self-hosted Matomo with browser-triggered archiving disabled they can come back empty; the page's own metrics and its previous/next pages do not use segments.
+- Backoffice assets are served from `App_Plugins` (`fc-analytics`, `fc-foundation`) and built for the Umbraco Bellissima backoffice.
+
+## License
+
+The package is free to use, including commercially, under the Flowcourier License 1.0. There is no license key to install and no domain restrictions.

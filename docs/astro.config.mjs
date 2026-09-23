@@ -92,6 +92,19 @@ export default defineConfig({
                 ],
             },
             {
+                label: 'Analytics (Matomo)',
+                items: [
+                    {
+                        label: 'Getting Started',
+                        items: [{ autogenerate: { directory: 'analytics/start-here' } }],
+                    },
+                    {
+                        label: 'Guides',
+                        items: [{ autogenerate: { directory: 'analytics/guides' } }],
+                    },
+                ],
+            },
+            {
                 label: 'Cookie Consent',
                 items: [
                     {

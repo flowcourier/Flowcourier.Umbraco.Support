@@ -1,0 +1,175 @@
+---
+title: Configuration
+description: All settings — the Matomo connection, tracked site URL, multi-site mapping, caching, and the shared Analytics section for the live badge, PageSpeed Insights and Search Console.
+sidebar:
+  order: 1
+---
+
+# Configuration
+
+Two sections of `appsettings.json` are involved: `Flowcourier:Matomo` for the Matomo connection (three values required — `Endpoint`, `TokenAuth` and `SiteId` — the rest have defaults) and `Flowcourier:Analytics` for everything shared by the Analytics section (all optional).
+
+## Matomo connection
+
+```jsonc
+{
+  "Flowcourier": {
+    "Matomo": {
+      "Enabled": true,
+
+      // Connection (required)
+      "Endpoint": "https://analytics.example.com/",
+      "TokenAuth": "<token_auth>",
+      "SiteId": 1,
+
+      // Where the pages are tracked (recommended)
+      "SiteUrl": "https://www.example.com",
+
+      // Multi-site installs (optional)
+      "Sites": [
+        { "RootContentKey": "6f1a…", "SiteId": 2, "SiteUrl": "https://other.example" }
+      ],
+
+      // Behaviour
+      "ReportCacheSeconds": 300,
+      "RealtimeCacheSeconds": 15,
+      "RealtimeMinutes": 30,
+      "TimeoutSeconds": 30
+    }
+  }
+}
+```
+
+Environment variables work too: `Flowcourier__Matomo__TokenAuth`, `Flowcourier__Matomo__SiteId`, and so on.
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `Enabled` | `true` | Master switch. When false the backoffice shows a "disabled" note and Matomo is never called. |
+| `Endpoint` | — | Base URL of your Matomo, with or without a trailing slash or `index.php`. |
+| `TokenAuth` | — | A Matomo API token (**Administration → Personal → Security → Auth tokens**). Tokens created with *Only allow secure requests* work: the token is only ever sent as a POST field, never in a URL. |
+| `SiteId` | — | The Matomo website ID (**Administration → Websites → Manage**). |
+| `SiteUrl` | Matomo's main URL for the site | Public base URL the pages are tracked under; used to build the per-page URLs for the document tab. |
+| `Sites` | `[]` | Per-root-node overrides for multi-site installs — see below. |
+| `ReportCacheSeconds` | `300` | How long a date-ranged report is cached on the server before Matomo is asked again. |
+| `RealtimeCacheSeconds` | `15` | Cache for the Realtime payload. The dashboard polls every 30 seconds; several open tabs share one Matomo call. |
+| `RealtimeMinutes` | `30` | The Realtime "active now" window. |
+| `TimeoutSeconds` | `30` | Per-request timeout for Matomo calls. |
+
+The effective values are shown (token masked) under **Settings → Flowcourier → Matomo**.
+
+## Shared Analytics settings
+
+```jsonc
+{
+  "Flowcourier": {
+    "Analytics": {
+      "SiteUrl": "https://www.example.com",
+      "GrantAdminSectionAccess": true,
+      "RealtimeBadge": { "Enabled": true, "PollSeconds": 60 },
+      "PageSpeed": { "Enabled": false, "ApiKey": "" },
+      "SearchConsole": { "Enabled": false, "Property": "" },
+      "Google": { "ServiceAccountJson": "", "ServiceAccountJsonPath": "" }
+    }
+  }
+}
+```
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `SiteUrl` | the provider's tracked URL | Public base URL used to build page URLs for PageSpeed Insights and Search Console. |
+| `GrantAdminSectionAccess` | `true` | On startup, add the Analytics section to the Administrators group if it is missing. |
+| `RealtimeBadge:Enabled` | `true` | The live visitor count on the Analytics section in the top bar. Every open backoffice tab polls for it (the server caches the answer for 15 s). |
+| `RealtimeBadge:PollSeconds` | `60` | Badge refresh interval (minimum 15). |
+| `PageSpeed:*` | off | See [PageSpeed Insights](/docs/analytics/guides/pagespeed-insights/). |
+| `SearchConsole:*`, `Google:*` | off | See [Search Console](/docs/analytics/guides/search-console/). |
+| `VisitorJourney:Enabled` | `true` | The [Visits dashboard and the per-visit journey](/docs/analytics/guides/reports/#visits). Set to `false` to remove the dashboard, answer the endpoints with 409 and stop any request for individual-visitor data reaching the provider. Only does anything when the installed provider answers per visit (Matomo does, Google Analytics cannot). |
+| `VisitorJourney:PageSize` | `50` | Visits per page in the list. The visits log is not archived data, so a wide page costs the Matomo host more. |
+| `VisitorJourney:MaxVisitorVisits` | `25` | Most earlier visits shown for one visitor. |
+| `AI:*` | on | The "Explain and suggest" button, when `Flowcourier.Umbraco.Analytics.AI` is installed. See [Ask the Copilot](/docs/analytics/guides/copilot/). |
+
+The effective values are shown (secrets masked) under **Settings → Flowcourier → Analytics**.
+
+### Who can see individual visitors
+
+The Visits dashboard, the journey panel and the Realtime report all show individual visits, so they require **Analytics section access**, checked on the server rather than only in the browser — every signed-in backoffice user can reach the API, because editors need the document Analytics tab. A user without the section gets a 403 and is offered no journey surface at all.
+
+## The token
+
+The token carries the rights of the Matomo user it was created for. Create it for a user that only has **view** access to the website so the token can never change anything in Matomo. Rotate it from Matomo whenever you like — the package picks up a changed `appsettings.json` value without a restart.
+
+Keep it out of source control: an environment variable, a user-secrets file or your host's secret store all bind to the same setting.
+
+## `SiteUrl` and multi-site installs
+
+Matomo stores **absolute** page URLs. To show a page's numbers, the document tab combines a base URL with the page's route (`/about-us/`) and asks Matomo for exactly that URL. The base URL is:
+
+1. `SiteUrl`, when set — use this whenever the Umbraco host differs from the tracked host (staging, an internal hostname, a load balancer), or when Matomo's registered main URL is not the canonical one.
+2. Otherwise the **main URL** registered for the website in Matomo.
+
+For an Umbraco install hosting several websites, map each content root to its Matomo site:
+
+```json
+"Sites": [
+  { "RootContentKey": "6f1a1b2c-…", "SiteId": 2, "SiteUrl": "https://second.example" },
+  { "RootContentKey": "9e8d7c6b-…", "SiteId": 3 }
+]
+```
+
+`RootContentKey` is the key (GUID) of the root node — copy it from the node's **Info** tab. A page reports against the closest configured ancestor; anything not covered falls back to the top-level `SiteId`/`SiteUrl`. The Analytics section dashboards always show the top-level site.
+
+## Findings
+
+The findings strip on the document tab compares the last `Flowcourier:Findings:WindowDays` full days (default 28) with the same length before. The traffic thresholds live under `Flowcourier:Analytics:Findings`:
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `MinPageviews` | `50` | Below this many pageviews in the window no traffic rule fires. |
+| `NewPageDays` | `14` | Pages younger than this are not reported for having no traffic. |
+| `TrafficDropPercent` | `30` | Visits down by at least this much vs the previous window. |
+| `LandingEntranceShare` | `0.4` | Share of visits starting on the page above which it counts as a landing page. |
+| `BounceAboveMedianFactor` | `1.5` | Landing-page bounce at or above the site median × factor. |
+| `ExitAboveMedianFactor` | `1.5` | Mid-funnel exit rate at or above the site median × factor. |
+| `SearchAfterPercent` | `10` | Site searches right after the page, as a share of its pageviews. |
+| `ServerTimeFactor` / `ServerTimeMinMs` | `2` / `300` | Page server time vs the site's, with a floor in milliseconds. |
+| `MinPagesForBaseline` | `5` | The site medians need at least this many pages with enough traffic. |
+| `CacheMinutes` | `10` | How long a page's computed findings are kept. |
+
+The site baseline (median bounce and exit rates over pages with at least `MinPageviews`, site server time) comes from the provider — Matomo reads its pages report and the PagePerformance plugin.
+
+## Which documents get the tab
+
+The document Analytics tab hides on nodes that are not web pages — settings, data folders, product data on a headless site. Detection is automatic (a template, traffic on the URL, whether the public site serves the URL), and configuration under `Flowcourier:Pages` overrides it:
+
+```json
+{
+  "Flowcourier": {
+    "Pages": {
+      "IncludeDocumentTypes": [],
+      "ExcludeDocumentTypes": ["siteSettings", "dataFolder"],
+      "ExcludeRoutePrefixes": ["/data/"],
+      "UseDeliveryApiDisallowedTypes": true,
+      "SiteUrl": "",
+      "Probe": { "Enabled": true, "TimeoutSeconds": 5 }
+    }
+  }
+}
+```
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `IncludeDocumentTypes` | — | When set, only these document types are pages. The simplest answer on a headless site. |
+| `ExcludeDocumentTypes` | — | Document types that are never pages. |
+| `ExcludeRoutePrefixes` | — | Routes under these prefixes are never pages. |
+| `UseDeliveryApiDisallowedTypes` | `true` | Types listed in Umbraco's `DeliveryApi:DisallowedContentTypeAliases` count as data. |
+| `SiteUrl` | the analytics provider's tracked URL | Where the public site is probed. Set it on a headless site whose front end is not the Umbraco host; without it, and with the Delivery API enabled, nothing is probed and undecided nodes keep the tab. |
+| `Probe:Enabled` | `true` | Ask the front end (HEAD, then GET) when nothing else decides. |
+
+The effective settings and the reasoning are shown under **Settings → Flowcourier → Page detection**.
+
+## Section access
+
+The Analytics section is an ordinary backoffice section. Administrators get it on the first start after install (`Flowcourier:Analytics:GrantAdminSectionAccess`); grant it to other groups under **Users → Groups → (group) → Sections → Analytics**. The document tab needs no extra permission — anyone who can open the document sees it.
+
+## Caching
+
+Matomo archives reports rather than counting live, so a five-minute server-side cache costs nothing in freshness while keeping the Matomo load flat when many editors have dashboards open. Set `ReportCacheSeconds` to `0` to disable it. The Realtime dashboard is cached for `RealtimeCacheSeconds` only.

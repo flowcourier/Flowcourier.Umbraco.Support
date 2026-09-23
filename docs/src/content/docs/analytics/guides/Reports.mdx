@@ -1,0 +1,146 @@
+---
+title: Reports
+description: What each Analytics dashboard and the document Analytics tab show, and which Matomo, PageSpeed Insights and Search Console reports the numbers come from.
+sidebar:
+  order: 2
+---
+
+# Reports
+
+All date-ranged views share one date-range control: **Today**, **Yesterday**, **7 days**, **30 days**, **This month**, **Last month**, **This year** or a **Custom** from/to pair. The selection is remembered for the browser session, so switching between dashboards and documents keeps the range. Headline metrics are compared with the **previous period of the same length** (▲ / ▼ with the percentage change; bounce and exit rates read "good" when they go down).
+
+Dates are interpreted in the Matomo website's time zone, exactly as in Matomo itself.
+
+## Analytics section
+
+Referrer tables show the brand's logo beside its name when it is a known search engine, social network, AI assistant or site — grey at rest, in colour when you hover the row.
+
+### Realtime
+
+Who is on the site right now:
+
+- **World map** of where the current visitors are: one bubble per city (or country when the city is unknown), sized by visits, with the details on hover. Needs city-level GeoIP in Matomo — the default GeoIP 2 database includes it; without coordinates the map stays empty and the overview says so.
+- **Active visitors** in the last 30 minutes (`RealtimeMinutes`) and visits in the last 5, with visits and actions.
+- **Visits per minute** across that window.
+- **Latest visitors** — last seen, location, device, browser and OS, referrer, actions, duration and the last page viewed.
+- **Devices**, **countries** and **pages being viewed** in the window.
+
+Refreshes every 30 seconds while open. Source: `Live.getCounters` and `Live.getLastVisitsDetails`.
+
+### Visitors
+
+- Headline cards: **Visits**, **Pageviews**, **Avg. visit duration**, **Actions per visit**, **Bounce rate** — and **Unique visitors** when your Matomo computes them for custom ranges.
+- **Visits over time**: visits, unique visitors and pageviews per day.
+- **Countries**, **regions** and **cities**.
+
+Source: `VisitsSummary.get`, `Actions.get`, `UserCountry.*`.
+
+### Behaviour
+
+- The same headline cards and a **pageviews over time** chart.
+- **Pages** — pageviews, visits, average time on page, bounce and exit rates for the 25 most viewed pages.
+- **Entry pages** and **exit pages**.
+
+Source: `Actions.getPageUrls`, `Actions.getEntryPageUrls`, `Actions.getExitPageUrls`.
+
+### Acquisition
+
+- Cards per channel: **Direct**, **Search engines**, **Social networks**, **Websites**, **Campaigns** and **AI assistants** (ChatGPT, Perplexity, Copilot … — reported by Matomo 5.x) with their share of visits.
+- **Top referrers** chart and **channels** donut.
+- Tables: all referrers, search engines, social networks, AI assistants, websites, campaigns.
+
+Source: `Referrers.getReferrerType`, `Referrers.getAll`, `Referrers.getSearchEngines`, `Referrers.getSocials`, `Referrers.getWebsites`, `Referrers.getCampaigns`.
+
+### Technology
+
+- Cards: **Desktop**, **Mobile** (smartphones and phablets) and **Tablet** shares.
+- **Browsers** chart and **device types** donut.
+- Tables: browsers, operating systems, device types, device models, screen resolutions.
+
+Source: `DevicesDetection.*`, `Resolution.getResolution`.
+
+### Visits
+
+Shown when the installed provider can answer per visit — Matomo can, Google Analytics cannot, so on a GA install this dashboard does not appear at all.
+
+The visits of the selected range, newest first, one page at a time, with a filter for a single visitor id or user id. Opening one shows its **journey**: the entry page, each pageview with the time spent on it, and the last marked as the exit. Events, goals, site searches, downloads and outlinks are shown *on* the pageview they happened on rather than as steps of their own, so the path stays a path. **Earlier visits by this visitor** opens any of them in the same panel.
+
+Two things worth knowing:
+
+- **Time on the last page reads "—", not "0s".** Matomo cannot know how long someone stayed on the page they left from unless the site's own tracking code calls `enableHeartBeatTimer()`. These packages only read Matomo's Reporting API; they do not emit tracking code. A dash means "not measured", which is the truth.
+- **Identity is the user id when your site sets one**, and the per-device visitor id otherwise — the visitor id changes when the same person uses another device, so a history resolved by it is narrower.
+
+The **Realtime** dashboard's visitor rows open the same panel, marked *Active now*, using data that report already carries — no extra polling.
+
+Access is Analytics section access, checked on the server; `Flowcourier:Analytics:VisitorJourney:Enabled` turns the whole feature off. Nothing is stored in Umbraco. See [Configuration](/docs/analytics/guides/configuration/) for both.
+
+### Search queries
+
+Shown when [Search Console](/docs/analytics/guides/search-console/) is enabled: clicks, impressions, average CTR and position with previous-period comparison, a daily chart, and the top queries (with a filter), pages, countries and devices for the property.
+
+## The document Analytics tab
+
+Open any document and switch to **Analytics**. The tab has one sub-tab per connected source — **Traffic** (the provider), **Page speed** ([PageSpeed Insights](/docs/analytics/guides/pagespeed-insights/)) and **Search Console** ([Search Console](/docs/analytics/guides/search-console/)) — and remembers the one you used last.
+
+The tab appears only on documents that are web pages. Umbraco cannot tell a settings node from a page by itself, so the packages decide per document: your configuration first (see [which documents get the tab](/docs/analytics/guides/configuration/#which-documents-get-the-tab)), then a template, then traffic on the page's URL, then whether the public site serves it. A page that is new or has no data yet keeps the tab with a notice; a node judged to be data gets none.
+
+The tab is shared by every Flowcourier extension, so the other ones you have installed add their own sub-tabs beside these: **SEO** (the [SEO Agent](/docs/ai/guides/seo-agent/): this page's SEO fields, and its AI-readiness score where AEO can produce one) and **AI Visibility** ([AEO](/docs/aeo/start-here/get-started/): which AI crawlers fetched this page and who arrived from an assistant, with a dot on the sub-tab when one has been here in the last day). Nothing to configure — installing the package adds its sub-tab, and a package installed on its own simply has the tab to itself.
+
+The Traffic view is scoped to the page's tracked URL for the language you are editing:
+
+- **Pageviews**, **visits** (visits that viewed the page), **avg. time on page**, **bounce rate**, **exit rate** and **entrances**, each compared with the previous period.
+- **Pageviews over time** per day, with the page flow directly beneath it.
+- **How visitors reach this page, and where they go next** — one flow instead of two lists. On the left, where they arrived from: other pages of your site and external referrers. On the right, what they did next: other pages, links off the site, downloads, the visits that came back to this page, and the ones that left the site altogether. Each side shows its top 8 plus one "other" row that carries the rest honestly, and every entry its share of that side. The **List** button swaps the graph for the numbers.
+
+  The bands run from each side into the page, never straight across it: without a segment applied the two sides are separate totals, so a band drawn from one arrival to one departure would claim a path through the page that the data does not actually show.
+
+  **Narrow it to one channel** by clicking an arrival group — search engines, social networks, direct, campaigns, AI assistants. Only the flow reloads, and the right-hand side then genuinely is conditional on the left: *of the people who arrived from search, here is where they went*. "All" puts it back.
+
+  The narrowed view is capped at the last 90 days and cached for 15 minutes. That is not arbitrary: unlike the rest of the tab, this report is built from raw logs rather than pre-archived data, and a wide range makes the Matomo host work hard for it.
+
+  Needs Matomo's Transitions plugin. Without it this area shows its empty state and the rest of the Traffic view is unaffected.
+- **Channels** that brought visitors here, as a bar chart of the top 5. Clicking a channel drills into the individual referrers within it — the same shape as the countries card below. "Direct" is the exception: those visitors arrived with no referrer at all, so there is nothing to list, and the card says so rather than showing an empty table.
+- **Top referrers** to this page, again as a bar chart of the top 5 with brand marks.
+- **Where the visitors are** — countries as a bar chart, with a **Table** toggle for the exact numbers. Clicking a country drills into its cities; **All countries** goes back. Both levels come from the same request, so drilling in costs nothing and is instant.
+- **Technology** — device types and browsers in one card, switched with the **Devices** / **Browsers** buttons. The devices donut carries the whole site's split in its legend for the same range ("Mobile · site 62%"), so the page's mix can be read against the baseline.
+
+Every one of these cards opens as a chart and has a **Table** toggle. The chart shows the top few, which is what a shape is for; the table shows the rest.
+
+Source: `Actions.getPageUrl` for the page's own metrics and daily series, `Transitions.getTransitionsForPageUrl` for the previous/next pages, and the referrer, location and device reports filtered with a `pageUrl==` segment.
+
+### Findings: what to look at first
+
+The tab opens with a strip of findings — things worth changing on this page, each with the evidence and a button to the sub-tab holding the detail. They judge the last 28 days against the 28 before (not the date range picked below), so they stay put between visits, and a page with fewer than 50 pageviews in the window says so instead of guessing.
+
+**A page younger than 14 days gets no strip at all** — not an empty one. Nothing useful can be said about a page nobody has had the chance to visit yet, and "nothing to fix" on a page published yesterday reads as a clean bill of health it has not earned. No source is even asked, so a new page costs no upstream calls. The threshold is `Flowcourier:Findings:NewPageDays`; set it to `0` to judge every page from the day it is created. Nodes that are not web pages are skipped the same way.
+
+| Finding | It fires when | What it suggests |
+|---------|---------------|------------------|
+| Traffic down | Visits fell 30 % or more; the channel that fell most is named | Depends on the channel: search → title, description and queries; social → the posts have aged; direct → a link changed; campaigns → the campaign ended; AI → refresh the answer-first structure |
+| No visits | An old page recorded no pageviews | Link it from pages with traffic; check the sitemap and index status |
+| Visitors land here and leave | A landing page's bounce rate is 1.5× the site median | Make the first screen answer what brought people here; add a next step |
+| Visitors stop here | A mid-funnel page's exit rate is 1.5× the site median | Add the next step where visitors currently stop |
+| No page leads here | No internal previous page in the window | Add links from related pages |
+| Visitors search right after | Site searches after the page reach 10 % of its pageviews; the terms are listed | Cover the searched terms, or link to the pages that do |
+| Slow on the server | Server time is 2× the site's and at least 300 ms | A developer or hosting problem, not a content edit |
+| Not indexed | The last Search Console inspection is not a pass (see the advice table in the Search Console guide) | Per state |
+| Queries just off the first page | Search Console queries at positions 8–20 with 100+ impressions whose words are missing from the title and headings (SEO Agent) | Work the term into the title or a heading |
+| AI assistants read it but never cite it | Verified AI-bot fetches, zero visitors from assistants (AEO) | Direct answer up top, question-shaped headings, llms.txt |
+
+Thresholds are under `Flowcourier:Analytics:Findings` and the window under `Flowcourier:Findings:WindowDays`; both are shown on the settings pages.
+
+### When the tab shows a notice instead
+
+| Notice | Meaning |
+|--------|---------|
+| *Nothing to report yet* | The document has never been saved — publish it first. |
+| *This page has no public URL* | The page is not published in this language, or no tracked base URL could be determined (set `SiteUrl`). |
+| *No visits recorded* | Matomo has no pageviews for that URL in the range. Widen the range, or check that the tracked URL (shown in the notice) matches what Matomo records — see [`SiteUrl`](/docs/analytics/guides/configuration/#siteurl-and-multi-site-installs). |
+| *Connect Matomo to see analytics here* | `Endpoint`, `TokenAuth` or `SiteId` is missing. |
+| *Matomo rejected the token* | The token is invalid, expired or its user cannot view the site. |
+
+## Where the numbers differ from Matomo's UI
+
+- **Unique visitors** over a custom range are omitted unless your host enables `enable_processing_unique_visitors_range`; Matomo's own UI hides them in the same case.
+- The document tab's **visits** metric counts visits that included the page, so it can exceed the page's entrances and never exceeds its pageviews.
+- Segment-based breakdowns are processed on the fly. On hosts with browser-triggered archiving disabled they can be empty until the segment has been archived; the page metrics and Transitions are unaffected.

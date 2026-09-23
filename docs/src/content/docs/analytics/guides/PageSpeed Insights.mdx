@@ -1,0 +1,61 @@
+---
+title: PageSpeed Insights
+description: Turn on the "Page speed" view on every document — Lighthouse scores, Core Web Vitals and real-user data from Google PageSpeed Insights, without leaving Umbraco.
+sidebar:
+  order: 3
+---
+
+# PageSpeed Insights
+
+With PageSpeed Insights enabled, every document's **Analytics** tab gets a **Page speed** view that runs Google's Lighthouse analysis for the page's public URL, for **mobile** or **desktop**:
+
+- **Scores** — Performance, Accessibility, Best practices and SEO as Lighthouse score rings.
+- **Lab metrics** — Largest Contentful Paint, First Contentful Paint, Cumulative Layout Shift, Total Blocking Time, Speed Index, Time to Interactive and server response time, coloured good / needs work / poor exactly like Lighthouse.
+- **Real-user data** — 75th-percentile LCP, INP, CLS, FCP and TTFB from the Chrome UX Report when Google has enough traffic for the page (or, failing that, for the whole site).
+- **Opportunities** — the Lighthouse suggestions with the biggest estimated savings.
+- **Failing audits** per category, with Lighthouse's explanation and links.
+
+An analysis takes 20–60 seconds. The last result is kept on the server for a day (`CacheHours`) so opening the tab is instant; **Run new analysis** starts a fresh one. Two editors opening the same page at the same time share one run.
+
+## Enable it
+
+```json
+{
+  "Flowcourier": {
+    "Analytics": {
+      "SiteUrl": "https://www.example.com",
+      "PageSpeed": {
+        "Enabled": true,
+        "ApiKey": "<google api key>"
+      }
+    }
+  }
+}
+```
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `PageSpeed:Enabled` | `false` | Shows the Page speed view. |
+| `PageSpeed:ApiKey` | — | A Google Cloud API key with the **PageSpeed Insights API** enabled. Strongly recommended: without a key Google applies a tiny anonymous quota shared with everyone on your outbound IP, and the view reports *quota exceeded* once it is used up. |
+| `PageSpeed:Referer` | the analysed page's origin | Sent as the HTTP referrer of every request, so a key restricted to **HTTP referrers** (your site's domain) works from the server. Set it only when the key allows a different URL. |
+| `PageSpeed:DefaultStrategy` | `mobile` | Which strategy the view analyses first. |
+| `PageSpeed:Categories` | performance, accessibility, best-practices, seo | Lighthouse categories to run. Fewer categories finish faster. |
+| `PageSpeed:CacheHours` | `24` | How long a finished analysis is reused. |
+| `PageSpeed:TimeoutSeconds` | `120` | Give up on a run after this long. |
+| `SiteUrl` | the traffic provider's tracked URL | The public base URL the page URL is built from. Set it explicitly when the Umbraco host differs from the public one. |
+
+### Getting an API key
+
+1. In [Google Cloud Console](https://console.cloud.google.com/), pick or create a project.
+2. **APIs & Services → Library**: enable **PageSpeed Insights API**.
+3. **APIs & Services → Credentials → Create credentials → API key**. Restrict the key to the PageSpeed Insights API. If you also add an *application* restriction, choose **IP addresses** (your server's outbound address) or **HTTP referrers** that include your site (`www.example.com/*`): the package sends your site's URL as the referrer. A key whose referrer list does not include the site fails with *Requests from referer … are blocked* — the error names the URL to allow.
+4. Put the key in `Flowcourier:Analytics:PageSpeed:ApiKey` — an environment variable (`Flowcourier__Analytics__PageSpeed__ApiKey`) keeps it out of source control.
+
+The key is shown masked under **Settings → Flowcourier → Analytics**.
+
+## Notes
+
+- The **Real-user data (Chrome UX Report)** section shows Chrome's field data (LCP, INP, CLS, FCP, TTFB at the 75th percentile) for the page, or for the whole site when the page alone has too little traffic. When neither is available the section says so — the lab metrics are the guide until enough visitors have loaded the page.
+- Google analyses the **public** page: it must be reachable from the internet. Staging sites behind a login or an IP allow-list get a fetch error.
+- Only published pages have a URL to analyse; the view says so otherwise.
+- PageSpeed Insights runs from Google's infrastructure, so results reflect Google's location and network conditions, not a visitor's.

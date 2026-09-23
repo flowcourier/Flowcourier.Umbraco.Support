@@ -1,0 +1,156 @@
+---
+title: Ask the Copilot
+description: Put the analytics figures in the Umbraco AI Copilot — ask how a page is doing, what lost traffic, or whether it is indexed — plus "Explain and suggest" on the document Analytics tab.
+sidebar:
+  order: 5
+---
+
+# Ask the Copilot
+
+`Flowcourier.Umbraco.Analytics.AI` lets the Umbraco AI Copilot read the same
+figures the Analytics dashboards show. Ask *"how is this page doing?"*, *"what
+lost the most traffic last month?"* or *"is this indexed?"* and the agent
+answers from measured data rather than from guesswork.
+
+It also adds **Explain and suggest** to the findings strip on every document's
+Analytics tab: one button that turns the findings already computed for the page
+into three prioritised edits.
+
+## Install
+
+It needs the Analytics core, a provider, and the Umbraco AI Copilot:
+
+```bash
+dotnet add package Flowcourier.Umbraco.Analytics.AI --prerelease
+```
+
+`Flowcourier.Umbraco.Analytics.Core` and `Flowcourier.Umbraco.Foundation` come
+with it. You also need a provider package such as
+`Flowcourier.Umbraco.Matomo`, and the Umbraco AI Copilot with a **Chat
+profile** configured.
+
+Nothing else to switch on. The tools appear in the Copilot under the
+**Analytics** scope, and the button appears on the document tab, as soon as the
+site has a Chat profile.
+
+:::note
+The Analytics core has **no** dependency on Umbraco AI. A site running Matomo
+with no AI at all is unaffected by this package existing — which is why it is a
+separate install rather than part of the core.
+:::
+
+## What the agent can read
+
+| Ask about | The tool behind it |
+|---|---|
+| How one page is doing — pageviews, visits, time on page, bounce, exit, entrances, each against the previous period, plus its channels, referrers, devices and countries | `flowcourier-page-stats` |
+| How people reach a page and what they do next, optionally narrowed to one arrival channel | `flowcourier-page-flow` |
+| What is worth changing about a page — every installed package's verdict, the same strip the tab shows | `flowcourier-page-findings` |
+| The Google searches that bring people to a page, with clicks, impressions, CTR and position | `flowcourier-page-queries` |
+| Whether Google has indexed a page, and what it thinks of it | `flowcourier-index-status` |
+| Which pages gained or lost the most traffic across the site | `flowcourier-top-movers` |
+| Which published pages get no traffic at all | `flowcourier-zero-traffic-pages` |
+| Which AI crawlers fetched a page, and whether anyone arrived from an assistant afterwards | `flowcourier-crawler-hits` |
+
+### Tools disappear rather than fail
+
+A tool that is installed but always answers "not configured" costs a round
+trip, fills the agent's context and invites it to keep trying. So each is
+removed from the Copilot when its data source is absent: with no traffic
+provider the traffic tools are gone, and without
+[`Flowcourier.Umbraco.AEO`](/docs/aeo/start-here/get-started/) the crawler tool is gone. The Copilot
+then simply cannot answer those questions, instead of answering them badly.
+
+### Two things the agent is told, and you should know
+
+**Every window ends yesterday.** Today is still being recorded, and a half day
+of data reads as a collapse in traffic. If you ask *"how is this page doing
+today?"* the answer covers up to yesterday, and says so.
+
+**"Crawled but never cited" is a real state.** A page an AI crawler fetches
+repeatedly and never sends anyone back from is not the same as a page nothing
+has looked at. The crawler tool reports fetches that failed verification
+separately, so a spoofed hit is never read as genuine AI interest.
+
+## Explain and suggest
+
+On a document's **Analytics** tab, under the findings, one button turns what
+the packages have computed into three prioritised edits — each with the
+evidence it rests on and what to actually do.
+
+The model is given:
+
+- the **findings** for the page, with their figures,
+- the page's stored **meta title and description**,
+- its **top 10 search queries**, when Search Console is connected.
+
+**The numbers are never the model's.** They are stated in the prompt, and it is
+asked to prioritise and word them — never to calculate. A model asked to
+"analyse this page's traffic" will happily produce plausible percentages, and
+nobody reading the result can tell those from the measured ones. It is also
+told not to claim a cause the evidence does not show: *"traffic fell 40%, and
+search fell most"* is supported; *"traffic fell because of an algorithm
+update"* is not.
+
+The answer is kept for a day per page, language and window — the evidence is a
+28-day window that barely moves overnight, and every call costs tokens. **Ask
+again** forces a fresh one.
+
+The button does not appear at all when the site has no Chat profile. An action
+that is offered and then refuses is worse than one that was never offered.
+
+### Editing the wording
+
+If you have the **Umbraco AI Prompt** add-on installed, the prompt is seeded
+once as an ordinary editable prompt called **Analytics — explain and suggest**.
+Change it freely: it is yours from the moment it is created, and is never
+overwritten. Delete it and it comes back on the next restart — delete it *and*
+set `AI:Enabled` to `false` to keep it gone.
+
+Without the add-on, a built-in prompt is used and there is nothing to edit.
+
+## Privacy
+
+**Every tool returns aggregates only.** None of them touches the visits log,
+visitor ids or IP addresses. What an agent can see here is exactly what the
+dashboards already show anyone with access to the Analytics section — page
+totals, channel splits, country counts.
+
+The per-visit data behind the
+[Visits dashboard](/docs/analytics/guides/reports/#visits) is **not** exposed to
+the Copilot at all. No tool can list individual visits or follow one visitor.
+
+Nothing in the package writes. Every tool is marked non-destructive, and a test
+in the build enforces it rather than trusting the marking.
+
+What does leave your site is what you would expect: when the agent calls a
+tool, the tool's result goes to whichever model your Chat profile points at,
+the same as any other Copilot conversation. Choose the profile accordingly.
+
+## Settings
+
+Under `Flowcourier:Analytics:AI`:
+
+| Setting | Default | Description |
+|---|---|---|
+| `Enabled` | `true` | The "Explain and suggest" button and its endpoint. The tools are unaffected — they are governed by the Copilot's own scope settings. |
+| `CacheHours` | `24` | How long one page's answer is kept before the button asks again. |
+| `TimeoutSeconds` | `60` | Give up rather than leave an editor waiting on a slow model. |
+| `TitleFieldAliases` | `seoTitle`, `metaTitle`, `metaName`, `browserTitle` | Property aliases checked, in order, for the page's meta title. |
+| `DescriptionFieldAliases` | `seoMetaDescription`, `metaDescription` | Property aliases checked, in order, for the meta description. |
+
+The alias defaults match the [SEO Agent's](/docs/ai/guides/seo-agent/), so a
+site that has configured one does not have to think about the other. They are
+deliberately narrow: on many document types `title` and `description` are body
+content, not metadata, and feeding those to the model would produce advice
+about the wrong field.
+
+## When something is missing
+
+| What you see | Why |
+|---|---|
+| No Analytics tools in the Copilot | No provider package installed, or none configured. Check **Settings → Flowcourier → Analytics**. |
+| No **Explain and suggest** button | No Umbraco AI **Chat profile** on the site, or `AI:Enabled` is `false`. |
+| The button says nothing was suggested | The page has no findings and no search queries — there is nothing measured to reason from. |
+| No AI crawler tool | `Flowcourier.Umbraco.AEO` is not installed. |
+| The agent reports figures that disagree with the dashboard | Ask it to quote the tool's numbers rather than recomputing them. Percentages derived from rounded figures will not match. |
