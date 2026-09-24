@@ -14,7 +14,7 @@ Flowcourier Analytics puts your web analytics where editors work — in the Umbr
 
 - An **Analytics** section that opens on an **Overview** — human traffic and AI-agent traffic side by side — followed by **Realtime**, **Visitors**, **Behaviour**, **Acquisition** and **Technology**, and a live visitor count on the section itself. Installing [Flowcourier AEO](/docs/aeo/start-here/get-started/) adds **AI Crawlers** and **AI Referrals** here too, and fills in the AI half of the Overview.
 - An **Analytics tab on every document** showing that page's traffic, where its visitors came from, which pages they came from and went to next, and their locations and devices.
-- Optional [**PageSpeed Insights**](/docs/analytics/guides/pagespeed-insights/) and [**Search Console**](/docs/analytics/guides/search-console/) views on the same tab, plus a **Search queries** dashboard.
+- A **Google Search** sub-tab on the same tab, filled by [**Search Console**](/docs/analytics/guides/search-console/) and [**PageSpeed Insights**](/docs/analytics/guides/pagespeed-insights/) — either one on its own is enough for it — plus a **Search queries** dashboard.
 - Optionally, the same figures [**in the Umbraco AI Copilot**](/docs/analytics/guides/copilot/) — ask how a page is doing or what lost traffic, and get an answer from measured data.
 
 Two packages make this up: `Flowcourier.Umbraco.Analytics.Core` (the section, the tab, the Google features) and a **provider** that supplies the traffic data — today `Flowcourier.Umbraco.Matomo`, reading live from your own Matomo (self-hosted or Matomo Cloud) through its Reporting API. Installing the provider brings the core in. A third, `Flowcourier.Umbraco.Analytics.AI`, is optional and only for sites running the [Umbraco AI Copilot](/docs/analytics/guides/copilot/) — the core has no AI dependency of its own. Nothing about your visitors is stored, and the only database table is the index-status cache, created just for sites that turn [Search Console index tracking](/docs/analytics/guides/search-console/) on.
@@ -68,7 +68,7 @@ Two packages make this up: `Flowcourier.Umbraco.Analytics.Core` (the section, th
 
 6. Optional: add PageSpeed Insights and Search Console
 
-    Both are off by default and each is a few lines of configuration: [PageSpeed Insights](/docs/analytics/guides/pagespeed-insights/) adds a **Page speed** view to the document tab; [Search Console](/docs/analytics/guides/search-console/) adds a **Search Console** view and a **Search queries** dashboard.
+    Both are off by default and each is a few lines of configuration. Either one adds the **Google Search** sub-tab to the document tab: [Search Console](/docs/analytics/guides/search-console/) fills it with Google's index status and the queries that bring people to the page (and adds a **Search queries** dashboard), [PageSpeed Insights](/docs/analytics/guides/pagespeed-insights/) with the page's Lighthouse scores and real-user data.
 
 </Steps>
 

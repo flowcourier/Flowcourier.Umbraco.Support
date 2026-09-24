@@ -1,6 +1,6 @@
 ---
 title: Search Console
-description: Connect Google Search Console — a "Search queries" dashboard and a per-page view with the queries that bring visitors and Google's index status for the page.
+description: Connect Google Search Console — a "Search queries" dashboard and the "Google Search" sub-tab on every document, with the queries that bring visitors and Google's index status for the page.
 sidebar:
   order: 4
 ---
@@ -10,7 +10,7 @@ sidebar:
 With Search Console enabled you get:
 
 - A **Search queries** dashboard in the Analytics section: clicks, impressions, average CTR and average position for the selected range (compared with the previous period), a daily chart, and the top queries, pages, countries and devices.
-- A **Search Console** view on every document's **Analytics** tab: Google's **index status** for the page (verdict, coverage, last crawl, canonical, fetch and robots.txt state, a link to the URL Inspection tool) and the page's own queries, countries and devices.
+- The **Google Search** sub-tab on every document's **Analytics** tab: Google's **index status** for the page (verdict, coverage, last crawl, canonical, fetch and robots.txt state, a link to the URL Inspection tool) and the page's own queries, countries and devices. [PageSpeed Insights](/docs/analytics/guides/pagespeed-insights/) fills the rest of that sub-tab when it is enabled too — both are Google's verdict on the same page.
 
 Everything is read from the Search Console API with a **service account**. No Google SDK is bundled: the package signs a short-lived JWT with the account's key and exchanges it for an access token.
 
@@ -59,7 +59,7 @@ The key JSON is long: an environment variable (`Flowcourier__Analytics__Google__
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `SearchConsole:Enabled` | `false` | Shows the dashboard and the document view. |
+| `SearchConsole:Enabled` | `false` | Shows the dashboard and the Search Console half of the document's Google Search sub-tab. |
 | `SearchConsole:Property` | `SiteUrl` + `/` | The property exactly as Search Console lists it: a URL-prefix property (`https://www.example.com/`) or a domain property (`sc-domain:example.com`). |
 | `SearchConsole:CacheSeconds` | `900` | Server-side cache for search analytics. |
 | `SearchConsole:InspectionCacheMinutes` | `60` | Cache for URL inspection results (the inspection API allows about 2 000 calls per day per property). |
@@ -74,7 +74,7 @@ The key JSON is long: an environment variable (`Flowcourier__Analytics__Google__
 - Search Console finalises data with a **delay of about two days**; the newest days can still change. The dashboard states the latest day that has data.
 - **Position** is the average ranking — lower is better, and the change arrow is coloured accordingly.
 - **Index status** is what Google reported when the page was last inspected. The view caches it for an hour; **Re-check** asks Google again.
-- The per-page view filters search analytics to the page's exact public URL (`SiteUrl` + route). If Search Console knows the page under a different URL (a redirect, a trailing-slash difference), set `SiteUrl` to match.
+- The per-page figures filter search analytics to the page's exact public URL (`SiteUrl` + route). If Search Console knows the page under a different URL (a redirect, a trailing-slash difference), set `SiteUrl` to match.
 
 ## Errors you may see
 
@@ -86,7 +86,7 @@ The key JSON is long: an environment variable (`Flowcourier__Analytics__Google__
 
 ## Index status: checked on demand, with advice
 
-The document's **Search Console** view shows Google's index status for the page — verdict, coverage state, last crawl, canonical, robots and fetch state — together with what to do about it. The state is translated into one line of advice with a severity:
+The document's **Google Search** sub-tab shows Google's index status for the page — verdict, coverage state, last crawl, canonical, robots and fetch state — together with what to do about it. The state is translated into one line of advice with a severity:
 
 | Google says | Advice |
 |-------------|--------|

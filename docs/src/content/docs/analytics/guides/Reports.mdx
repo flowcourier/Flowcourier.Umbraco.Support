@@ -102,7 +102,12 @@ Reading crawler data needs either the Analytics section or the Settings section.
 
 ## The document Analytics tab
 
-Open any document and switch to **Analytics**. The tab has one sub-tab per connected source — **Traffic** (the provider), **Page speed** ([PageSpeed Insights](/docs/analytics/guides/pagespeed-insights/)) and **Search Console** ([Search Console](/docs/analytics/guides/search-console/)) — and remembers the one you used last.
+Open any document and switch to **Analytics**. The tab has one sub-tab per connected source — **Traffic** (the provider) and **Google Search** — and remembers the one you used last.
+
+**Google Search** is both of Google's views of the page in one place, because an editor reads them as one question: does Google have this page, and is it fast when it gets there? It appears when either feature is enabled and shows whichever half this site can serve, saying in one line what the other would add.
+
+- From [Search Console](/docs/analytics/guides/search-console/): the page's **index status** with what to do about it, its canonical and discovery detail, clicks and impressions over time, and the queries, countries and devices behind them.
+- From [PageSpeed Insights](/docs/analytics/guides/pagespeed-insights/): the **Lighthouse scores** and the real-user (Chrome UX Report) numbers, for mobile or desktop. It shows the last analysis the server holds and waits for **Run analysis** before starting a new one — a run takes 20–60 seconds and spends PageSpeed quota. Lighthouse's own detail is a link away in Google's tool, which runs a fresh test there, so its numbers will differ.
 
 The tab appears only on documents that are web pages. Umbraco cannot tell a settings node from a page by itself, so the packages decide per document: your configuration first (see [which documents get the tab](/docs/analytics/guides/configuration/#which-documents-get-the-tab)), then a template, then traffic on the page's URL, then whether the public site serves it. A page that is new or has no data yet keeps the tab with a notice; a node judged to be data gets none.
 
