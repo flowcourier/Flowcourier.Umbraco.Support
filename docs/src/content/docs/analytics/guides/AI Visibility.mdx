@@ -1,0 +1,156 @@
+---
+title: AI Visibility
+description: Run your own prompt set through your own AI profiles with web search, count what the answers cite, and put the real signals — AEO's crawler fetches and Google's clicks — beside the sampled ones.
+sidebar:
+  order: 6
+  badge: Pro
+---
+
+# AI Visibility
+
+The hosted "AI visibility" tools run a fixed set of prompts against the AI
+assistants on a schedule, record the answers and count which URLs each answer
+cites. Every number they show is a citation inside *their* sampled answers, and
+they cannot see the one thing that is not a sample: which of your pages the
+assistants' crawlers actually fetch.
+
+`Flowcourier.Umbraco.Analytics.AI` does the lean version inside your site, on
+your own Umbraco AI profiles and your own key, and puts the two real signals
+beside it — [AEO](/docs/aeo/start-here/get-started/)'s verified AI-crawler
+fetches and [Search Console](/docs/analytics/guides/search-console/)'s clicks.
+
+:::note[What a share means here]
+Every share on these surfaces is **within your prompt set**, over the answers
+that searched the web. Write a different prompt set and you get different
+numbers. A run where the model answered from memory without searching is
+counted apart ("Answered without search") — it says nothing about whether your
+site would have been found — and never as "not cited".
+:::
+
+## How it works
+
+1. **Prompts.** You write the questions you want assistants to answer with your
+   site — on the dashboard, or on a document's sub-tab (a prompt *aimed at*
+   that page), or by letting the model suggest some from the page's text.
+2. **Sampling.** Every prompt is put to each configured chat profile, with the
+   provider's **web search** switched on, every 72 hours by default. The
+   answer and the URLs it cites are stored.
+3. **Reading.** Each cited host is yours, a competitor's or third party's,
+   decided from your configuration when a report is built — so editing the
+   competitor list reclassifies history instead of splitting it. Cited URLs on
+   your own hosts are resolved to the documents behind them.
+
+Every run is a model call **plus a provider-priced web search** on your key. It
+is off by default; there is a daily run budget; and the dashboard states the
+sample size above its figures.
+
+## Install and switch on
+
+It needs the [Analytics AI package](/docs/analytics/guides/copilot/#install),
+an Umbraco AI **chat profile whose model can search the web** (an OpenAI
+Responses-API model such as `gpt-5.x` or `gpt-4.1` today), and an **Analytics
+Pro** licence.
+
+```json
+{
+  "Flowcourier": {
+    "Analytics": {
+      "AI": {
+        "Visibility": {
+          "Enabled": true,
+          "ProfileAliases": ["sampling"],
+          "BrandNames": ["Acme"],
+          "BrandDomains": [],
+          "CompetitorDomains": ["rival.com"],
+          "DailyRunBudget": 100,
+          "IntervalHours": 72
+        }
+      }
+    },
+    "Licenses": {
+      "AnalyticsPro": "FC1.…"
+    }
+  }
+}
+```
+
+| Setting | Default | What it does |
+|---|---|---|
+| `Enabled` | `false` | The whole feature. Off, nothing is stored and nothing appears. On, three tables are created on the next start (`FcAiVisibilityPrompt`, `FcAiVisibilityRun`, `FcAiVisibilityCitation`). |
+| `ProfileAliases` | `[]` | The chat profiles to sample, one answer per prompt per profile. Empty means the default chat profile. **Use a dedicated profile without a system-prompt template** — a template written for the Copilot steers the sampled answer. |
+| `IntervalHours` | `72` | How long after its last run a prompt is due again. Answers are not deterministic; a share only settles over repeated runs. |
+| `DailyRunBudget` | `100` | Runs (prompt × profile) per UTC day, shared by the scheduled job and **Run now**. |
+| `MaxPrompts` | `200` | The most prompts a site may track — a cap on the bill. |
+| `BrandNames` | `[]` | Names whose presence in an answer's text counts as a mention. |
+| `BrandDomains` | `[]` | Hosts that are "you". Your site URL's host and the Umbraco domains are always included. |
+| `CompetitorDomains` | `[]` | Hosts that are competitors. Everything else cited is third party. |
+| `RetentionDays` | `365` | How long answers are kept. |
+| `RunTimeoutSeconds` | `90` | A run that has not answered by then is recorded as a timeout. |
+
+Settings → Flowcourier → **Analytics AI** shows the configuration and the
+licence state.
+
+## The dashboard
+
+Analytics → **AI Visibility** (it sits between Search queries and AEO's AI
+Crawlers):
+
+- **Prompts tracked**, **answers sampled**, **cited** (answers with web search
+  that cite your site), **mentioned**, **competitors cited** and **answered
+  without search**, each against the previous period.
+- **Cited share over time**, one line per model.
+- **Who gets cited** — your site, competitors, third party — and the **cited
+  domains**.
+- **Your cited pages**, each opening the document, with AEO's count of
+  verified AI-agent fetches beside it when AEO is installed. Fetches are real
+  traffic; citations are a sample.
+- **Prompts** — add, pause, run now, remove; a row opens the sampled answers:
+  the latest answer as the assistant gave it, its cited sources, and the run
+  history per model.
+- **Gaps** — prompts whose latest answer cites a competitor and not you.
+- **Real fetches vs sampled citations** — pages AI agents fetch but the
+  answers never cite (the pages to restructure for answer engines), and pages
+  cited but never fetched. Computed against AEO's 200 most-fetched paths in the
+  range, and the card says so.
+
+**Run due prompts now** samples immediately instead of waiting for the hourly
+tick, within the same daily budget.
+
+## The document sub-tab
+
+On every web page's Analytics tab, **AI Visibility** (after AEO's
+**AI Traffic**):
+
+- Whether the answers to the prompts aimed at this page cite it, per model.
+- One line of real signals: verified AI-agent fetches and visits from
+  assistants (AEO), Google clicks and impressions (Search Console).
+- **Citations of this page**, whichever prompt produced them, with the exact
+  URL cited.
+- **Prompts aimed at this page** — add your own, or **Suggest prompts**: one
+  model call that proposes up to five questions the page could answer, from its
+  text and the Google queries it already appears for. Nothing is stored until
+  you add one.
+- **Cited instead of this page** — who the prompts aimed at it cited.
+
+Three findings join the strip: *AI assistants cite this page* (info), *AI
+agents fetch this page but the sampled answers never cite it* (warning, needs
+AEO), and *Competitors cited for prompts aimed at this page* (warning).
+
+## Licence
+
+Sampling, prompt writes, **Run now** and **Suggest prompts** need an
+**Analytics Pro** key at `Flowcourier:Licenses:AnalyticsPro`. Unlicensed, the
+dashboard and the sub-tab render a banner over whatever data exists, the job
+stays idle, and a write is refused with the reason. A key added later needs no
+restart.
+
+## Limits
+
+- Engines are whatever Umbraco AI profiles you have: OpenAI today, Anthropic
+  when its provider maps the web-search tool. Perplexity, Gemini and Copilot
+  have no Umbraco AI provider.
+- A profile whose model cannot search fails every run with "this profile's
+  model or provider does not support web search" — pick a model that can.
+- Multi-site installs whose Umbraco domains carry a path (`example.com/da`)
+  may not resolve every cited URL to its document; the citation is still
+  counted for the host.
