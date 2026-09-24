@@ -11,9 +11,11 @@ Flowcourier AEO recognises the user agents of 150+ AI crawlers — OpenAI (GPTBo
 
 Spoofed hits — vulnerability scanners wearing an AI user agent — are blocked, excluded from the traffic aggregates below, and reported separately, so the numbers you see are real crawler traffic.
 
-## The AI Crawlers view
+## The AI Traffic view
 
-Open **Analytics → AI Crawlers** in the backoffice. With [Flowcourier Analytics](/docs/analytics/start-here/get-started/) installed this view is a tab in the **Analytics** section; on a site running AEO alone it is under **Settings → Flowcourier → AEO Dashboard**.
+Open **Analytics → AI Traffic** in the backoffice. With [Flowcourier Analytics](/docs/analytics/start-here/get-started/) installed this view is a tab in the **Analytics** section; on a site running AEO alone it is under **Settings → Flowcourier → AEO Dashboard**.
+
+It has four tabs — **Overview**, **Top pages**, **Crawler log** and **[Referrals](/docs/aeo/guides/ai-referrals/)** — sharing one date range with every other Flowcourier Analytics view. Crawler fetch → assistant citation → human arrival is one funnel, so it is one view.
 
 - **Hits per crawler**, with operator and purpose — training, AI search, or live assistant fetches — so you can tell "a model is being trained on my content" apart from "a user asked an assistant about my site right now". A **filter box** narrows the table as you type.
 - **HTML vs Markdown ratio** — is your AEO surface actually being used?
@@ -25,7 +27,7 @@ Open **Analytics → AI Crawlers** in the backoffice. With [Flowcourier Analytic
 
 ![AI crawler hits, distinct crawlers, HTML vs Markdown responses, hits per day, traffic share per operator and hits per crawler](../../../../assets/aeo/AEO-Dashboard.png)
 
-[AI Referrals](/docs/aeo/guides/ai-referrals/) sits beside this view, wherever the two live. The [Blocking](/docs/aeo/guides/crawler-verification-and-blocking/) page, the [Structured Data](/docs/aeo/guides/structured-data/) form and the read-only settings page are always under **Settings → Flowcourier** — they are configuration, not measurement — in a group named **AEO** when Flowcourier Analytics is installed and **AEO Dashboard** when it is not.
+[Referrals](/docs/aeo/guides/ai-referrals/) is the fourth tab of this view. The [Blocking](/docs/aeo/guides/crawler-verification-and-blocking/) page, the [Structured Data](/docs/aeo/guides/structured-data/) form and the read-only settings page are always under **Settings → Flowcourier** — they are configuration, not measurement — in a group named **AEO** when Flowcourier Analytics is installed and **AEO Dashboard** when it is not.
 
 ## What the crawler types mean
 
@@ -99,7 +101,7 @@ model corpora, block those crawlers on the
   else. If your key landing pages aren't here but your archive is, that's a
   signal to review your
   [llms.txt inclusion rules](/docs/aeo/guides/markdown-endpoints/).
-- **Recent visits** — the raw log: timestamp, crawler, path, verification
+- **Crawler log** — the raw log: timestamp, crawler, path, verification
   verdict badge, what was served, and status code.
 
 ## Where the crawler list comes from

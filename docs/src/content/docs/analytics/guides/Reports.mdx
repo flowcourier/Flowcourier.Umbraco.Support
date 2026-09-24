@@ -21,7 +21,7 @@ The tab the section opens on, and the only one that answers a question no single
 
 - **Headline cards** — human visits, AI agent fetches, the AI share, and how long ago an AI agent last fetched anything.
 - **Human and AI traffic over time** — one daily chart with both, on two y-axes. They are deliberately not on a shared axis: a visit is a session and an agent fetch is a single request, so the two lines count different things.
-- **What the agents came for** — the fetches split by purpose: retrieval (an assistant fetching because somebody asked it something), training, and AI search indexing. The same colours as the AI Crawlers tab uses for the same purposes.
+- **What the agents came for** — the fetches split by purpose: retrieval (an assistant fetching because somebody asked it something), training, and AI search indexing. The same colours as the AI Traffic tab uses for the same purposes.
 - **Visits from AI assistants** — people who arrived from ChatGPT, Claude, Perplexity and the rest.
 - **Google Search** — clicks and impressions for the range, and **index coverage**: how many of the site's pages Google has indexed.
 
@@ -29,7 +29,7 @@ The page renders whatever this site has. With only a traffic provider installed 
 
 The **AI share** is a share of *page requests* — agent fetches against agent fetches plus human pageviews — not of visits, for the reason above. The **index coverage** card is a snapshot rather than a range figure (it is the latest known status of each page), so it carries its own "as of" date.
 
-Agent figures come from [Flowcourier AEO](/docs/aeo/start-here/get-started/), which records them itself. They will not match AEO's own dashboard exactly for a nominally equal period: this page counts whole UTC days, while the AI Crawlers tab's "30 days" counts back from the current moment.
+Agent figures come from [Flowcourier AEO](/docs/aeo/start-here/get-started/), which records them itself. They will not match AEO's own dashboard exactly for a nominally equal period: this page counts whole UTC days, while the AI Traffic tab's "30 days" counts back from the current moment.
 
 ### Realtime
 
@@ -94,9 +94,9 @@ Access is Analytics section access, checked on the server; `Flowcourier:Analytic
 
 Shown when [Search Console](/docs/analytics/guides/search-console/) is enabled: clicks, impressions, average CTR and position with previous-period comparison, a daily chart, and the top queries (with a filter), pages, countries and devices for the property.
 
-### AI Crawlers and AI Referrals
+### AI Traffic
 
-Shown when [Flowcourier AEO](/docs/aeo/start-here/get-started/) is installed: which AI crawlers fetch the site and what they take, and who arrives from an AI assistant afterwards. These are AEO's own views — see [AI crawler analytics](/docs/aeo/guides/ai-crawler-analytics/) and [AI referrals](/docs/aeo/guides/ai-referrals/) — shown here because this is where a site's measurement belongs. On a site running AEO without Flowcourier Analytics they live under **Settings → Flowcourier → AEO Dashboard** instead.
+Shown when [Flowcourier AEO](/docs/aeo/start-here/get-started/) is installed: which AI crawlers fetch the site and what they take, and who arrives from an AI assistant afterwards. One view with four tabs — Overview, Top pages, Crawler log and Referrals — because a crawler fetch, an assistant citation and the human arrival that follows are one funnel. This is AEO's own view — see [AI crawler analytics](/docs/aeo/guides/ai-crawler-analytics/) and [AI referrals](/docs/aeo/guides/ai-referrals/) — shown here because this is where a site's measurement belongs. On a site running AEO without Flowcourier Analytics it lives under **Settings → Flowcourier → AEO Dashboard** instead.
 
 Reading crawler data needs either the Analytics section or the Settings section.
 
