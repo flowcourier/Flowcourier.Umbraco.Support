@@ -44,6 +44,16 @@ The converter walks each page's properties generically — it works with any con
 
 The page **title** and **description** are resolved by trying a configurable list of property aliases (`TitlePropertyAliases` / `DescriptionPropertyAliases`, falling back to the node name), so they follow whatever your SEO fields are called.
 
+## Seeing the difference
+
+Open any document, switch to **Analytics → AI Visibility**, and press **Compare Human vs AI view**. The page opens as a browser downloads it beside the page as an AI client is served it, with what each costs to read:
+
+- **Human view** — the HTML fetched from your own front end, markup, inline script, tracking and all.
+- **AI view** — the Markdown produced by the converter described above, exactly what `/{page}.md` returns.
+- **Tokens on each side**, counted with `o200k_base` (the encoding GPT-4o and GPT-5 use) rather than estimated, plus how much less an agent has to read.
+
+The difference is usually the argument for the whole feature: a page that is several hundred kilobytes of markup for a browser is a few kilobytes of prose for an agent. Nothing is fetched until you press the button, and the fetch is a normal request to your site's public URL — so a page behind a login or an IP allow-list reports why it could not be read rather than showing an empty pane.
+
 ## Multilingual sites
 
 On culture-variant sites the output is generated **per language**, following the same domain configuration Umbraco uses to route your pages — both host-based (`es.your-site/llms.txt`) and path-prefix (`your-site/es/llms.txt`) setups:
