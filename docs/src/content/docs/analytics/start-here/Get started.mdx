@@ -1,43 +1,72 @@
 ---
 title: Quick start
-description: Install Flowcourier Analytics for Umbraco with the Matomo provider — dashboards and a per-page Analytics tab in the backoffice, read live from your own Matomo, plus optional PageSpeed Insights and Search Console.
+description: Install Flowcourier Analytics for Umbraco with the Matomo or the Google Analytics provider — dashboards and a per-page Analytics tab in the backoffice, read live from your own analytics, plus optional PageSpeed Insights and Search Console.
 sidebar:
   order: 1
 ---
 
-import { Steps } from '@astrojs/starlight/components';
-import { Code } from '@astrojs/starlight/components';
+import { Steps, Tabs, TabItem, Code } from '@astrojs/starlight/components';
 
-# How to install Flowcourier Analytics for Umbraco (Matomo)
+# How to install Flowcourier Analytics for Umbraco
 
 Flowcourier Analytics puts your web analytics where editors work — in the Umbraco backoffice. No analytics login, no context switch:
 
 - An **Analytics** section that opens on an **Overview** — human traffic and AI-agent traffic side by side — followed by **Realtime**, **Visitors**, **Behaviour**, **Acquisition** and **Technology**, and a live visitor count on the section itself. Installing [Flowcourier AEO](/docs/aeo/start-here/get-started/) adds **AI Traffic** here too, and fills in the AI half of the Overview.
 - An **Analytics tab on every document** showing that page's traffic, where its visitors came from, which pages they came from and went to next, and their locations and devices.
 - A **Google Search** sub-tab on the same tab, filled by [**Search Console**](/docs/analytics/guides/search-console/) and [**PageSpeed Insights**](/docs/analytics/guides/pagespeed-insights/) — either one on its own is enough for it — plus a **Search queries** dashboard.
-- Optionally, the same figures [**in the Umbraco AI Copilot**](/docs/analytics/guides/copilot/) — ask how a page is doing or what lost traffic, and get an answer from measured data.
+- Optionally, the same figures [**in the Umbraco AI Copilot**](/docs/analytics/guides/copilot/) — ask how a page is doing or what lost traffic, and get an answer from measured data — and, with an Analytics Pro key, [**AI Visibility**](/docs/analytics/guides/ai-visibility/): whether AI assistants cite your site.
 
-Two packages make this up: `Flowcourier.Umbraco.Analytics.Core` (the section, the tab, the Google features) and a **provider** that supplies the traffic data — today `Flowcourier.Umbraco.Matomo`, reading live from your own Matomo (self-hosted or Matomo Cloud) through its Reporting API. Installing the provider brings the core in. A third, `Flowcourier.Umbraco.Analytics.AI`, is optional and only for sites running the [Umbraco AI Copilot](/docs/analytics/guides/copilot/) — the core has no AI dependency of its own. Nothing about your visitors is stored, and the only database table is the index-status cache, created just for sites that turn [Search Console index tracking](/docs/analytics/guides/search-console/) on.
+Two packages make this up: `Flowcourier.Umbraco.Analytics.Core` (the section, the tab, the Google features) and **one provider** that supplies the traffic data:
+
+| Provider | Package | Reads |
+|----------|---------|-------|
+| **Matomo** | `Flowcourier.Umbraco.Matomo` | Your own Matomo (self-hosted or Matomo Cloud) through its Reporting API |
+| **Google Analytics 4** | `Flowcourier.Umbraco.GoogleAnalytics` | Your GA4 property through the Google Analytics Data API, with a service account |
+
+Install one or the other; the core resolves one provider. Installing a provider brings the core in. A third package, `Flowcourier.Umbraco.Analytics.AI`, is optional and only for sites running the [Umbraco AI Copilot](/docs/analytics/guides/copilot/) — the core has no AI dependency of its own. Nothing about your visitors is stored, and the only database tables are created for features you switch on ([index tracking](/docs/analytics/guides/search-console/), [AI Visibility](/docs/analytics/guides/ai-visibility/)).
 
 <Steps>
 
-1. Create a Matomo token
+1. Prepare the analytics side
 
-    In Matomo go to **Administration → Personal → Security → Auth tokens → Create new token**. Give it a description (for example "Umbraco"), keep **Only allow secure requests** ticked and copy the token — Matomo shows it only once.
+    <Tabs syncKey="provider">
+    <TabItem label="Matomo">
 
-    Create the token for a user that only has **view** access to the website: the token carries that user's rights.
+    In Matomo go to **Administration → Personal → Security → Auth tokens → Create new token**. Give it a description (for example "Umbraco"), keep **Only allow secure requests** ticked and copy the token — Matomo shows it only once. Create the token for a user that only has **view** access to the website: the token carries that user's rights.
 
     Note the website's **ID** from **Administration → Websites → Manage**.
 
-2. Install the package
+    </TabItem>
+    <TabItem label="Google Analytics">
 
-    The package is available via NuGet. Visit [Flowcourier.Umbraco.Matomo on NuGet](https://www.nuget.org/packages/Flowcourier.Umbraco.Matomo/), search for it in Visual Studio, or run:
+    In the Google Cloud Console enable the **Google Analytics Data API** (and, optionally, the **Admin API**) for a project, create a **service account** and download a JSON key. In Google Analytics, under **Admin → Property → Property access management**, add the service account's e-mail as a **Viewer**.
+
+    Note the numeric **property id** from **Admin → Property details** — not the `G-…` measurement id. The [Google Analytics guide](/docs/analytics/guides/google-analytics/) walks through this with screenshots' worth of detail.
+
+    </TabItem>
+    </Tabs>
+
+2. Install the provider package
+
+    <Tabs syncKey="provider">
+    <TabItem label="Matomo">
 
     <Code code="dotnet add package Flowcourier.Umbraco.Matomo --prerelease" lang="shell" />
 
-    This installs `Flowcourier.Umbraco.Analytics.Core` as well. No composer, no `Program.cs` changes: the packages self-register.
+    </TabItem>
+    <TabItem label="Google Analytics">
+
+    <Code code="dotnet add package Flowcourier.Umbraco.GoogleAnalytics --prerelease" lang="shell" />
+
+    </TabItem>
+    </Tabs>
+
+    Either one installs `Flowcourier.Umbraco.Analytics.Core` as well. No composer, no `Program.cs` changes: the packages self-register.
 
 3. Configure the connection
+
+    <Tabs syncKey="provider">
+    <TabItem label="Matomo">
 
     Add the `Flowcourier:Matomo` section to `appsettings.json` (or set the matching environment variables):
 
@@ -54,7 +83,33 @@ Two packages make this up: `Flowcourier.Umbraco.Analytics.Core` (the section, th
     }
     ```
 
-    Keep the token out of source control — `Flowcourier__Matomo__TokenAuth` as an environment variable or a secret store works the same way. `SiteUrl` is the public base URL the pages are tracked under; when omitted the package uses the main URL registered for the site in Matomo. All settings — including the shared `Flowcourier:Analytics` section for PageSpeed Insights, Search Console and the live badge — are described in [Configuration](/docs/analytics/guides/configuration/).
+    Keep the token out of source control — `Flowcourier__Matomo__TokenAuth` as an environment variable or a secret store works the same way. `SiteUrl` is the public base URL the pages are tracked under; when omitted the package uses the main URL registered for the site in Matomo.
+
+    </TabItem>
+    <TabItem label="Google Analytics">
+
+    Add the property under `Flowcourier:GoogleAnalytics` and the key under `Flowcourier:Analytics:Google` — the same place Search Console reads it from:
+
+    ```json
+    {
+      "Flowcourier": {
+        "GoogleAnalytics": {
+          "PropertyId": "123456789",
+          "SiteUrl": "https://www.example.com"
+        },
+        "Analytics": {
+          "Google": { "ServiceAccountJsonPath": "/secrets/ga-service-account.json" }
+        }
+      }
+    }
+    ```
+
+    Keep the key out of source control — a path outside the web root, or the JSON itself in `Flowcourier__Analytics__Google__ServiceAccountJson`. `SiteUrl` is the public base URL the pages are tracked under; when omitted the package reads the property's web data stream (Admin API).
+
+    </TabItem>
+    </Tabs>
+
+    All settings — including the shared `Flowcourier:Analytics` section for PageSpeed Insights, Search Console and the live badge — are described in [Configuration](/docs/analytics/guides/configuration/).
 
 4. Open the Analytics section
 
@@ -62,7 +117,7 @@ Two packages make this up: `Flowcourier.Umbraco.Analytics.Core` (the section, th
 
 5. Open a page's Analytics tab
 
-    Open any published document in the Content section and switch to its **Analytics** tab. Its **Traffic** view shows pageviews, visits, time on page, bounce and exit rates for the selected range, compared with the previous period, plus the page's referrers, the pages visitors came from and went to next, and their countries, cities, devices and browsers. The tab follows the language you are editing.
+    Open any published document in the Content section and switch to its **Analytics** tab. Its **Traffic** view shows pageviews, visits, time on page, bounce rate (and, on Matomo, exit rate) for the selected range, compared with the previous period, plus the page's referrers, the pages visitors came from and went to next, and their countries, cities, devices and browsers. The tab follows the language you are editing.
 
     The Analytics tab is shared by every Flowcourier extension: if you also run the [SEO Agent](/docs/ai/guides/seo-agent/) or [AEO](/docs/aeo/start-here/get-started/), their per-page views appear as further sub-tabs here rather than as tabs of their own.
 
@@ -73,7 +128,7 @@ Two packages make this up: `Flowcourier.Umbraco.Analytics.Core` (the section, th
 </Steps>
 
 :::tip[Where are the settings shown?]
-The effective settings (secrets masked) are shown under **Settings → Flowcourier → Matomo** and **→ Analytics**. If the dashboards show *Connect Matomo to see analytics here*, one of `Endpoint`, `TokenAuth` or `SiteId` is missing.
+The effective settings (secrets masked) are shown under **Settings → Flowcourier → Matomo** or **→ Google Analytics**, and **→ Analytics**. If the dashboards show *Connect Matomo / Google Analytics to see analytics here*, a required value is missing — the notice says which.
 :::
 
-See [Reports](/docs/analytics/guides/reports/) for what each dashboard shows and where the numbers come from in Matomo.
+See [Reports](/docs/analytics/guides/reports/) for what each dashboard shows and where the numbers come from, and [Google Analytics](/docs/analytics/guides/google-analytics/) for what differs on a GA4 property.

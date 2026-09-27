@@ -1,6 +1,6 @@
 ---
 title: Reports
-description: What each Analytics dashboard and the document Analytics tab show, and which Matomo, PageSpeed Insights and Search Console reports the numbers come from.
+description: What each Analytics dashboard and the document Analytics tab show, and which Matomo or Google Analytics, PageSpeed Insights and Search Console reports the numbers come from.
 sidebar:
   order: 2
 ---
@@ -9,7 +9,7 @@ sidebar:
 
 All date-ranged views share one date-range control: **Today**, **Yesterday**, **7 days**, **30 days**, **This month**, **Last month**, **This year** or a **Custom** from/to pair. The selection is remembered for the browser session, so switching between dashboards and documents keeps the range. Headline metrics are compared with the **previous period of the same length** (▲ / ▼ with the percentage change; bounce and exit rates read "good" when they go down).
 
-Dates are interpreted in the Matomo website's time zone, exactly as in Matomo itself.
+Dates are interpreted in the provider's time zone — the Matomo website's or the GA4 property's — exactly as in the provider's own UI.
 
 ## Analytics section
 
@@ -165,6 +165,10 @@ Thresholds are under `Flowcourier:Analytics:Findings` and the window under `Flow
 | *No visits recorded* | Matomo has no pageviews for that URL in the range. Widen the range, or check that the tracked URL (shown in the notice) matches what Matomo records — see [`SiteUrl`](/docs/analytics/guides/configuration/#siteurl-and-multi-site-installs). |
 | *Connect Matomo to see analytics here* | `Endpoint`, `TokenAuth` or `SiteId` is missing. |
 | *Matomo rejected the token* | The token is invalid, expired or its user cannot view the site. |
+
+## On Google Analytics
+
+The pages above describe the Matomo provider, which has the richest data. With the Google Analytics provider the same dashboards and the same document tab render from GA4 reports; the differences are listed on the [Google Analytics](/docs/analytics/guides/google-analytics/#what-the-dashboards-show-on-ga4) page. In short: visits are sessions, the previous period rides in the same request, the **AI assistants** channel is derived from the source host, the page flow is read off `pageReferrer`, and what GA4 does not measure — journeys, individual realtime visits, exits, outlinks, site search, server time, a page's live count — is absent rather than zero. The notice *Connect Google Analytics to see analytics here* names the missing setting (the property id, or the service account under `Flowcourier:Analytics:Google`).
 
 ## Where the numbers differ from Matomo's UI
 

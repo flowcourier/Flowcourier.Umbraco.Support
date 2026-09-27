@@ -53,6 +53,19 @@ export default defineConfig({
                 items: [
                     {
                         label: 'Getting Started',
+                        items: [{ autogenerate: { directory: 'analytics/start-here' } }],
+                    },
+                    {
+                        label: 'Guides',
+                        items: [{ autogenerate: { directory: 'analytics/guides' } }],
+                    },
+                ],
+            },
+            {
+                label: 'Google Analytics (legacy, Umbraco 10–13)',
+                items: [
+                    {
+                        label: 'Getting Started',
                         items: [{ autogenerate: { directory: 'start-here' } }],
                     },
                     {
@@ -88,19 +101,6 @@ export default defineConfig({
                     {
                         label: 'Guides',
                         items: [{ autogenerate: { directory: 'aeo/guides' } }],
-                    },
-                ],
-            },
-            {
-                label: 'Analytics (Matomo)',
-                items: [
-                    {
-                        label: 'Getting Started',
-                        items: [{ autogenerate: { directory: 'analytics/start-here' } }],
-                    },
-                    {
-                        label: 'Guides',
-                        items: [{ autogenerate: { directory: 'analytics/guides' } }],
                     },
                 ],
             },

@@ -1,13 +1,13 @@
 ---
 title: Configuration
-description: All settings — the Matomo connection, tracked site URL, multi-site mapping, caching, and the shared Analytics section for the live badge, PageSpeed Insights and Search Console.
+description: All settings — the Matomo or Google Analytics connection, tracked site URL, multi-site mapping, caching, and the shared Analytics section for the live badge, PageSpeed Insights and Search Console.
 sidebar:
   order: 1
 ---
 
 # Configuration
 
-Two sections of `appsettings.json` are involved: `Flowcourier:Matomo` for the Matomo connection (three values required — `Endpoint`, `TokenAuth` and `SiteId` — the rest have defaults) and `Flowcourier:Analytics` for everything shared by the Analytics section (all optional).
+Two sections of `appsettings.json` are involved: one for the provider's connection — `Flowcourier:Matomo` (three values required: `Endpoint`, `TokenAuth` and `SiteId`) or `Flowcourier:GoogleAnalytics` (one: `PropertyId`, plus the service account under `Flowcourier:Analytics:Google`) — and `Flowcourier:Analytics` for everything shared by the Analytics section (all optional).
 
 ## Matomo connection
 
@@ -57,6 +57,54 @@ Environment variables work too: `Flowcourier__Matomo__TokenAuth`, `Flowcourier__
 
 The effective values are shown (token masked) under **Settings → Flowcourier → Matomo**.
 
+## Google Analytics connection
+
+```jsonc
+{
+  "Flowcourier": {
+    "GoogleAnalytics": {
+      "Enabled": true,
+
+      // The GA4 property (required) — the numeric id, not the G-… measurement id
+      "PropertyId": "123456789",
+
+      // Where the pages are tracked (recommended)
+      "SiteUrl": "https://www.example.com",
+
+      // Multi-site installs (optional)
+      "Sites": [
+        { "RootContentKey": "6f1a…", "PropertyId": "987654321", "SiteUrl": "https://other.example" }
+      ],
+
+      // Behaviour
+      "ReportCacheSeconds": 300,
+      "RealtimeCacheSeconds": 15,
+      "RealtimeMinutes": 30,
+      "TimeoutSeconds": 30
+    },
+    "Analytics": {
+      // The service account (required) — shared with Search Console
+      "Google": { "ServiceAccountJsonPath": "/secrets/ga-service-account.json" }
+    }
+  }
+}
+```
+
+Environment variables work too: `Flowcourier__GoogleAnalytics__PropertyId`, `Flowcourier__Analytics__Google__ServiceAccountJson`, and so on.
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `Enabled` | `true` | Master switch. When false the backoffice shows a "disabled" note and Google is never called. |
+| `PropertyId` | — | The GA4 **property** id (**Admin → Property details**), a number; `properties/123456789` is accepted. A `G-…` measurement id is refused and the status says why. |
+| `SiteUrl` | the property's web data stream URI | Public base URL the pages are tracked under. Page filters go to Google as host + path; when empty the package reads the first web data stream's default URI (Admin API). |
+| `Sites` | `[]` | Per-root-node properties for multi-site installs — see below. |
+| `ReportCacheSeconds` | `300` | How long a date-ranged report is cached on the server before Google is asked again. GA4 data is hours behind anyway. |
+| `RealtimeCacheSeconds` | `15` | Cache for the Realtime payload. The dashboard polls every 30 seconds; several open tabs share one Google call. |
+| `RealtimeMinutes` | `30` | The Realtime "active now" window; a standard GA4 property reports at most 30 minutes. |
+| `TimeoutSeconds` | `30` | Per-request timeout for Google calls. |
+
+The key itself lives under `Flowcourier:Analytics:Google` (`ServiceAccountJson` inline, or `ServiceAccountJsonPath`); see [Search Console](/docs/analytics/guides/search-console/) for that section. The effective values are shown — with the service account's e-mail, never the key — under **Settings → Flowcourier → Google Analytics**.
+
 ## Shared Analytics settings
 
 ```jsonc
@@ -101,7 +149,9 @@ Keep it out of source control: an environment variable, a user-secrets file or y
 
 ## `SiteUrl` and multi-site installs
 
-Matomo stores **absolute** page URLs. To show a page's numbers, the document tab combines a base URL with the page's route (`/about-us/`) and asks Matomo for exactly that URL. The base URL is:
+On **Google Analytics** the same idea applies with the property in place of the site: `SiteUrl` (or the web data stream's default URI) supplies the host the page filter is narrowed to, and `Sites[]` maps content roots to property ids (`"PropertyId"` instead of `"SiteId"`). Without a host the page is filtered on its path alone, which over-counts on a property that tracks several hosts.
+
+On **Matomo**, Matomo stores **absolute** page URLs. To show a page's numbers, the document tab combines a base URL with the page's route (`/about-us/`) and asks Matomo for exactly that URL. The base URL is:
 
 1. `SiteUrl`, when set — use this whenever the Umbraco host differs from the tracked host (staging, an internal hostname, a load balancer), or when Matomo's registered main URL is not the canonical one.
 2. Otherwise the **main URL** registered for the website in Matomo.
@@ -134,7 +184,7 @@ The findings strip on the document tab compares the last `Flowcourier:Findings:W
 | `MinPagesForBaseline` | `5` | The site medians need at least this many pages with enough traffic. |
 | `CacheMinutes` | `10` | How long a page's computed findings are kept. |
 
-The site baseline (median bounce and exit rates over pages with at least `MinPageviews`, site server time) comes from the provider — Matomo reads its pages report and the PagePerformance plugin.
+The site baseline (median bounce and exit rates over pages with at least `MinPageviews`, site server time) comes from the provider — Matomo reads its pages report and the PagePerformance plugin; Google Analytics supplies the bounce median only (GA4 has no exit metric and no server timing), so the exit and server-time rules never fire there.
 
 ## Which documents get the tab
 
@@ -181,4 +231,4 @@ The Analytics section is an ordinary backoffice section. Administrators get it o
 
 ## Caching
 
-Matomo archives reports rather than counting live, so a five-minute server-side cache costs nothing in freshness while keeping the Matomo load flat when many editors have dashboards open. Set `ReportCacheSeconds` to `0` to disable it. The Realtime dashboard is cached for `RealtimeCacheSeconds` only.
+Matomo archives reports rather than counting live, and GA4 processes them hours behind, so a five-minute server-side cache costs nothing in freshness while keeping the provider load (and, on Google, the API quota) flat when many editors have dashboards open. Set `ReportCacheSeconds` to `0` to disable it. The Realtime dashboard is cached for `RealtimeCacheSeconds` only.

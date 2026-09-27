@@ -1,0 +1,95 @@
+---
+title: Google Analytics
+description: Connect a Google Analytics 4 property to Flowcourier Analytics — service account, property id, what the dashboards show on GA4 and what GA4 cannot answer.
+sidebar:
+  order: 7
+---
+
+import { Steps } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+# Google Analytics 4 as the traffic provider
+
+`Flowcourier.Umbraco.GoogleAnalytics` reads your GA4 property through the Google Analytics Data API and feeds the same Analytics section, document tab, PageSpeed / Search Console views, Copilot tools and [AI Visibility](/docs/analytics/guides/ai-visibility/) that the Matomo provider does. Install one provider or the other, never both — the core resolves one.
+
+It uses a **service account**, the same one the [Search Console](/docs/analytics/guides/search-console/) feature uses, so a site that runs both configures one key. No Google login for editors, no Google SDK on the server, nothing stored.
+
+<Steps>
+
+1. Enable the APIs and create a service account
+
+    In the [Google Cloud Console](https://console.cloud.google.com/), pick (or create) a project and enable **Google Analytics Data API**. Enable **Google Analytics Admin API** as well: it is optional, but without it the status card cannot show the property's name and the site URL has to be configured by hand.
+
+    Under **IAM & Admin → Service accounts** create a service account and add a **JSON key**. Download it — Google shows it once.
+
+2. Give the account access to the property
+
+    In Google Analytics open **Admin → Property → Property access management**, add the service account's e-mail (`…@…iam.gserviceaccount.com`) and give it the **Viewer** role. Nothing more: the package only reads.
+
+    While there, note the **property id** under **Admin → Property details** — a number such as `123456789`. It is *not* the `G-…` measurement id shown on the data stream; the package refuses a measurement id and says so.
+
+3. Install the package
+
+    <Code code="dotnet add package Flowcourier.Umbraco.GoogleAnalytics --prerelease" lang="shell" />
+
+    This installs `Flowcourier.Umbraco.Analytics.Core` as well. No composer, no `Program.cs` changes: the packages self-register.
+
+4. Configure
+
+    ```json
+    {
+      "Flowcourier": {
+        "GoogleAnalytics": {
+          "PropertyId": "123456789",
+          "SiteUrl": "https://www.example.com"
+        },
+        "Analytics": {
+          "Google": {
+            "ServiceAccountJsonPath": "/secrets/ga-service-account.json"
+          }
+        }
+      }
+    }
+    ```
+
+    Keep the key out of source control: a file path outside the web root, or `Flowcourier__Analytics__Google__ServiceAccountJson` with the JSON as an environment variable. `SiteUrl` is the public base URL the pages are tracked under; when omitted the package reads the default URI of the property's first web data stream (Admin API). Every setting is listed in [Configuration](/docs/analytics/guides/configuration/#google-analytics-connection).
+
+5. Restart and check
+
+    **Settings → Flowcourier → Google Analytics** shows the effective configuration and the service account's e-mail — the one to add in step 2. The Analytics section and the document tab work as described in the [quick start](/docs/analytics/start-here/get-started/).
+
+</Steps>
+
+## What the dashboards show on GA4
+
+Everything is a GA4 report over the selected range, in the property's time zone. Sessions are shown as *visits*, `totalUsers` as *users*, and the previous period is asked for in the same request as the current one. The **AI assistants** channel does not exist in Google Analytics: sessions whose source is an assistant's host (`chatgpt.com`, `perplexity.ai`, `claude.ai`, `copilot.microsoft.com`, `gemini.google.com`, …) are reported as AI assistants here rather than as referrals, on the Acquisition dashboard, on a page's referrers and in the page flow's channel filter.
+
+The **page flow** (previous and following pages on the document tab) has no transitions report to read from in GA4. It is read off `pageReferrer` instead: the referrers of this page's views are its previous pages, the views whose referrer is this page are its following pages, and a view that refers to itself is counted as a reload ("Returned to this page"). Arrivals from outside the site are grouped by channel.
+
+## What GA4 cannot answer
+
+GA4's API reports aggregates, never individual visits. These parts of the Matomo experience are absent or different on a Google Analytics site, and the views say so rather than showing zeros:
+
+| Surface | On Google Analytics |
+|---------|---------------------|
+| Visitor journeys, the **Visits** dashboard, clicking a realtime row | Not available. |
+| Realtime "latest visitors" table, the map, the "last seen" tag | Counts only. The pages list shows page **titles** (GA4 realtime has no page path). |
+| Exit pages, exit rate, "left the site" in the flow | GA4 has no exit metric. |
+| Outlinks, downloads, site search in the flow | Not in GA4's report model. |
+| The live count on a page before publishing | Not shown. |
+| Time on page | Engaged time per view (`userEngagementDuration ÷ screenPageViews`). |
+| Server time in the findings | Not measured by GA4. |
+
+The Realtime window is at most 30 minutes on a standard property (`RealtimeMinutes` above that is clamped).
+
+## Quota
+
+A full walk through the section costs roughly 40 API requests. The standard quota of a GA4 property is 200 000 tokens a day and 40 000 an hour, and the package caches every report (five minutes by default, fifteen seconds for Realtime) and shares one Google call between backoffice tabs asking for the same thing. When Google does refuse for quota, the dashboards say so and the package waits a minute before asking again. The remaining quota is written to the log at Debug level after each report, Warning under 10 %.
+
+## Troubleshooting
+
+- **"… has no access to Google Analytics property …"** — the service account is not a Viewer on that property (step 2), or the property id belongs to another property.
+- **"The Google Analytics API is not enabled …"** — enable the Data API in the Cloud project that owns the service account (step 1).
+- **"… is a measurement id (G-…), not a property id"** — use the numeric id from Admin → Property details.
+- **The document tab says "no visits recorded" for a page that has traffic** — the tracked host does not match. Set `Flowcourier:GoogleAnalytics:SiteUrl` to the exact public origin (with or without `www`, as your site is tracked) or check the web data stream's default URI.
+- **Nothing for today** — GA4 processes standard reports with a delay of hours; yesterday is the first complete day. Realtime is live.

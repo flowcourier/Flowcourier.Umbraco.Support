@@ -11,10 +11,17 @@ import { LinkButton } from '@astrojs/starlight/components';
 ## 
 
 <CardGrid>
-	<Card title="Google Analytics for Umbraco - Developers guide" icon="information">
+	<Card title="Analytics for Umbraco (Matomo, Google Analytics) - Developers guide" icon="bars">
+	 <LinkButton href="/docs/analytics/start-here/get-started">Quick start</LinkButton>
+	<LinkButton href="/docs/analytics/guides/configuration"  variant="secondary">Guides</LinkButton>
+	<LinkButton href="/docs/analytics/guides/google-analytics"  variant="secondary">Google Analytics</LinkButton>
+
+	</Card>
+	<Card title="Google Analytics for Umbraco (legacy, Umbraco 10–13) - Developers guide" icon="information">
 	 <LinkButton href="/docs/start-here/get-started">Quick start</LinkButton>
 	<LinkButton href="/docs/install-guide/1-install-nuget-package"  variant="secondary">Install Guide</LinkButton>
 	<LinkButton href="/docs/faq"  variant="secondary">FAQ</LinkButton>
+	<LinkButton href="/docs/analytics/guides/migrating-from-the-legacy-package"  variant="secondary">Migrate to Umbraco 17</LinkButton>
 		
 	</Card>
 	<Card title="AI Agents for Umbraco - Developers guide" icon="rocket">
@@ -26,11 +33,6 @@ import { LinkButton } from '@astrojs/starlight/components';
 	 <LinkButton href="/docs/aeo/start-here/get-started">Quick start</LinkButton>
 	<LinkButton href="/docs/aeo/guides/markdown-endpoints"  variant="secondary">Guides</LinkButton>
 	<LinkButton href="/docs/aeo/guides/faq"  variant="secondary">FAQ</LinkButton>
-
-	</Card>
-	<Card title="Analytics for Umbraco (Matomo) - Developers guide" icon="bars">
-	 <LinkButton href="/docs/analytics/start-here/get-started">Quick start</LinkButton>
-	<LinkButton href="/docs/analytics/guides/configuration"  variant="secondary">Guides</LinkButton>
 
 	</Card>
 	<Card title="Free website analyzer" icon="magnifier">

@@ -5,11 +5,17 @@ description: Installing the extension for Umbraco
 
 # FAQ
 
+:::caution[Legacy package]
+These questions cover the legacy **Google Analytics for Umbraco** package (`Flowcourier.Umbraco.Analytics`, Umbraco 10–13), which is deprecated. On Umbraco 17.5+ use [Flowcourier Analytics](/docs/analytics/start-here/get-started/) with the [Google Analytics provider](/docs/analytics/guides/google-analytics/) — there is a [migration page](/docs/analytics/guides/migrating-from-the-legacy-package/).
+:::
+
 
 ## Can I use the free license for a commercial project?
 Yes, you can use the free license for a commercial project.
 
 When you install the extension without providing a license, it runs in **Free Edition** mode by default. This includes a 30-day data view limit. If you want access to additional features such as filters, you need to upgrade to the **Paid License** — see the [Google Analytics for Umbraco page](https://flowcourier.com/solutions/google-analytics/) for pricing. A valid license key will be provided upon purchase.
+
+The successor on Umbraco 17.5+ has no licence file and no 30-day limit: all traffic reports are free, and only [AI Visibility](/docs/analytics/guides/ai-visibility/) (Analytics Pro) takes a key.
 
 If you experience issues, please contact us at [support@flowcourier.com](mailto:support@flowcourier.com).
 
@@ -26,13 +32,13 @@ In this case, your Umbraco home node `http://localhost/` maps to the GA view of 
 
 
 ## Does the extension support Umbraco 14-17?
-Not yet. The currently supported versions are Umbraco 10–13, and we are working on compatibility with the newer Umbraco majors.
+Not this package: it supports Umbraco 10–13 and is deprecated. Its successor for Umbraco 17.5+ is [`Flowcourier.Umbraco.GoogleAnalytics`](/docs/analytics/guides/google-analytics/), the Google Analytics provider for Flowcourier Analytics — configuration only, no licence file, and the same backoffice views the Matomo provider gets. See [Migrating from the legacy package](/docs/analytics/guides/migrating-from-the-legacy-package/).
 
 ## Can I request a feature?
 Yes! Please open an issue on GitHub at [https://github.com/flowcourier/Flowcourier.Umbraco.Support](https://github.com/flowcourier/Flowcourier.Umbraco.Support).
 
 ## What happened to Matomo support?
-We did not get enough interest to continue developing the Matomo connector. If you are interested in Matomo support, please contact us.
+It lives in the successor: [Flowcourier Analytics](/docs/analytics/start-here/get-started/) on Umbraco 17.5+ takes either the Matomo or the Google Analytics provider behind the same dashboards. The legacy package never shipped a Matomo connector.
 
 
 ## I get an "Invalid grant" error message — what should I check?

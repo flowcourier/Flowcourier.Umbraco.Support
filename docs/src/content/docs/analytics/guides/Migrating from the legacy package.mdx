@@ -1,0 +1,99 @@
+---
+title: Migrating from the legacy package
+description: Moving from the legacy Google Analytics for Umbraco package (Flowcourier.Umbraco.Analytics, Umbraco 10–13) to Flowcourier Analytics with the Google Analytics provider on Umbraco 17.
+sidebar:
+  order: 8
+---
+
+# Migrating from the legacy Google Analytics package
+
+The legacy package, `Flowcourier.Umbraco.Analytics` (plus
+`Flowcourier.Umbraco.Backoffice.Assets`), supported Umbraco 10–13 and put a
+React dashboard in an iframe. It is **deprecated on NuGet** — its 13.x
+releases stay listed for sites on Umbraco 13 until that LTS ends, and nothing
+new will be published under that id. Its successor on Umbraco 17.5+ is
+[`Flowcourier.Umbraco.GoogleAnalytics`](/docs/analytics/guides/google-analytics/),
+the Google Analytics provider for Flowcourier Analytics.
+
+## What changes
+
+| | Legacy package | Flowcourier Analytics |
+|---|---|---|
+| Umbraco | 10–13 | 17.5+ (LTS) |
+| Connection | Service-account JSON pasted into a backoffice screen, stored in the `Flowcourier_ServiceConnections` table | `appsettings.json` / environment variables; nothing stored |
+| Licence | `.lic` file bound to domains, a 30-day free-edition limit | No key. All traffic reports are free; [AI Visibility](/docs/analytics/guides/ai-visibility/) (Analytics Pro) is the family's paid feature |
+| Backoffice | Own section with a React app; a **Visitors** workspace tab | The shared Analytics section (Overview, Realtime, Visitors, Behaviour, Acquisition, Technology) and the shared document **Analytics** tab, built from native backoffice elements |
+| PageSpeed Insights, Search Console | Per-connection settings | The `Flowcourier:Analytics` section, same service account |
+| Matomo | — | Swap the provider package and the same views read Matomo instead |
+
+## Steps
+
+<ol>
+<li>
+
+**Upgrade to Umbraco 17.5 or later** first; the new family does not run on
+Umbraco 13.
+
+</li>
+<li>
+
+**Collect what you had.** Open the legacy connection screen (Settings →
+Flowcourier) and copy the property id, the service-account JSON (or download
+a fresh key for the same account in Google Cloud), the site URL, and — if you
+used them — the PageSpeed API key and the Search Console property.
+
+</li>
+<li>
+
+**Uninstall** `Flowcourier.Umbraco.Analytics` and
+`Flowcourier.Umbraco.Backoffice.Assets`. Delete
+`umbraco/Licenses/flowcourier-analytics.lic`. The
+`Flowcourier_ServiceConnections` table is not read by anything any more and
+can be dropped when convenient.
+
+</li>
+<li>
+
+**Install** `Flowcourier.Umbraco.GoogleAnalytics` and configure it:
+
+```json
+{
+  "Flowcourier": {
+    "GoogleAnalytics": {
+      "PropertyId": "123456789",
+      "SiteUrl": "https://www.example.com"
+    },
+    "Analytics": {
+      "Google": { "ServiceAccountJsonPath": "/secrets/ga-service-account.json" },
+      "PageSpeed": { "Enabled": true, "ApiKey": "<key>" },
+      "SearchConsole": { "Enabled": true, "Property": "sc-domain:example.com" }
+    }
+  }
+}
+```
+
+The service account keeps its Viewer role on the property; nothing changes
+on the Google side. Enable the **Google Analytics Data API** in the Cloud
+project if the legacy install predates it (it was needed there too).
+
+</li>
+<li>
+
+**Grant the section.** Administrators get the Analytics section on the first
+start; other groups need it under **Users → Groups → Sections**. The old
+section and its permissions disappear with the old package.
+
+</li>
+</ol>
+
+## What you gain, what you lose
+
+Gained: the Overview with AI-agent traffic beside human traffic (with
+[AEO](/docs/aeo/start-here/get-started/)), the shared document tab with page
+flow, findings, PageSpeed and Search Console side by side, the Copilot
+tools, AI Visibility, and a provider you can swap for Matomo.
+
+Lost: the 30-day limit and the licence file. The legacy dashboards had
+nothing the new ones do not, but GA4's API still has no per-visit data, so
+the [same limits](/docs/analytics/guides/google-analytics/#what-ga4-cannot-answer)
+apply as before — they are now stated in the views instead of shown as zeros.
