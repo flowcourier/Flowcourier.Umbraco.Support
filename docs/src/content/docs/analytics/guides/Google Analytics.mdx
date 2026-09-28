@@ -64,7 +64,7 @@ It uses a **service account**, the same one the [Search Console](/docs/analytics
 
 Everything is a GA4 report over the selected range, in the property's time zone. Sessions are shown as *visits*, `totalUsers` as *users*, and the previous period is asked for in the same request as the current one. The **AI assistants** channel does not exist in Google Analytics: sessions whose source is an assistant's host (`chatgpt.com`, `perplexity.ai`, `claude.ai`, `copilot.microsoft.com`, `gemini.google.com`, …) are reported as AI assistants here rather than as referrals, on the Acquisition dashboard, on a page's referrers and in the page flow's channel filter.
 
-The **page flow** (previous and following pages on the document tab) has no transitions report to read from in GA4. It is read off `pageReferrer` instead: the referrers of this page's views are its previous pages, the views whose referrer is this page are its following pages, and a view that refers to itself is counted as a reload ("Returned to this page"). Arrivals from outside the site are grouped by channel.
+The **page flow** (previous and following pages on the document tab) has no transitions report to read from in GA4. It is read off `pageReferrer` instead: the referrers of this page's views are its previous pages, the views whose referrer is this page are its following pages, and a view that refers to itself is counted as a reload ("Returned to this page"). Arrivals from outside the site are grouped by channel — and the campaign channel keeps Google's own group, so a home page fed by Performance Max shows "From Google Ads (Cross-network)" rather than a bare "From campaigns" (e-mail, display, affiliates and the rest are named the same way; the **Campaigns** filter still narrows to all of them). A **Campaigns** card on the document tab lists the campaigns, by name, that landed sessions on the page; the site-wide names are on the Acquisition dashboard.
 
 ## What GA4 cannot answer
 
@@ -73,7 +73,7 @@ GA4's API reports aggregates, never individual visits. These parts of the Matomo
 | Surface | On Google Analytics |
 |---------|---------------------|
 | Visitor journeys, the **Visits** dashboard, clicking a realtime row | Not available. |
-| Realtime "latest visitors" table, the map, the "last seen" tag | Counts only. The pages list shows page **titles** (GA4 realtime has no page path). |
+| Realtime "latest visitors" table, the map, the "last seen" tag | Counts only. The map shades countries by active visitors instead of placing city bubbles; the pages list shows page **titles** (GA4 realtime has no page path). |
 | Exit pages, exit rate, "left the site" in the flow | GA4 has no exit metric. |
 | Outlinks, downloads, site search in the flow | Not in GA4's report model. |
 | The live count on a page before publishing | Not shown. |
