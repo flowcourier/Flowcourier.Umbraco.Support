@@ -1,13 +1,13 @@
 ---
 title: PageSpeed Insights
-description: Lighthouse scores and real-user data from Google PageSpeed Insights on every document, in the Google Search tab, without leaving Umbraco.
+description: Lighthouse scores and real-user data from Google PageSpeed Insights on every document, without leaving Umbraco.
 sidebar:
   order: 3
 ---
 
 # PageSpeed Insights
 
-With PageSpeed Insights enabled, every document's **Analytics** tab gains a **Page speed** section on its **Google Search** sub-tab — beside Google's index status for the same page — running Lighthouse for the page's public URL, for **mobile** or **desktop**:
+With PageSpeed Insights enabled, every document's **Analytics** tab gains a **Page speed** section on its **Google Search** sub-tab, beside Google's index status for the same page, running Lighthouse for the page's public URL, for **mobile** or **desktop**:
 
 - **Scores** — Performance, Accessibility, Best practices and SEO as Lighthouse score rings. Hover one to see how many of its audits passed and how many need work.
 - **Real-user data** — 75th-percentile LCP, INP, CLS, FCP and TTFB from the Chrome UX Report when Google has enough traffic for the page (or, failing that, for the whole site). This is what visitors actually experienced, rather than what one lab run measured.
@@ -33,7 +33,7 @@ With PageSpeed Insights enabled, every document's **Analytics** tab gains a **Pa
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `PageSpeed:Enabled` | `false` | Shows the Page speed section on the document's Google Search sub-tab. |
+| `PageSpeed:Enabled` | `false` | Shows the Page speed section on the document's Google Search sub-tab. That sub-tab needs [Search Console](/docs/analytics/guides/search-console/) enabled too — PageSpeed alone shows nothing. |
 | `PageSpeed:ApiKey` | — | A Google Cloud API key with the **PageSpeed Insights API** enabled. Strongly recommended: without a key Google applies a tiny anonymous quota shared with everyone on your outbound IP, and the section reports *quota exceeded* once it is used up. |
 | `PageSpeed:Referer` | the analysed page's origin | Sent as the HTTP referrer of every request, so a key restricted to **HTTP referrers** (your site's domain) works from the server. Set it only when the key allows a different URL. |
 | `PageSpeed:DefaultStrategy` | `mobile` | Which strategy the section shows first. |

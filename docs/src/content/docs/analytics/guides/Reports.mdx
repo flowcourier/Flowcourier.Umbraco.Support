@@ -63,9 +63,20 @@ Source: `Actions.getPageUrls`, `Actions.getEntryPageUrls`, `Actions.getExitPageU
 
 - Cards per channel: **Direct**, **Search engines**, **Social networks**, **Websites**, **Campaigns** and **AI assistants** (ChatGPT, Perplexity, Copilot … — reported by Matomo 5.x) with their share of visits.
 - **Top referrers** chart and **channels** donut.
-- Tables: all referrers, search engines, social networks, AI assistants, websites, campaigns.
+- Tables: all referrers, search engines, social networks, AI assistants, websites.
+- **Campaigns** card — see [Campaigns](#campaigns) below; the document Traffic tab has the same card for one page.
 
 Source: `Referrers.getReferrerType`, `Referrers.getAll`, `Referrers.getSearchEngines`, `Referrers.getSocials`, `Referrers.getWebsites`, `Referrers.getCampaigns`.
+
+### Campaigns
+
+The Campaigns card — on the Acquisition dashboard for the whole site, and on a document's Traffic tab for that page — works the same in both places:
+
+- **Bar chart or table** of the campaigns, largest first.
+- **Break down by** — on Google Analytics, switch between **Campaign**, **Ad group**, **Keyword**, **Search query** and **Network**. Campaign is any UTM-tagged or Google Ads campaign; the other four come from Google Ads and need the GA4 property [linked to Google Ads](https://support.google.com/analytics/answer/9379420). Keyword and search query exist only for **Search** campaigns — Demand Gen and Performance Max have neither, so those views are often short. The search query (what the person actually typed before clicking your ad) is usually the most revealing: it shows the competitor and problem searches your keywords catch. On Matomo the card shows campaigns only.
+- **Click any row** (a bar or a table row) for its sidebar: sessions, engaged sessions, engagement rate, key events and average session length against the previous period, a daily trend, and the row's breakdowns — its ad groups, keywords, search queries and networks, source / medium, landing pages and devices. Breakdowns that are themselves Google Ads rows are clickable too, so you can walk campaign → ad group → keyword, with **Back** to return. On Matomo the sidebar shows visits, actions, visit length and bounce rate, the trend, the campaign's keywords (`mtm_kwd` / `utm_term`), landing pages and devices.
+
+A breakdown is only fetched when you switch to it or open a row, so the card costs nothing extra until you use it. Cost, CPC and ROAS are not shown: GA4's Data API does not carry Google Ads cost.
 
 ### Technology
 
@@ -104,7 +115,7 @@ Reading crawler data needs either the Analytics section or the Settings section.
 
 Open any document and switch to **Analytics**. The tab has one sub-tab per connected source — **Traffic** (the provider) and **Google Search** — and remembers the one you used last.
 
-**Google Search** is both of Google's views of the page in one place, because an editor reads them as one question: does Google have this page, and is it fast when it gets there? It appears when either feature is enabled and shows whichever half this site can serve, saying in one line what the other would add.
+**Google Search** is both of Google's views of the page in one place, because an editor reads them as one question: does Google have this page, and is it fast when it gets there? It appears only when Search Console is enabled, whichever traffic provider (Matomo or Google Analytics) the site uses; PageSpeed, when enabled too, is a section below the search data. With Search Console off there is no Google Search sub-tab and no page-speed view.
 
 - From [Search Console](/docs/analytics/guides/search-console/): the page's **index status** with what to do about it, its canonical and discovery detail, clicks and impressions over time, and the queries, countries and devices behind them.
 - From [PageSpeed Insights](/docs/analytics/guides/pagespeed-insights/): the **Lighthouse scores** and the real-user (Chrome UX Report) numbers, for mobile or desktop. It shows the last analysis the server holds and waits for **Run analysis** before starting a new one — a run takes 20–60 seconds and spends PageSpeed quota. Lighthouse's own detail is a link away in Google's tool, which runs a fresh test there, so its numbers will differ.
@@ -128,6 +139,7 @@ The Traffic view is scoped to the page's tracked URL for the language you are ed
   Needs Matomo's Transitions plugin. Without it this area shows its empty state and the rest of the Traffic view is unaffected.
 - **Channels** that brought visitors here, as a bar chart of the top 5. Clicking a channel drills into the individual referrers within it — the same shape as the countries card below. "Direct" is the exception: those visitors arrived with no referrer at all, so there is nothing to list, and the card says so rather than showing an empty table.
 - **Top referrers** to this page, again as a bar chart of the top 5 with brand marks.
+- **Campaigns** that brought visitors to this page — the same card as on the Acquisition dashboard, scoped to the page. See [Campaigns](#campaigns).
 - **Where the visitors are** — countries as a bar chart, with a **Table** toggle for the exact numbers. Clicking a country drills into its cities; **All countries** goes back. Both levels come from the same request, so drilling in costs nothing and is instant.
 - **Technology** — device types and browsers in one card, switched with the **Devices** / **Browsers** buttons. The devices donut carries the whole site's split in its legend for the same range ("Mobile · site 62%"), so the page's mix can be read against the baseline.
 

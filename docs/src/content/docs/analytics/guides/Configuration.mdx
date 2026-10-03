@@ -105,6 +105,38 @@ Environment variables work too: `Flowcourier__GoogleAnalytics__PropertyId`, `Flo
 
 The key itself lives under `Flowcourier:Analytics:Google` (`ServiceAccountJson` inline, or `ServiceAccountJsonPath`); see [Search Console](/docs/analytics/guides/search-console/) for that section. The effective values are shown — with the service account's e-mail, never the key — under **Settings → Flowcourier → Google Analytics**.
 
+## Running Matomo and Google Analytics together
+
+Some sites run both tools — typically Matomo for privacy-friendly, consent-free statistics and Google Analytics 4 for marketing. Install both provider packages and configure each one as above. The Analytics section reads **one** of them at a time; `Flowcourier:Analytics:Provider` says which:
+
+```jsonc
+{
+  "Flowcourier": {
+    "Analytics": {
+      "Provider": "google-analytics"   // or "matomo"
+    }
+  }
+}
+```
+
+Or as an environment variable: `Flowcourier__Analytics__Provider=matomo`.
+
+The active provider feeds everything: the dashboards, the document **Analytics** tab, the findings strip, the live badge, [the Copilot tools](/docs/analytics/guides/copilot/) and [AI Visibility](/docs/analytics/guides/ai-visibility/). The other one is installed but not read. Figures from the two tools are never mixed — Matomo and GA4 count visits differently, so a combined number would match neither.
+
+**Switching** is a configuration change and takes effect without a restart; reopen the dashboard to see the other provider's figures. Each provider caches its own reports, so nothing from one shows up under the other.
+
+**When `Provider` is empty**, the choice is automatic:
+
+1. Only one provider package installed → that one (the setting is not needed).
+2. Both installed, only one enabled and configured → that one. To switch off one provider without uninstalling it, set its `Enabled` to `false`.
+3. Both set up → Matomo, and the Analytics **Overview** shows a note asking you to set `Provider`.
+
+A `Provider` value that names a package that is not installed is ignored (the rules above apply) and the Overview says so.
+
+**Visitor journeys** (the Visits dashboard and per-visit panel) come from Matomo only, so they appear only while Matomo is the active provider. Google Analytics cannot report individual visits.
+
+The Overview dashboard shows which provider the figures come from whenever both are installed.
+
 ## Shared Analytics settings
 
 ```jsonc
@@ -112,6 +144,7 @@ The key itself lives under `Flowcourier:Analytics:Google` (`ServiceAccountJson` 
   "Flowcourier": {
     "Analytics": {
       "SiteUrl": "https://www.example.com",
+      "Provider": "",
       "GrantAdminSectionAccess": true,
       "RealtimeBadge": { "Enabled": true, "PollSeconds": 60 },
       "PageSpeed": { "Enabled": false, "ApiKey": "" },
@@ -125,6 +158,7 @@ The key itself lives under `Flowcourier:Analytics:Google` (`ServiceAccountJson` 
 | Setting | Default | Description |
 |---------|---------|-------------|
 | `SiteUrl` | the provider's tracked URL | Public base URL used to build page URLs for PageSpeed Insights and Search Console. |
+| `Provider` | automatic | `matomo` or `google-analytics`: which provider the section reads when both are installed. See [Running Matomo and Google Analytics together](#running-matomo-and-google-analytics-together). |
 | `GrantAdminSectionAccess` | `true` | On startup, add the Analytics section to the Administrators group if it is missing. |
 | `RealtimeBadge:Enabled` | `true` | The live visitor count on the Analytics section in the top bar. Every open backoffice tab polls for it (the server caches the answer for 15 s). |
 | `RealtimeBadge:PollSeconds` | `60` | Badge refresh interval (minimum 15). |
