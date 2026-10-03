@@ -77,7 +77,7 @@ Pro** licence.
 | Setting | Default | What it does |
 |---|---|---|
 | `Enabled` | `false` | The whole feature. Off, nothing is stored and nothing appears. On, three tables are created on the next start (`FcAiVisibilityPrompt`, `FcAiVisibilityRun`, `FcAiVisibilityCitation`). |
-| `ProfileAliases` | `[]` | The chat profiles to sample, one answer per prompt per profile. Empty means the default chat profile. **Use a dedicated profile without a system-prompt template** — a template written for the Copilot steers the sampled answer. |
+| `ProfileAliases` | `[]` | The chat profiles to sample, one answer per prompt per profile. Empty means the default chat profile. The prompt is sent alone — a profile's system-prompt template is not applied to sampled answers — so a dedicated profile is only needed to pick the model (it must support web search) or to track the cost separately. |
 | `IntervalHours` | `72` | How long after its last run a prompt is due again. Answers are not deterministic; a share only settles over repeated runs. |
 | `DailyRunBudget` | `100` | Runs (prompt × profile) per UTC day, shared by the scheduled job and **Run now**. |
 | `MaxPrompts` | `200` | The most prompts a site may track — a cap on the bill. |
