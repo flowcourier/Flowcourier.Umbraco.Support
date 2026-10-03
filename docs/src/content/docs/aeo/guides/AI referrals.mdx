@@ -57,7 +57,10 @@ Referral hits are recorded with **no IP address, no user agent and no query
 string** — the path is stored without its query, `utm_source` is parsed and the
 rest discarded — which keeps the `FcAeoReferralHit` table outside personal-data
 scope by construction. Rows are kept forever by default
-(`ReferralRetentionDays: 0`); set a positive number of days to prune older ones.
+(`ReferralRetentionDays: 0`) — deliberately: the table holds no personal data,
+and long history is what makes the "questions answered" trend useful. Set a
+positive number of days to prune older ones; pruning runs in short batches,
+like crawler hits.
 
 ## appsettings reference
 
@@ -66,7 +69,7 @@ All settings are optional, under `Flowcourier:Aeo:CrawlerAnalytics`:
 | Setting | Default | Description |
 |---------|---------|-------------|
 | `ReferralHosts` | `claude.ai`, `chatgpt.com`, `perplexity.ai`, `copilot.microsoft.com`, `gemini.google.com` | AI surfaces whose outbound clicks count as referrals (matched on Referer host, including subdomains, or `utm_source`). Configured entries are **added** to these built-in defaults, not replaced. |
-| `ReferralRetentionDays` | `0` | Days of referral hits to keep; `0` keeps them forever. |
+| `ReferralRetentionDays` | `0` | Days of referral hits to keep; `0` keeps them forever (deliberate: no personal data is stored, and long history is what makes the trend useful). |
 
 The correlation only needs crawler analytics to be on — referrals pair each
 AI-referred visit with the earlier **User-triggered** (Assistant-type) fetch of

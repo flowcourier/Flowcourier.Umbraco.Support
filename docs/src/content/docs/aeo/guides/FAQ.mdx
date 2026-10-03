@@ -105,11 +105,16 @@ analytics](/docs/aeo/guides/ai-crawler-analytics/).
 
 No measurable per-request cost. Verification runs **out of band** — the first
 request from an unknown address passes through while the verdict resolves, and
-later requests hit a cached verdict. Analytics hits go into an in-memory queue
-and are flushed to the database in background batches; the queue drops on
-overflow rather than ever blocking a request. Blocked requests are answered
-before the content pipeline runs, so scanner floods get cheaper, not more
-expensive.
+later requests hit a cached verdict. The crawler policy, client allowlist and
+block list are in-memory snapshots refreshed off the request path, so
+enforcement never waits for the database. Analytics hits go into an in-memory
+queue and are flushed to the database in background batches; the queue drops on
+overflow rather than ever blocking a request, and a crawler's fetches of
+stylesheets, scripts, images and fonts are not recorded at all (see
+`RecordStaticAssets`). The daily purge deletes in short batches, so even a
+large backlog never holds the database's writer lock. Blocked requests are
+answered before the content pipeline runs, so scanner floods get cheaper, not
+more expensive.
 
 ## Can a normal browser accidentally receive Markdown instead of HTML?
 

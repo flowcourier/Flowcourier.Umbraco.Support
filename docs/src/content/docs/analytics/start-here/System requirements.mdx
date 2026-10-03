@@ -14,7 +14,7 @@ sidebar:
 | **Matomo** provider | Matomo 4.x or 5.x, self-hosted or Matomo Cloud, reachable over HTTPS from the Umbraco server; a `token_auth` for a user with *view* access to the website |
 | **Google Analytics** provider | A GA4 property; a Google Cloud service account with the Google Analytics Data API enabled, added as a *Viewer* on the property |
 
-The packages have **no AI dependency** and no database footprint of their own: they read reports from the provider's API on demand and cache them briefly in memory.
+The packages have **no AI dependency** and create no database tables by default: they read reports from the provider's API on demand and cache them briefly in memory. Two optional features add tables when switched on — `FcAnalyticsIndexStatus` for Search Console index tracking, and the three `FcAiVisibility*` tables for AI Visibility (`Flowcourier:Analytics:AI:Visibility:Enabled`).
 
 ## Packages
 
